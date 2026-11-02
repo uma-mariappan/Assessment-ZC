@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    {% if seo.description != blank %}
+      <meta name="description" content="{{ seo.description | escape }}">
+    {% endif %}
+    {% if seo.keywords != blank %}
+      <meta name="keywords" content="{{ seo.keywords | escape }}">
+    {% endif %}
+    {% if store.favicon.url != blank and store.favicon.url != '?' %}
+      {% assign fav_small = store.favicon.url %}
+      {% assign fav_large = store.favicon.url %}
+      {% for res in store.favicon.resolutions %}
+        {% if res.format == "png" and res.width == 320 %}{% assign fav_small = res.url %}{% endif %}
+        {% if res.format == "png" and res.width == 640 %}{% assign fav_large = res.url %}{% endif %}
+      {% endfor %}
+      <link rel="icon" type="image/png" sizes="any" href="{{ fav_small }}">
+      <link rel="apple-touch-icon" href="{{ fav_small }}">
+      {% capture fav_manifest_json %}{"name":"Pink Beauty","short_name":"Pink Beauty","theme_color":"#EC4899","background_color":"#FFFFFF","display":"standalone","icons":[{"src":"{{ fav_small }}","type":"image/png","sizes":"192x192"},{"src":"{{ fav_large }}","type":"image/png","sizes":"512x512"}]}{% endcapture %}
+      <link rel="manifest" href="data:application/manifest+json,{{ fav_manifest_json | strip | url_encode }}">
+    {% endif %}
+    <meta name="theme-color" content="#EC4899">
+    <link rel="stylesheet" href="{{ "style-19486920188144.css" | asset_url }}">
+    <link rel="stylesheet" href="{{ "theme-settings-898456141777185.css" | asset_url }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Roboto+Slab:wght@400;500;600;700&display=swap">
+    <script src="{{ 'zc-storefront-events-747074100527742.js' | asset_url }}" defer></script>
+    <script type="module" src="{{ 'network-adapter-730892702895239.js' | asset_url }}" defer></script>
+    <script src="{{ "components-library.iife-928893321546253.js" | asset_url }}" defer></script>
+    <script src="{{ 'quantity-message-588403974700878.js' | asset_url }}" defer></script>
+    <script type="module" src="{{ 'add-to-cart-514496733357978.js' | asset_url }}" defer></script>
+    {% comment %} <script src="{{ "analytics-361669822365921.js" | asset_url }}" defer></script>
+    <script src="{{ "img-lazy-loader-585481362045211.js" | asset_url }}" defer></script> {% endcomment %}
+    <title>
+      {{ page_title }}
+      {% if collection %}
+        {% assign current_pg = collection.page_context.current_page %}
+        {% if current_pg != 1 %}&ndash; Page {{ current_pg }}{% endif %}
+      {% endif %}
+      {% if store.name == null and page_title == null %} 
+        Home 
+      {% endif %}
+      {% if store.name %}
+        {% unless page_title contains store.name %}
+         {% if page_title != blank %} &ndash; {% endif %} {{ store.name }}
+        {% endunless %}
+      {% endif %}
+    </title>
+    {{ content_for_header }}
+  </head>
+  {% liquid
+    assign layout_signin_url = storefrontRootUrl | append: '/signin'
+  %}
+  <body{% if store.customer_portal.enabled %} data-customer-portal="true" data-signin-url="{{ layout_signin_url | escape }}"{% endif %}>
+    {{ content_for_body }}
+    <a href="#mainContent" class="skip-to-content-link">{{ "common.skip_to_content" | t }}</a>
+    {% render "cookie-bar" %}
+    {% render 'quantity-message' %}
+    {% sections 'header-group' %}
+    {% render 'global-mini-cart-host' %}
+
+    <main id="mainContent" tabindex="-1" class="flex-grow flex flex-col">
+      {{ content_for_layout }}
+    </main>
+
+    {% sections 'footer-group' %}
+
+    <script type="speculationrules">
+      {
+        "prefetch": [
+          {
+            "where": {
+              "and": [
+                { "href_matches": "/*" },
+                { "not": { "href_matches": "/checkout" } },
+                { "not": { "selector_matches": ".no-prerender" } },
+                { "not": { "selector_matches": "[rel~=nofollow]" } }
+              ]
+            },
+            "eagerness": "moderate"
+          }
+        ]
+      }
+    </script>
+    <footer class="w-full whitespace-normal break-words">
+      {{ content_for_footer }}
+    </footer>
+
+    {% render 'theme-settings' %}
+  </body>
+</html>

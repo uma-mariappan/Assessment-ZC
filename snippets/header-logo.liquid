@@ -1,0 +1,45 @@
+{% style %}
+    #section-{{ sectionId }} .heading-size{
+        font-size: {{ sectionSettings.mobile_store_name_size }}px;
+    }
+    #section-{{ sectionId }} .tag-line-size{
+        font-size: {{ sectionSettings.mobile_tag_line_size }}px;
+    }
+    #section-{{ sectionId }} .logo-height{
+        max-height: {{ sectionSettings.mobile_store_logo_size }}px;
+    }
+
+    @media (min-width: 768px) {
+        #section-{{ sectionId }} .heading-size {
+            font-size: {{ sectionSettings.desktop_store_name_size }}px;
+        }
+        #section-{{ sectionId }} .tag-line-size{
+            font-size: {{ sectionSettings.desktop_tag_line_size }}px;
+        }
+        #section-{{ sectionId }} .logo-height{
+            max-height: {{ sectionSettings.desktop_store_logo_size }}px;
+        }
+    }
+{% endstyle %}
+
+<div class="flex items-center {%if sectionSettings.menu_alignment.value != 'center' %}{% if menuList.size > 0 %} min-w-[60%] {% endif %} justify-center{% endif %} md:gap-4">
+    {% if organization.logo != null and organization.logo != blank %}
+        <a href="/home" class="flex items-center {% if sectionSettings.mobile_layout_details.value == 'logo' %} block justify-center {% else %} hidden {% endif %} md:block">
+            <picture class="block">
+                {% render 'image-resolutions', firstImage: organization.logo %}
+                <img src="{{ organization.logo.url }}" class="logo-height w-auto min-w-full object-cover object-center" alt="{{ organization.name | escape }}" height="40" loading="eager">
+            </picture>
+        </a>
+    {% endif %}
+    {% if organization.name != null and organization.name != blank or organization.tag_line != null and organization.tag_line != "" %}
+        <div class="flex flex-col {% if sectionSettings.mobile_layout_details.value == 'orgname' %} block {% else %} hidden {% endif %} md:block">
+            <a href="/home" class="heading-size flex justify-center md:justify-start" style="color: var(--color-heading);">{{ organization.name | escape }}</a>
+            <p class="tag-line-size" style="color: var(--color-heading);">{{ organization.tag_line | escape }}</p>
+        </div>
+    {% endif %}
+    {% if organization.logo == null and organization.name == null %}
+        <a href="/home" class="flex items-center">
+            <p class="text-lg" style="color: var(--color-heading);">{{ "common.home" | t }}</p>
+        </a>
+    {% endif %}
+</div>

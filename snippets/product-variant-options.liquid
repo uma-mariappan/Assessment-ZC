@@ -1,0 +1,50 @@
+{% liquid
+  assign value_name = value.name | default: value
+  assign value_data = value.data | default: ''
+  assign option_value = value_name
+  if is_color_option and value_data != blank
+    assign option_value = value_name | append: value_data
+  endif
+  assign selected_raw = option.selected_value | downcase | strip
+  assign option_value_downcase = option_value | downcase | strip
+  assign is_selected = false
+
+  if selected_raw == option_value_downcase
+    assign is_selected = true
+  elsif selected_raw contains option_value_downcase
+    assign is_selected = true
+  elsif option.selected_value == blank and is_first
+    assign is_selected = true
+  endif
+%}
+
+{% if is_color_option %}
+  <button
+    type="button"
+    class="variant-option w-9 h-9 rounded-full p-1 border border-[#d9c2cb] transition-all duration-200
+      [&.is-selected]:border-[#8B1E3F] [&.is-selected]:shadow-[inset_0_0_0_1px_#8B1E3F]
+      [&.is-disabled]:opacity-35 [&.is-disabled]:pointer-events-none
+      {% if is_selected %}is-selected{% endif %}"
+    data-variant-option
+    data-option-value="{{ option_value }}"
+    data-option-color="{{ value_data }}"
+    aria-label="{{ option.name }} {{ value_name }}"
+  >
+    <span class="block w-full h-full rounded-full border border-black/[0.08]" style="background-color: {{ value_data }}"></span>
+  </button>
+{% else %}
+  <button
+    type="button"
+    class="variant-option min-w-[72px] h-12 px-5 inline-flex items-center justify-center text-sm border text-[#1F1F1F] transition-all duration-200
+      [&:not(.is-selected)]:bg-white [&:not(.is-selected)]:border-[#E5E5E5]
+      [&.is-selected]:bg-[#FDF2F8] [&.is-selected]:border-[#750A27] [&.is-selected]:text-[#750A27] [&.is-selected]:font-medium
+      [&.is-disabled]:opacity-35 [&.is-disabled]:pointer-events-none
+      {% if is_selected %}is-selected{% endif %}"
+    data-variant-option
+    data-option-value="{{ option_value }}"
+    data-option-color="{{ value_data }}"
+    aria-label="{{ option.name }} {{ value_name }}"
+  >
+    <span>{{ value_name }}</span>
+  </button>
+{% endif %}

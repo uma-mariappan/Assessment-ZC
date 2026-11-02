@@ -1,0 +1,17 @@
+<quantity-message class="text-center fixed z-[9999] top-40 hidden 
+    w-[90%] md:w-[80%] lg:w-[70%] inset-x-0 mx-auto bg-color shadow-lg bg-opacity-40
+    rounded-full backdrop-blur-md page-max-width">
+    <div class="py-4 px-2">
+        <div class="flex justify-center">
+            <div class="hidden" id="svg-warning">
+                {% render "icon-warning" %}
+            </div>
+            <div class="hidden" id="svg-check-circle">
+                {% render "icon-check-square" %}
+            </div>
+            <div>
+                <p class="font-normal text-xs md:text-sm pl-2" id="quantity-status-message"></p>
+            </div>
+        </div>
+    </div>
+</quantity-message>

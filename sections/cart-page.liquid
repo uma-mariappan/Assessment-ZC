@@ -1,0 +1,311 @@
+<script src={{ "quantity-message-588403974700878.js" | asset_url }} defer></script>
+<script type="module" src={{ "cart-items-766467123046257.js" | asset_url }} defer></script>
+<script src={{ "quantity-counter-176141763398130.js" | asset_url }} defer></script>
+{% liquid
+  assign save_for_later_enabled = false
+  if store.customer_portal.enabled and store.preferences.is_save_for_later_enabled
+    assign save_for_later_enabled = true
+  endif
+%}
+{% if save_for_later_enabled %}
+<script type="module" src={{ "save-for-later-496064007697714.js" | asset_url }} defer></script>
+{% endif %}
+
+<script defer>
+    window.cart_list = {{ cart | json }}
+</script>
+
+{% liquid assign section_settings = section.settings
+  assign mobile_margin = section_settings.mobile_horizontal_margin
+  assign desktop_margin = section_settings.desktop_horizontal_margin
+%}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-white bg-opacity-60 z-50">
+    <div class="flex items-center">
+        <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+        {% render "icon-page-loader" %}
+    </div>
+</div>
+{% render 'quantity-message' %}
+<div id="section-{{ section.id }}" class="w-full mx-auto page-max-width">
+  <div data-cart-page class="mx-[{{ mobile_margin }}rem] lg:mx-[{{ desktop_margin }}rem]">
+    {% if cart.item_count > 0 %}
+      <cart-items class="flex flex-col lg:grid lg:grid-cols-[75%,25%] mb-2 md:mb-10">
+        <div class="h-fit lg:border-r border-[#E5E5E5]">
+          <h2 class="text-[32px] leading-[40px] lg:text-[40px] lg:leading-[48px] font-semibold py-4 md:py-5 border-b border-[#E5E5E5]">
+            {{ 'cart.my_cart' | t }}
+          </h2>
+          <div class="py-4 lg:pr-10 hidden lg:flex flex-row justify-between items-start border-b border-[#E5E5E5]">
+            <div class="flex flex-row gap-4 [min-inline-size:46%]">
+              <div class="flex flex-col justify-between">
+                <p class="text-sm">{{ 'cart.items' | t }}</p>
+              </div>
+            </div>
+            <div class="[min-inline-size:18%] lg:[min-inline-size:27%] text-right lg:pr-4">
+              <p class="text-sm">{{ 'cart.quantity' | t }}</p>
+            </div>
+            <div class="[min-inline-size:18%] lg:[min-inline-size:27%] text-right lg:pr-4">
+              <p class="text-sm">{{ 'cart.amount' | t }}</p>
+            </div>
+            <div class="[min-inline-size:18%] lg:hidden">
+            </div>
+          </div>
+          {% for lineItem in cart.items %}
+            {% liquid assign variant_id = lineItem.selected_variant.id
+              assign cart_product_img = lineItem.product.cover_media
+              assign line_item_id = lineItem.id
+            %}
+            {% if cart_product_img.url == '?' or cart_product_img.url == '' or cart_product_img.url == null %}
+              {% assign cart_product_img = "no-image-59606643991319.webp" | asset_url %}
+            {% endif %}
+            <div class="py-4 lg:pr-10 flex flex-col justify-between md:flex-row md:items-start lg:h-2/5 border-b border-[#E5E5E5]">
+              <div class="flex flex-col [min-inline-size:46%]">
+                <div class="flex flex-row gap-2 md:gap-4 [min-inline-size:46%]">
+                  <div class="flex flex-col gap-2">
+                    <a href="{{ lineItem.product.url }}" class="w-[75px] h-[75px] md:w-[112px] md:h-[112px] cursor-pointer rounded-lg overflow-hidden">
+                      <picture>
+                        {% render "image-resolutions", firstImage: cart_product_img  %}
+                        <img src="{{ cart_product_img | image_url }}" alt="{{ lineItem.selected_variant.title | escape }}" class="h-full w-auto min-w-full object-cover object-center" height="80" loading="lazy">
+                      </picture>
+                    </a>
+                  </div>
+                  <div>
+                    <a href="{{ lineItem.product.url }}" class="text-xs md:text-base font-semibold cursor-pointer break-all">
+                      {{ lineItem.selected_variant.title | escape }}
+                    </a>
+                    <div class="mt-[4px] flex flex-row items-center flex-wrap gap-2">
+                      <p class="text-xs md:text-sm">{{ "cart.price" | t }}:</p>
+                      <div class="flex flex-row flex-wrap items-center text-xs md:text-sm gap-1">
+                        <b>{{ lineItem.selected_variant.price_formatted | escape }}</b>
+                        {% if lineItem.selected_variant.discount_total > 0 %}
+                          <s>{{ lineItem.selected_variant.label_price_formatted | escape }}</s>
+                          <span class="text-xs md:text-sm">{{ lineItem.selected_variant.discount_percentage | escape }}{{ "common.offer" | t }}</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                    {% render 'order-item-custom-fields', orderItem: lineItem %}
+                    {% comment %} <p class="text-xs md:text-sm"></p> {% endcomment %}
+                    {% for option_value in lineItem.selected_variant.options %}
+                      {% assign product_option = lineItem.product.options[forloop.index0] %}
+                      <div class="mt-[8px] flex flex-row items-center flex-wrap gap-2">
+                        <p class="text-xs md:text-sm md:min-w-[48px]">{{ product_option.name | capitalize | escape }}:</p>
+                        {% if option_value contains '#' %}
+                          {% assign color_parts = option_value | split: '#' %}
+                          {% assign color_name = color_parts[0] %}
+                          {% assign color_code = '#' | append: color_parts[1] %}
+
+                          <div class="flex flex-row gap-[2px] items-center">
+                            <div class="h-3 w-3" style="background-color: {{ color_code }}"></div>
+                            <span class="text-xs md:text-sm px-1 font-semibold">{{ color_name | capitalize | escape }}</span>
+                          </div>
+                        {% else %}
+                          <span class="text-xs md:text-sm px-1 font-semibold">{{ option_value | capitalize | escape }}</span>
+                        {% endif %}
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="flex gap-2 mt-[8px] lg:mt-[16px]">
+                  <button data-remove-variant-id="{{ variant_id }}"
+                    class="btn-remove-items btn-secondary btn-secondary-color hidden lg:block text-xs md:text-sm border border-solid px-3 py-2 cursor-pointer font-normal text-center">
+                    {{ "cart.remove" | t }}
+                  </button>
+                  {% if save_for_later_enabled %}
+                    <button data-line-item-id="{{ line_item_id }}"
+                      class="btn-save-later btn-secondary btn-secondary-color hidden lg:block text-xs md:text-sm border border-solid px-3 py-2 cursor-pointer font-normal text-center">
+                      {{ "cart.save_for_later" | t }}
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="hidden lg:flex [min-inline-size:18%] lg:[min-inline-size:27%] justify-end lg:pr-4">
+                <div class="flex flex-row items-center lg:gap-[5.5rem] justify-between">
+                  {% liquid assign is_cart_page = true
+                    assign quantity_value = lineItem.quantity
+                  %}
+                  {% render "quantity-counter", quantity: quantity_value, variantId: variant_id, isCartPage: is_cart_page %}
+                </div>
+              </div>
+              <div class="hidden lg:flex [min-inline-size:18%] lg:[min-inline-size:27%] justify-end lg:pr-4">
+                <p class="leading-[48px]">{{ lineItem.item_total_formatted | escape }}</p>
+              </div>
+              <div class="flex flex-row gap-3 justify-between flex-wrap md:hidden lg:py-4">
+                <div class="flex flex-row gap-3 w-full justify-between">
+                  {% liquid assign is_cart_page = true
+                    assign quantity_value = lineItem.quantity 
+                  %}
+                  {% render "quantity-counter", quantity: quantity_value, variantId: variant_id, isCartPage: is_cart_page %}
+                  <p class="text-xs md:text-sm flex items-center">{{ lineItem.item_total_formatted | escape }}</p>
+                </div>
+                <div class="flex gap-2 w-full justify-between">
+                    <button class="btn-remove-items btn-secondary btn-secondary-color 
+                      text-xs md:text-sm border border-solid px-2 py-2  cursor-pointer font-normal text-center"
+                      data-remove-variant-id="{{ variant_id }}">
+                        {{ "cart.remove" | t }}
+                    </button>
+                    {% if save_for_later_enabled %}
+                      <button data-line-item-id="{{ line_item_id }}" class="btn-save-later btn-secondary btn-secondary-color text-xs md:text-sm border border-solid px-3 py-2 cursor-pointer font-normal text-center">
+                          {{ "cart.save_for_later" | t }}
+                      </button>
+                    {% endif %}
+                </div>
+              </div>
+              <div class="hidden md:flex md:flex-col lg:hidden [min-inline-size:18%] justify-end">
+                  <div class="flex flex-col gap-2">
+                    <button class="btn-remove-items my-4 btn-secondary btn-secondary-color 
+                      text-xs md:text-sm border border-solid px-2 py-2  cursor-pointer font-normal text-center"
+                      data-remove-variant-id="{{ variant_id }}">
+                        {{ "cart.remove" | t }}
+                    </button>
+                    {% if save_for_later_enabled %}
+                      <button data-line-item-id="{{ line_item_id }}" class="btn-save-later btn-secondary btn-secondary-color text-xs md:text-sm border border-solid px-3 py-2 cursor-pointer font-normal text-center">
+                          {{ "cart.save_for_later" | t }}
+                      </button>
+                    {% endif %}
+                  </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="flex flex-col pt-5 lg:pl-10 lg:pt-10">
+          <div class="flex flex-col gap-2 md:gap-4">
+            <div class="flex flex-row justify-between items-center text-base">
+              <p><b class="mr-2">{{ "cart.subtotal" | t }}</b>({{ cart.item_count }} {{ "cart.items" | t }})</p>
+              <p class="font-bold"> {{ cart.total_price_formatted | escape }}</p>
+            </div>
+            {% if cart.total_discount > 0 %}
+              <div class="flex flex-row justify-between items-center">
+                <p class="text-xs md:text-sm">{{ "cart.discount_msg" | t }}</p>
+                <p class="text-base font-bold"> {{ cart.total_discount_formatted | escape }}</p>
+              </div>
+            {% endif %}
+            <p class="text-xs md:text-xs">{{ "cart.shipping_tax_descp" | t }}</p>
+          </div>
+          <div class="flex flex-col md:flex-row-reverse lg:flex-col gap-3 my-5 lg:mt-10">
+            <a href="{{storefrontHomeUrl}}/checkout" class="w-full btn-primary btn-primary-color btn-primary-hover text-center cursor-pointer px-[32px] py-[12px] rounded-lg">
+              <span class="text-xs md:text-base font-normal bubble-animation">{{ "cart.checkout" | t }}</span>
+            </a>
+            <a href="{{storefrontHomeUrl}}/" class="w-full border border-solid btn-secondary btn-secondary-color btn-secondary-hover px-2 py-2 
+              text-center cursor-pointer">
+              <span class="text-xs md:text-sm font-normal">{{ "common.continue_shopping_btn" | t }}</span>
+            </a>
+          </div>
+        </div>
+      </cart-items>
+    {% else %}
+      {% render "cart-empty" , sectionSettings: section_settings %}
+    {% endif %}
+
+    {% if save_for_later_enabled %}
+      <save-for-later>
+      {% assign save_for_later = save_for_later %}
+      {% if save_for_later.size > 0 %}
+        {% render "save-for-later", saveForLater: save_for_later %}
+      {% endif %}
+      </save-for-later>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.cart.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["cart"]},
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.cart.title"
+    },
+    {
+      "type": "range",
+      "id": "mobile_horizontal_margin",
+      "label": "t:sections.cart.settings.tab_horizontal_margin.label",
+      "min": 0,
+      "max": 5,
+      "unit": "rem",
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "desktop_horizontal_margin",
+      "label": "t:sections.cart.settings.desktop_horizontal_margin.label",
+      "min": 0,
+      "max": 7,
+      "unit": "rem",
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "t:sections.cart.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.cart.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.cart.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.cart.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.cart.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.cart.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.cart.presets.default.name" }]
+}
+{% endschema %}

@@ -1,0 +1,16 @@
+{% if currentPage > 0 and currentPage < totalPages %}
+  <div class="py-6 lg:py-8 flex justify-center">
+    <button
+      type="button"
+      id="loadMoreReviewsBtn"
+      class="px-6 py-2.5 text-sm border flex items-center justify-center gap-2"
+      style="border-color: var(--color-primary); color: var(--color-primary);"
+      data-page="{{ currentPage | plus: 1 }}"
+      data-current-page="{{ currentPage }}"
+      data-total-pages="{{ totalPages }}"
+    >
+      Load more
+      <span class="animate-spin h-4 w-4 hidden spinner">{% render "icon-spinner" %}</span>
+    </button>
+  </div>
+{% endif %}

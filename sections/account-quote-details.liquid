@@ -1,0 +1,242 @@
+<script type="module" src="{{ "account-quote-details-42751872933184.js" | asset_url }}" defer></script>
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% case quote_details.status_formatted %}
+  {% when "Accepted" %}
+    {% liquid
+        assign status_bg_color = "bg-[var(--color-warning)]"
+    %}
+  {% when "Expired", "Declined" %}
+    {% liquid
+        assign status_bg_color = "bg-[var(--color-error)]"
+    %}
+{% endcase %}
+
+{% if quote_details.is_ordered %}
+    {% liquid
+        assign status_bg_color = "bg-[var(--color-success)]"
+    %}
+{% endif %}
+
+<account-quote-details id="section-{{ section.id }}">
+    <div class="w-[90%] mx-auto page-max-width">
+        <div>
+
+            <div class="flex justify-between items-center py-6 md:py-8 flex-wrap">
+                <div class="flex gap-6 items-center">
+                    <a href="/account/quotes">
+                        {%  render 'icon-back-btn' %}
+                    </a>
+                    <h1 class="text-xl md:text-[40px] md:leading-[48px] font-medium heading-text-color primary-font">{{ 'accounts.quotes.quote_details_title' | t }}</h1>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-row gap-6 items-center">
+                            <h2 class="font-semibold text-xl md:text-2xl">#{{ quote_details.estimate_number | escape }}</h2>
+                            <span class="{{ status_bg_color }} text-sm md:text-base font-medium text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-white"></span>
+                                {% if quote_details.is_ordered %} {{ 'accounts.quotes.ordered' | t }} {% else %} {{ quote_details.status_formatted | escape }} {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {% if quote_details.status != "declined" and quote_details.is_ordered == false %}
+                    <button class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base font-medium account-quote-checkout-btn" data-estimate-id="{{quote_details.estimate_id}}">
+                        {{ 'accounts.quotes.checkout' | t }}
+                    </button>
+                {% endif %}
+
+            </div>
+
+                <div class="mt-6 md:mt-8 p-4 md:p-8 bg-white border border-color" id="QuoteCommentForm" data-estimate-id="{{ quote_details.estimate_id }}">
+                    <p class="text-xl md:text-2xl font-bold mb-4">{{ 'accounts.quotes.comments' | t }}</p>
+                    <p class="text-sm md:text-base mb-2">{{ 'accounts.quotes.message' | t }}</p>
+                    <div class="w-full md:w-1/2">
+                        <textarea id="commentContent" rows="5" cols="50" maxlength="5000" placeholder="{{ 'accounts.quotes.enter_comments' | t }}"
+                        class="w-full p-3 md:p-4 border border-[var(--color-border)] rounded-lg focus:outline-none focus:border-black resize-none text-sm md:text-base"></textarea>
+                        <p class="text-red-500 text-sm hidden" data-error="comment-empty">{{ "blog_comments.comment_error_msg" | t }}</p>
+
+                        <div class="mt-6 flex justify-end">
+                            <button id="submitQuoteComment" class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base font-medium">{{ 'accounts.quotes.save' | t }}
+                                <span class="animate-spin h-6 w-8 hidden spinner">
+                                    {% render "icon-spinner" %}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex flex-col gap-4">
+                        {% for comment in quote_details.comments %}
+                            <div class="flex justify-between items-center flex-wrap gap-2">
+                                <div>
+                                    <p class="text-sm md:text-base font-semibold">{{ comment.commented_by | escape }}</p>
+                                    <p class="text-sm md:text-base font-medium">{{ comment.comments_html_format }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm md:text-base font-medium opacity-50">{{ comment.date_description | escape }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+
+
+        
+        
+                <!-- Address & Payment Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 my-6 md:my-8">
+                    <!-- Shipping Address -->
+                    <div class="border border-color p-4 md:p-8 bg-white">
+                        <h3 class="font-bold text-lg md:text-xl mb-4">{{ 'accounts.account_order_details.shipping_address' | t }}</h3>
+                        <p class="text-sm md:text-base font-semibold mb-2">{{ quote_details.shipping_address.attention | escape }}</p>
+                        <p class="text-sm md:text-base mb-2">{{ quote_details.shipping_address.address | escape }},<br>{{ quote_details.shipping_address.city | escape }},
+                        <br>{{ quote_details.shipping_address.state | escape }} - {{ quote_details.shipping_address.zip | escape }},<br>{{ quote_details.shipping_address.country | escape }}.</p>
+                        <p class="text-sm md:text-base">{{ quote_details.shipping_address.phone | escape }}</p>
+                        <p class="text-sm md:text-base">{{ quote_details.customer_email | escape }}</p>
+                    </div>
+            
+                    <!-- Payment Information -->
+                    <div class="border border-color p-4 md:p-8 bg-white">
+                        <h3 class="font-bold text-lg md:text-xl mb-4">{{ 'accounts.account_order_details.payment_information' | t }}</h3>
+                        <div class="flex justify-between text-sm md:text-base mb-2">
+                            <span>{{ 'accounts.account_order_details.sub_total' | t }}</span>
+                            <span class="font-semibold">{{ quote_details.sub_total_formatted | escape }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm md:text-base mb-2">
+                            <span>{{ 'accounts.account_order_details.tax' | t }}</span>
+                            <span class="font-semibold">{{ quote_details.tax_total_formatted | escape }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm md:text-base font-semibold border-t border-[var(--color-border)] pt-3">
+                            <span>{{ 'accounts.account_order_details.total' | t }}</span>
+                            <span class="font-semibold">{{ quote_details.total_formatted | escape }}</span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="p-4 md:p-8 border border-color bg-white mb-40">
+                    <h3 class="font-bold text-lg md:text-xl pb-2">{{ 'accounts.account_order_details.items' | t }}</h3>
+                    <div>
+                        {% for quoteItem in quote_details.line_items %}
+                        <div class="flex items-center justify-between first:border-t-0 border-t border-color pt-6 pb-6 last:pb-0 flex-wrap gap-2">
+                            <div class="flex flex-col gap-3">
+                                <div class="flex items-center gap-6"> 
+                                    <div class="flex w-28 h-32 md:w-36 md:h-40 rounded-lg overflow-hidden border border-slate-200">
+                                        {% assign item_image = quoteItem.image_url %}
+                                        {% if item_image == '?' or item_image == '' or item_image == null %}
+                                            {% assign item_image = "no-image-59606643991319.webp" | asset_url %}
+                                        {% endif %}
+                                        {% assign quote_item_image_obj = quoteItem.image | default: item_image %}
+                                        <a href="{{ quoteItem.product_url }}" target="_blank" class="block w-full h-full">
+                                            <picture class="block w-full h-full">
+                                                {% render 'image-resolutions', firstImage: quote_item_image_obj %}
+                                                <img src="{{ item_image }}" alt="{{ quoteItem.name | escape }}" height="80" loading="lazy" class="h-full w-auto min-w-full object-cover object-center">
+                                            </picture>
+                                        </a>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                        <a href="{{ quoteItem.product_url }}" target="_blank" class="font-semibold text-sm md:text-base">{{ quoteItem.name | escape }}</a>
+                                        <p class="text-lg md:text-xl py-2">{{ orderItem.sales_rate_formatted | escape }}</p>
+                                        <div class="py-1.5 px-3 md:py-2 md:px-4 rounded-[32px] border" style="background-color: var(--color-background-alt); border-color: var(--color-border); flex items-center justify-center w-fit">
+                                            <p class="text-sm md:text-base font-medium">{{ 'accounts.common.quantity' | t }} : {{ quoteItem.quantity | floor }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-3 text-start sm:text-end">
+                                <div class="text-right flex flex-col gap-2">
+                                    <span class="block text-sm md:text-base">{{ 'accounts.account_order_details.amount' | t }}</span>
+                                    <span class="font-semibold text-xl md:text-2xl">{{ quoteItem.item_total_formatted | escape }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+        </div>
+    </div>
+</account-quote-details>
+
+{% schema %}
+{
+  "name": "t:sections.account_quote_details.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.account_quote_details.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote_details.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote_details.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.account_quote_details.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote_details.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote_details.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.account_quote_details.presets.default.name" }]
+}
+{% endschema %}

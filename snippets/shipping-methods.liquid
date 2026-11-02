@@ -1,0 +1,53 @@
+{% assign shippingChargeDetails =  checkoutDetails.shipping_charge_details %}
+
+{% render "shipping-billing-information", checkoutDetails: checkoutDetails %}
+
+<form id="shippingMethodsForm">
+    <div class="pt-7" id="shippingMethods">
+        <h4 class="pb-4 heading-text-color primary-font">{{ "checkout.blocks.shipping-methods.title" | t }}</h4>
+
+        <div>
+            <div class="border-b border-solid border-color">
+                {% for details in shippingChargeDetails %}
+                <div class="py-4 lg:pr-6">
+                    <div class="flex flex-row">
+                        <div class="mr-4 relative w-5 h-5 cursor-pointer shipping-radio">
+                            <input type="radio" class="appearance-none" value="{{details.shipping_charge_id}}"
+                            id="shipping_{{details.shipping_charge_id}}" name="shipping"  
+                            {% if checkoutDetails.customer.shipping_charge_id == details.shipping_charge_id %}
+                            checked="checked"{% endif %}>
+                            <span class="w-full h-full border border-color rounded-full absolute
+                            before:w-2 before:h-2 before:bg-sky-500 before:absolute before:transform 
+                            before:duration-200	before:ease-in before:top-1/2 before:left-1/2 
+                            before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full
+                            {% if checkoutDetails.customer.shipping_charge_id == details.shipping_charge_id %}before:scale-100{% else %}before:scale-0{% endif %}"
+                            value="{{details.shipping_charge_id}}"></span>
+                        </div>
+                        <div>
+                            <label class="block leading-5">{{details.name}}</label>
+                            <p>{{details.shipping_charge_formatted}} ({{details.delivery_title}})</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <p id="isEmptyShippingMethods" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+            </div>
+
+            <div class="py-10 flex justify-center lg:justify-end" id="shippingMethodSubmit">
+                <button type="submit" class="px-3 py-2 rounded-sm flex flex-row btn-primary btn-primary-color btn-primary-hover min-h-14 min-w-36 justify-center items-center">
+                    {{ "checkout.blocks.common.continue_btn" | t }}
+                    <span class="animate-spin h-6 w-8 hidden spinner">
+                        {% render "icon-spinner" %}
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 z-50">
+    <div class="flex items-center">
+        <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+        {% render "icon-page-loader" %}
+    </div>
+  </div>

@@ -1,0 +1,20 @@
+<div class="w-full">
+  <form
+    class="flex h-[50px] w-full max-w-[460px]"
+    onsubmit="event.preventDefault(); var v = this.querySelector('input[type=email]').value.trim(); if (v) { window.location.href = 'mailto:' + encodeURIComponent(v); }"
+  >
+    <input
+      type="email"
+      required
+      class="footer-subscribe-input flex-1 min-w-0 bg-white text-black px-4 text-sm placeholder:text-black/60"
+      placeholder="{{ block.settings.placeholder | escape }}"
+      aria-label="{{ block.settings.placeholder | escape }}"
+    />
+    <button
+      type="submit"
+      class="footer-subscribe-btn bg-transparent text-white px-6 text-sm font-normal border border-white whitespace-nowrap shrink-0"
+    >
+      {{ block.settings.button_label | escape }}
+    </button>
+  </form>
+</div>

@@ -1,0 +1,28 @@
+{
+  "layout": "theme",
+  "sections": {
+    "blog_list": {
+      "type": "blog-layout",
+      "settings": {
+        "heading": "Blogs",
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "desktop_title_size": {
+          "display_name": "Medium",
+          "value": "text-2xl"
+        },
+        "mobile_title_size": {
+          "display_name": "Large",
+          "value": "text-xl"
+        },
+        "mobile_padding_top": 40,
+        "mobile_padding_bottom": 40,
+        "desktop_padding_top": 40,
+        "desktop_padding_bottom": 40
+      }
+    }
+  },
+  "order": ["blog_list"]
+}

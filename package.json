@@ -1,0 +1,14 @@
+{
+  "name": "Sharma Book Center",
+  "version": "1.0.0",
+  "zcommerce": {
+    "thumbnail_images": {
+      "desktop_image": "thumbnail_images/desktop.png",
+      "mobile_image": "thumbnail_images/mobile.png"
+    }
+  },
+  "dependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7"
+  }
+}

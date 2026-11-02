@@ -1,0 +1,10 @@
+<div class="w-9 h-9 lg:w-11 lg:h-11 flex items-center justify-center cursor-pointer rounded-full text-sm
+    {% if index == currentPage %}
+      border heading-text-color
+    {% else %}
+      heading-text-color hover:border transition
+    {% endif %}"
+    style="{% if index == currentPage %}background-color: #FDF2F8; border-color: var(--color-primary);{% else %}border-color: var(--color-primary);{% endif %}"
+    data-page="{{ index }}">
+    {{ index }}
+</div>

@@ -1,0 +1,131 @@
+<script type="module" src="{{ 'add-to-cart-514496733357978.js' | asset_url }}" defer></script>
+<script src="{{ 'quantity-counter-176141763398130.js' | asset_url }}" defer></script>
+<script src="{{ 'quantity-message-588403974700878.js' | asset_url }}" defer></script>
+<script src="{{ 'variant-radios-80014417361969.js' | asset_url }}" defer></script>
+{% liquid
+  assign portal_enabled = store.customer_portal.enabled
+  assign wishlist_enabled = false
+  if portal_enabled and store.preferences.is_wishlist_enabled
+    assign wishlist_enabled = true
+  endif
+  assign quotes_enabled = false
+  if portal_enabled and store.preferences.is_quotes_enabled
+    assign quotes_enabled = true
+  endif
+%}
+{% if quotes_enabled %}
+<script type="module" src="{{ 'request-quote-571332105730115.js' | asset_url }}" defer></script>
+{% endif %}
+{% if wishlist_enabled %}
+<script type="module" src="{{ 'product-wishlist-943862380239332.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% liquid
+  assign variant_id = product.initial_variant.id
+  assign first_image = product.cover_media.url
+  if first_image == null or first_image == '?' or first_image == ''
+    assign first_image = 'no-image-59606643991319.webp' | asset_url
+  endif
+  assign product_availability = product.initial_variant.available
+  if product.initial_variant == null
+    assign product_availability = product.available
+  endif
+  assign description_text = product.short_description | default: product.description | strip_html
+%}
+
+<div class="relative w-full h-full bg-white">
+
+  <button type="button"
+    class="quickViewClose absolute top-5 right-5 z-20 w-9 h-9 flex items-center justify-center hover:bg-gray-100 rounded-full"
+    aria-label="Close quick view">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div class="flex flex-col md:flex-row h-full p-10 gap-8">
+
+    <div class="w-full md:w-[377px] md:h-full flex-shrink-0 relative bg-white overflow-hidden">
+      <picture class="block w-full h-full overflow-hidden">
+        {% render 'image-resolutions', firstImage: product.cover_media %}
+        <img src="{{ first_image }}" alt="{{ product.title | escape }}"
+          class="w-full h-full object-cover object-center" loading="lazy" height="498">
+      </picture>
+      {% if wishlist_enabled %}
+        <product-wishlist>
+          <div data-variant-id="{{ variant_id }}" class="product-wishlist absolute top-4 right-4 z-10">
+            <button type="button"
+              class="wishlist-removed w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm"
+              style="color: var(--color-heading);"
+              aria-label="Toggle wishlist"
+              aria-pressed="false">
+              {% render 'icon-wishlist' %}
+            </button>
+          </div>
+        </product-wishlist>
+      {% endif %}
+    </div>
+
+    <div class="flex-1 md:h-full overflow-y-auto hide-scrollbar flex flex-col gap-5">
+
+    <h2 id="quickViewTitle" class="text-[26px] font-medium leading-[34px]" style="color: #000;">
+      {{ product.title | escape }}
+    </h2>
+
+    <p class="text-[32px] font-medium leading-none" style="color: var(--color-primary);">
+      {{ product.initial_variant.price_formatted | default: product.price_min_formatted }}
+    </p>
+
+    {% if description_text != blank %}
+      <p class="text-base leading-[26px]" style="color: #727272;">
+        {{ description_text }}
+      </p>
+    {% endif %}
+
+    {% if product.options.size > 0 %}
+      <div>
+        {% render 'product-variant-picker', product: product, product_quick_view: true, isDesktop: "true" %}
+      </div>
+    {% endif %}
+
+    {% render 'quantity-message' %}
+
+    <div data-quantity data-quick-view-counter class="flex flex-col items-start gap-3">
+      <label class="text-base font-medium leading-[26px]" style="color: #0A0A0A;">Quantity</label>
+      {% assign quantity = 1 %}
+      {% render 'quantity-counter', quantity: quantity, variantId: variant_id %}
+
+      <div class="flex items-stretch gap-3 mt-1 w-full">
+        <div class="flex-1">
+          {% render 'add-to-cart', variantId: variant_id, perProduct: product, isCartPopup: true, isQuickView: true %}
+        </div>
+      </div>
+    </div>
+
+    {% if quotes_enabled %}
+      <request-quote class="block">
+        <form id="product-quote-form" method="post" action="/addtoquote" data-product-quick-view="true">
+          <input class="hidden" name="variant_id" type="text" value="{{ variant_id }}">
+          <button type="submit" data-quick-view-quote
+            class="w-full py-3 text-base font-normal text-center border disabled:opacity-60 disabled:cursor-not-allowed"
+            style="border-color: var(--color-primary); color: var(--color-primary); background-color: transparent;">
+            <span class="quote-btn-text">Request Quote</span>
+            <span class="hidden quote-spinner">Loading…</span>
+          </button>
+        </form>
+        <div data-quote-popup class="hidden"></div>
+      </request-quote>
+    {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Quick View",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["product"]},
+  "settings": []
+}
+{% endschema %}

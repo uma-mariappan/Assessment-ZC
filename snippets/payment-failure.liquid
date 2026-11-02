@@ -1,0 +1,33 @@
+<div class="flex flex-col justify-center items-center h-screen">
+  {% assign payment_failure_img = "payment-failure-3388155310490.webp" | asset_url %}
+  <div class="w-36 pt-10">
+    <picture>
+      {% render 'image-resolutions', firstImage: payment_failure_img %}
+      <img src="{{ payment_failure_img }}" height="144" alt="{{ 'payment-status.blocks.payment-failure.failure_image_alt' | t }}" loading="lazy" class="h-[144px] w-auto min-w-full object-cover object-center">
+    </picture>
+  </div>
+  <div>
+    <div class="flex justify-center">
+      <p class="text-xl text-center font-semibold">{{ "payment-status.blocks.payment-failure.transaction_failed_msg" | t }}</p>
+    </div>
+    <div class="flex flex-col items-center">
+      <p class="pt-2 font-extralight text-sm" id="errorDisplay"></p>
+      <div class="flex gap-3 py-4">
+        <a href="{{ storefrontRootUrl }}/home">
+          <div class="text-sm w-36 border border-solid px-2 py-2 rounded-md border-black text-black cursor-pointer font-normal text-center btn-primary-hover">
+            {{ "payment-status.continue_btn" | t }}
+          </div>
+        </a>
+        <a href="{{ storefrontHomeUrl }}/checkout">
+          <div class="text-sm border border-solid border-color px-7 py-2 btn-primary btn-primary-color rounded-md cursor-pointer">
+            {{ "payment-status.blocks.payment-failure.retry_payment_btn" | t }}
+          </div>
+        </a>
+      </div>
+      <span class="text-sm">
+        <a href="{{ storefrontRootUrl }}/checkout/mailTransactionFail">{{ "payment-status.blocks.payment-failure.click_here" | t }}</a>,
+        <span class="text-gray-400 text-xs">{{ "payment-status.blocks.payment-failure.payment_detected_msg" | t }}</span>
+      </span>
+    </div>
+  </div>
+</div>

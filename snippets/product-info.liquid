@@ -1,0 +1,147 @@
+{% liquid
+  assign total_reviews = product.review_count | default: 0 | plus: 0
+  assign average_rating = product.average_rating | default: 0 | plus: 0
+  assign rounded_average = average_rating | round
+  assign average_rating_display = average_rating | times: 10 | round | divided_by: 10.0
+  assign preview_image_obj = product.cover_media
+  assign preview_image = preview_image_obj.url
+
+  if preview_image == null or preview_image == '?' or preview_image == ''
+    assign preview_image = 'no-image-59606643991319.webp' | asset_url
+  endif
+
+  assign sticky_available = product.initial_variant.available
+  if product.initial_variant == null
+    assign sticky_available = product.available
+  endif
+
+  assign has_custom_fields = false
+  for variant in product.variants
+    if variant.custom_fields.size > 0
+      assign has_custom_fields = true
+      break
+    endif
+  endfor
+%}
+
+<product-details-tabs class="block py-6 lg:py-8">
+  <div class="flex flex-col lg:flex-row gap-6 lg:gap-16">
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-6 border-b border-[#DED9DC] bg-white lg:sticky lg:z-10" style="top: calc(var(--announcement-bar-height, 0px) + 4rem);">
+        <button
+          type="button"
+          class="py-2.5 text-sm lg:text-base border-b-2 border-transparent text-[#1F1F1F] transition-colors text-left"
+          data-product-tab-btn
+          data-tab-target="description"
+        >
+          {{ block_settings.description_title | default: 'Product Details' }}
+        </button>
+        <button
+          type="button"
+          class="py-2.5 text-sm lg:text-base border-b-2 border-transparent text-[#1F1F1F] transition-colors text-left"
+          data-product-tab-btn
+          data-tab-target="specification"
+        >
+          {{ block_settings.specification_title | default: 'Specifications' }}
+        </button>
+        {% if has_custom_fields %}
+          <button
+            type="button"
+            class="py-2.5 text-sm lg:text-base border-b-2 border-transparent text-[#1F1F1F] transition-colors text-left"
+            data-product-tab-btn
+            data-tab-target="custom-fields"
+          >
+            {{ block_settings.custom_fields_title | default: 'Custom Fields' }}
+          </button>
+        {% endif %}
+        <button
+          type="button"
+          class="py-2.5 text-sm lg:text-base border-b-2 border-transparent text-[#1F1F1F] transition-colors text-left"
+          data-product-tab-btn
+          data-tab-target="reviews"
+        >
+          {{ 'product_info.reviews_tab' | t: count: total_reviews }}
+        </button>
+      </div>
+
+      <div class="pt-5 lg:pt-6">
+        {%- comment -%} Product Details tab {%- endcomment -%}
+        <div data-product-tab-content="description">
+          <div class="text-sm lg:text-base leading-[1.8] md:w-[650px]">
+            {{ product.description | default: product.short_description }}
+          </div>
+        </div>
+
+        {%- comment -%} Specifications tab — flat grouped list {%- endcomment -%}
+        <div data-product-tab-content="specification" class="hidden">
+          {% if product.specification_group and product.specification_group.size > 0 %}
+            <div class="flex flex-col">
+              {% for group in product.specification_group %}
+                <div class="{% unless forloop.first %}border-t border-[#DED9DC] pt-6 mt-6{% endunless %}">
+                  <h3 class="text-base lg:text-lg font-semibold mb-4" style="color: var(--color-primary);">{{ group.name }}</h3>
+                  <div class="flex flex-col gap-3">
+                    {% for attribute in group.attributes %}
+                      <div class="flex gap-3 items-baseline">
+                        <p class="w-40 lg:w-52 text-sm text-[#1F1F1F] flex-shrink-0">{{ attribute.name }}</p>
+                        <p class="text-sm font-medium text-[#1F1F1F]">{{ attribute.value }}</p>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-sm text-[#6B6B6B]">{{ 'product_info.no_specifications' | t }}</p>
+          {% endif %}
+        </div>
+
+        {%- comment -%} Custom fields tab {%- endcomment -%}
+        {% if has_custom_fields %}
+          <div data-product-tab-content="custom-fields" class="hidden">
+            <div class="w-full lg:w-1/2">
+              {% render 'custom-fields', product: product, currency: currency %}
+            </div>
+          </div>
+        {% endif %}
+
+        {%- comment -%} Reviews tab — fetched via API on tab open {%- endcomment -%}
+        <div data-product-tab-content="reviews" class="hidden">
+          <reviews-ratings data-product-id="{{ product.id }}" id="review_section" class="block">
+            <div id="reviewsList">
+              <div class="flex justify-center py-10">
+                <span class="animate-spin h-8 w-8">{% render "icon-spinner" %}</span>
+              </div>
+            </div>
+          </reviews-ratings>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} Product preview card — hidden on mobile {%- endcomment -%}
+    <div class="hidden lg:block w-[306px] flex-shrink-0">
+      <div class="lg:sticky" style="top: calc(var(--announcement-bar-height, 0px) + 7rem);">
+        <div class="border border-[#D8A8B8] p-6 w-[306px] h-[612px] overflow-hidden">
+          <picture class="block w-full overflow-hidden">
+            {% if preview_image_obj != blank %}
+              {% render 'image-resolutions', firstImage: preview_image_obj %}
+            {% endif %}
+            <img src="{{ preview_image }}" alt="{{ product.title | escape }}" class="w-full h-[420px] object-cover object-center bg-[#F2E6EA]" height="420" loading="lazy">
+          </picture>
+          <h3 class="mt-3 text-base text-[#202020] leading-tight">{{ product.title | escape }}</h3>
+          <p class="mt-1.5 text-[20px] font-medium" style="color: var(--color-primary);">{{ product.initial_variant.price_formatted }}</p>
+          <button
+            type="button"
+            data-sticky-add-to-cart
+            {% unless sticky_available %}disabled{% endunless %}
+            class="mt-6 w-full text-white text-sm py-3 disabled:opacity-60 disabled:cursor-not-allowed"
+            style="background-color: var(--color-primary);"
+          >
+            <span data-sticky-add-text {% unless sticky_available %}class="hidden"{% endunless %}>Add to Cart</span>
+            <span data-sticky-loading-text class="hidden">Loading...</span>
+            <span data-sticky-out-text {% if sticky_available %}class="hidden"{% endif %}>Out of stock</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</product-details-tabs>

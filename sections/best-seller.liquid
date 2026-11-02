@@ -1,0 +1,326 @@
+<script src="{{ 'best-seller-tabs-939870203965050.js' | asset_url }}" defer></script>
+{% liquid
+  assign wishlist_enabled = false
+  if store.customer_portal.enabled and store.preferences.is_wishlist_enabled
+    assign wishlist_enabled = true
+  endif
+%}
+{% if wishlist_enabled %}
+<script type="module" src="{{ 'product-wishlist-943862380239332.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+  #section-{{ section.id }} [data-best-seller-track] {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #section-{{ section.id }} [data-best-seller-track]::-webkit-scrollbar {
+    display: none;
+  }
+  #section-{{ section.id }} .bs-scrollbar-track {
+    background-color: rgba(var(--border-color), 0.2);
+  }
+  #section-{{ section.id }} .bs-scrollbar-thumb {
+    background-color: var(--heading-text-color);
+  }
+{% endstyle %}
+
+{% liquid
+  assign section_settings = section.settings
+  assign bs_bg_value = section_settings.background_color.value | default: section_settings.background_color | default: 'secondary'
+%}
+
+<best-seller-tabs id="section-{{ section.id }}" class="block w-full {% if bs_bg_value == 'primary' %}bg-primary-color{% else %}bg-secondary-color{% endif %}">
+  <div class="w-[90%] page-max-width mx-auto">
+    {% assign has_collection_tab = false %}
+
+    <div class="text-center mb-4 md:mb-5">
+      {% render_blocks %}
+    </div>
+
+    <div class="flex justify-center gap-2 flex-wrap mb-8 md:mb-10" role="tablist" aria-label="Best seller collections">
+      {% assign tab_index = 0 %}
+      {% for perBlock in section.blocks %}
+        {% assign block_settings = perBlock.settings %}
+        {% if perBlock.type == 'collection-tab' %}
+          {% assign has_collection_tab = true %}
+          {% assign per_collection = block_settings.collection %}
+          {% assign tab_label = per_collection.display_name | default: per_collection.title | default: per_collection.name | default: per_collection.handle | default: 'Collection' %}
+          <button
+            type="button"
+            role="tab"
+            id="bs-tab-{{ perBlock.id }}"
+            aria-controls="bs-panel-{{ perBlock.id }}"
+            class="leading-none transition-colors duration-200 {% if tab_index == 0 %}btn-primary btn-primary-color btn-primary-hover{% else %}btn-secondary btn-secondary-color btn-secondary-hover{% endif %}"
+            data-best-seller-tab
+            data-tab-key="{{ perBlock.id }}"
+            aria-selected="{% if tab_index == 0 %}true{% else %}false{% endif %}"
+            {{ perBlock.zcommerce_attributes }}
+          >
+            {{ tab_label | escape }}
+          </button>
+          {% assign tab_index = tab_index | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div>
+      {% assign panel_index = 0 %}
+      {% for perBlock in section.blocks %}
+        {% assign block_settings = perBlock.settings %}
+        {% if perBlock.type == 'collection-tab' %}
+          {% assign setting_collection = block_settings.collection %}
+          {% assign has_selected_collection = false %}
+          {% assign collection_handle = setting_collection.handle | default: '' %}
+          {% assign collection_display_name = setting_collection.display_name | default: setting_collection.title | default: setting_collection.name | default: '' %}
+          {% if collection_handle != blank or collection_display_name != blank %}
+            {% assign has_selected_collection = true %}
+          {% endif %}
+
+          {% if has_selected_collection and setting_collection and setting_collection.products %}
+            {% assign product_count = setting_collection.products | size %}
+          {% else %}
+            {% assign product_count = 0 %}
+          {% endif %}
+
+          <div class="{% unless panel_index == 0 %}hidden{% endunless %}" role="tabpanel" id="bs-panel-{{ perBlock.id }}" aria-labelledby="bs-tab-{{ perBlock.id }}" data-best-seller-panel data-panel-key="{{ perBlock.id }}">
+            {% if product_count > 0 %}
+              {% if wishlist_enabled %}
+              <product-wishlist
+                data-best-seller-track
+                class="flex gap-3 md:gap-6 overflow-x-auto overflow-y-hidden pb-2 scroll-smooth snap-x snap-mandatory">
+              {% else %}
+              <div
+                data-best-seller-track
+                class="flex gap-3 md:gap-6 overflow-x-auto overflow-y-hidden pb-2 scroll-smooth snap-x snap-mandatory">
+              {% endif %}
+                {% for perProduct in setting_collection.products limit: 20 %}
+                  {% render 'product-card', perProduct: perProduct %}
+                {% endfor %}
+              {% if wishlist_enabled %}
+              </product-wishlist>
+              {% else %}
+              </div>
+              {% endif %}
+              <div class="bs-scrollbar-track mt-5 h-[2px] relative hidden" data-best-seller-scrollbar>
+                <div class="bs-scrollbar-thumb absolute top-0 left-0 h-[2px]" style="width: 40%; left: 0;" data-best-seller-scroll-thumb></div>
+              </div>
+            {% elsif has_selected_collection == false %}
+              <div class="py-10"></div>
+            {% else %}
+              <p class="text-center body-text-color opacity-70 py-10">
+                No products found in this collection.
+              </p>
+            {% endif %}
+          </div>
+          {% assign panel_index = panel_index | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+
+      {% unless has_collection_tab %}
+        <p class="text-center body-text-color opacity-70 py-10">
+          Add at least one Collection tab block.
+        </p>
+      {% endunless %}
+    </div>
+  </div>
+</best-seller-tabs>
+
+{% schema %}
+{
+  "name": "t:sections.best_seller.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {
+    "templates": [
+      "index"
+    ]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.best_seller.settings.background_color.label",
+      "options": [
+        {
+          "label": "t:sections.best_seller.settings.background_color.options.primary",
+          "value": "primary"
+        },
+        {
+          "label": "t:sections.best_seller.settings.background_color.options.secondary",
+          "value": "secondary"
+        }
+      ],
+      "default": {
+        "display_name": "Secondary",
+        "value": "secondary"
+      }
+    },
+    {
+      "type": "header",
+      "content": "t:sections.best_seller.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.best_seller.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.best_seller.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.best_seller.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 80,
+      "label": "t:sections.best_seller.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 80,
+      "label": "t:sections.best_seller.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "zc_theme__text",
+      "name": "t:blocks.text.name"
+    },
+    {
+      "type": "zc_theme__button",
+      "name": "t:blocks.button.name"
+    },
+    {
+      "type": "zc_theme__image",
+      "name": "t:blocks.image.name"
+    },
+    {
+      "type": "zc_theme__carousel",
+      "name": "t:blocks.carousel.name"
+    },
+    {
+      "type": "zc_theme__accordion",
+      "name": "t:blocks.accordion.name"
+    },
+    {
+      "type": "collection-tab",
+      "name": "t:sections.best_seller.blocks.collection_tab.name",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.best_seller.blocks.collection_tab.settings.collection.label",
+          "default": {
+            "display_name": "",
+            "handle": ""
+          }
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.best_seller.presets.default.name",
+      "settings": {
+        "background_color": {
+          "display_name": "Secondary",
+          "value": "secondary"
+        },
+        "mobile_padding_top": 60,
+        "mobile_padding_bottom": 60,
+        "desktop_padding_top": 80,
+        "desktop_padding_bottom": 80
+      },
+      "blocks": {
+        "best-seller-title": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "BEST SELLER",
+            "select_font_family": {
+              "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "t:blocks.text.settings.select_text_color.options.heading_text_color.label",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "best-seller-collection-1": {
+          "type": "collection-tab",
+          "settings": {
+            "collection": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        }
+      },
+      "block_order": [
+        "best-seller-title",
+        "best-seller-collection-1"
+      ]
+    }
+  ]
+}
+{% endschema %}

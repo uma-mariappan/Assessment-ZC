@@ -1,0 +1,374 @@
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+  #section-{{ section.id }} .video-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #section-{{ section.id }} .video-scroll::-webkit-scrollbar {
+    display: none;
+  }
+{% endstyle %}
+
+{% liquid
+  assign section_settings = section.settings
+  assign svs_bg_value = section_settings.background_color.value | default: section_settings.background_color | default: 'primary'
+%}
+
+<section id="section-{{ section.id }}" class="w-full {% if svs_bg_value == 'secondary' %}bg-secondary-color{% else %}bg-primary-color{% endif %}">
+  <div class="w-[90%] page-max-width mx-auto">
+    <div class="text-center mb-8 md:mb-10">
+      {% render_blocks %}
+    </div>
+
+    {% assign video_block_count = 0 %}
+    {% for perBlock in section.blocks %}
+      {% if perBlock.type == 'video' %}
+        {% assign video_block_count = video_block_count | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+
+    <div class="video-scroll flex {% if video_block_count >= 4 %}justify-between{% else %}justify-center{% endif %} gap-3 md:gap-5 overflow-x-auto">
+      {% for perBlock in section.blocks %}
+        {% if perBlock.type == 'video' %}
+          <div class="flex-shrink-0 w-[180px] md:w-[309px]" {{ perBlock.zcommerce_attributes }}>
+            {% render 'video-card', video_block: perBlock %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.video_stories.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {
+    "templates": [
+      "index"
+    ]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.video_stories.settings.background_color.label",
+      "options": [
+        {
+          "label": "t:sections.video_stories.settings.background_color.options.primary",
+          "value": "primary"
+        },
+        {
+          "label": "t:sections.video_stories.settings.background_color.options.secondary",
+          "value": "secondary"
+        }
+      ],
+      "default": {
+        "display_name": "Primary",
+        "value": "primary"
+      }
+    },
+    {
+      "type": "header",
+      "content": "t:sections.video_stories.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.video_stories.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.video_stories.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.video_stories.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.video_stories.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.video_stories.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "zc_theme__text",
+      "name": "t:blocks.text.name"
+    },
+    {
+      "type": "zc_theme__button",
+      "name": "t:blocks.button.name"
+    },
+    {
+      "type": "zc_theme__image",
+      "name": "t:blocks.image.name"
+    },
+    {
+      "type": "zc_theme__carousel",
+      "name": "t:blocks.carousel.name"
+    },
+    {
+      "type": "zc_theme__accordion",
+      "name": "t:blocks.accordion.name"
+    },
+    {
+      "type": "video",
+      "name": "t:sections.video_stories.blocks.video.name",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "media_picker",
+          "id": "video_media",
+          "label": "t:sections.video_stories.blocks.video.settings.video_media.label",
+          "default": {
+            "url": "",
+            "is_video": true
+          }
+        },
+        {
+          "type": "radio",
+          "id": "video_object_fit",
+          "label": "t:sections.video_stories.blocks.video.settings.video_object_fit.label",
+          "options": [
+            {
+              "label": "t:sections.video_stories.blocks.video.settings.video_object_fit.options.cover",
+              "value": "cover"
+            },
+            {
+              "label": "t:sections.video_stories.blocks.video.settings.video_object_fit.options.contain",
+              "value": "contain"
+            }
+          ],
+          "default": {
+            "display_name": "t:sections.video_stories.blocks.video.settings.video_object_fit.options.cover",
+            "value": "cover"
+          }
+        },
+        {
+          "type": "color",
+          "id": "card_bg_color",
+          "label": "t:sections.video_stories.blocks.video.settings.card_bg_color.label",
+          "default": "#FDF2F8"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "t:sections.video_stories.blocks.video.settings.product_image.label",
+          "default": {
+            "url": "video-card-product-img-879862157571571.webp",
+            "enable_customisation": true
+          }
+        },
+        {
+          "type": "richtext",
+          "id": "product_name",
+          "label": "t:sections.video_stories.blocks.video.settings.product_name.label",
+          "default": "t:sections.video_stories.blocks.video.settings.product_name.default"
+        },
+        {
+          "type": "url",
+          "id": "product_url",
+          "label": "t:sections.video_stories.blocks.video.settings.product_url.label",
+          "default": {
+            "display_name": "",
+            "handle": ""
+          }
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.video_stories.presets.default.name",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "video-stories-title": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "They have tried it. When you will!",
+            "select_font_family": {
+              "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "t:blocks.text.settings.select_text_color.options.heading_text_color.label",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "t:blocks.text.settings.mobile_text_size.options.text_2xl.label",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "video-1": {
+          "type": "video",
+          "settings": {
+            "video_media": {
+              "url": "video-1-140596725753705.mp4",
+              "is_video": true
+            },
+            "video_object_fit": {
+              "display_name": "t:sections.video_stories.blocks.video.settings.video_object_fit.options.cover",
+              "value": "cover"
+            },
+            "card_bg_color": "#FDF2F8",
+            "product_image": {
+              "url": "video-card-product-img-879862157571571.webp",
+              "enable_customisation": true
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "video-2": {
+          "type": "video",
+          "settings": {
+            "video_media": {
+              "url": "video-2-126233350407754.mp4",
+              "is_video": true
+            },
+            "video_object_fit": {
+              "display_name": "t:sections.video_stories.blocks.video.settings.video_object_fit.options.cover",
+              "value": "cover"
+            },
+            "card_bg_color": "#FDF2F8",
+            "product_image": {
+              "url": "video-card-product-img-879862157571571.webp",
+              "enable_customisation": true
+            },
+            "product_name": "Hydration Cream",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "video-3": {
+          "type": "video",
+          "settings": {
+            "video_media": {
+              "url": "video-3-122084631086184.mp4",
+              "is_video": true
+            },
+            "video_object_fit": {
+              "display_name": "t:sections.video_stories.blocks.video.settings.video_object_fit.options.cover",
+              "value": "cover"
+            },
+            "card_bg_color": "#FDF2F8",
+            "product_image": {
+              "url": "video-card-product-img-879862157571571.webp",
+              "enable_customisation": true
+            },
+            "product_name": "Repair Night Serum",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "video-4": {
+          "type": "video",
+          "settings": {
+            "video_media": {
+              "url": "video-4-271964726298857.mp4",
+              "is_video": true
+            },
+            "video_object_fit": {
+              "display_name": "t:sections.video_stories.blocks.video.settings.video_object_fit.options.cover",
+              "value": "cover"
+            },
+            "card_bg_color": "#FDF2F8",
+            "product_image": {
+              "url": "video-card-product-img-879862157571571.webp",
+              "enable_customisation": true
+            },
+            "product_name": "SkinQuench Sunscreen",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        }
+      },
+      "block_order": [
+        "video-stories-title",
+        "video-1",
+        "video-2",
+        "video-3",
+        "video-4"
+      ]
+    }
+  ]
+}
+{% endschema %}

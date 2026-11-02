@@ -1,0 +1,33 @@
+{% liquid
+  assign selected_variant = product.initial_variant
+  assign has_custom_fields = false
+
+  for variant in product.variants
+    if variant.custom_fields.size > 0
+      assign has_custom_fields = true
+      break
+    endif
+  endfor
+%}
+
+{% if has_custom_fields %}
+  <custom-fields>
+    <script type="application/json" data-config>
+    {
+      "initialVariantId": {{ selected_variant.id | json }},
+      "currencySymbol": {{ currency.symbol | json }},
+      "variants": {{ product.variants | json }},
+      "i18n": {
+        "cannotBeEmpty": {{ 'product_custom_fields.cannot_be_empty' | t | json }},
+        "selectOption": {{ 'product_custom_fields.dropdown.select_option' | t | json }},
+        "attachmentChoose": {{ 'product_custom_fields.attachment.choose_file' | t | json }},
+        "attachmentChange": {{ 'product_custom_fields.attachment.change_file' | t | json }},
+        "attachmentRemove": {{ 'product_custom_fields.attachment.remove_file' | t | json }},
+        "attachmentMaxSize": {{ 'product_custom_fields.attachment.maximum_size' | t | json }},
+        "attachmentCannotBeEmpty": {{ 'product_custom_fields.attachment.cannot_be_empty' | t | json }}
+      }
+    }
+    </script>
+    <div data-custom-field-main-container></div>
+  </custom-fields>
+{% endif %}

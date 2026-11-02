@@ -1,0 +1,158 @@
+<div id="moreMenuOverlay" class="hidden fixed inset-0 bg-black bg-opacity-30 z-[60] transition-[top] duration-300 ease-in-out" style="top: calc(var(--announcement-bar-height, 0px) + 4rem);"></div>
+
+<aside id="moreMenuPanel" class="hidden fixed right-0 bottom-0 w-[85%] max-w-[380px] bg-white shadow-2xl z-[70] overflow-hidden flex flex-col transition-[top] duration-300 ease-in-out"
+    style="top: calc(var(--announcement-bar-height, 0px) + 4rem);"
+    role="dialog" aria-modal="false" aria-label="Account menu">
+
+    <currency-converter class="flex-1 flex flex-col overflow-hidden">
+
+        <div data-main-view class="flex-1 flex flex-col overflow-y-auto">
+
+            {% if organization.customer_portal.enabled %}
+                <div id="beforeSignIn" class="hidden items-center justify-between px-5 py-4 border-b"
+                    style="border-color: var(--color-border); color: var(--color-text);">
+                    <div class="flex items-center gap-3 text-sm font-medium min-w-0">
+                        <span class="flex items-center justify-center w-9 h-9 rounded-full shrink-0" style="background-color: #D9D9D9;">
+                            {% render "icon-profile-photo" %}
+                        </span>
+                        <span class="flex items-center gap-2 whitespace-nowrap">
+                            <a href="/signin" class="hover:underline">{{ "header.sign_in" | t }}</a>
+                            {% if organization.customer_portal.signup_enabled %}
+                                <span style="color: var(--color-border);">|</span>
+                                <a href="/signup" class="hover:underline">{{ "header.sign_up" | t }}</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <a href="/signin" aria-label="{{ 'header.sign_in' | t }}" style="color: var(--color-text);">{% render "icon-greater-than" %}</a>
+                </div>
+
+                <button type="button" id="afterSignIn" data-open-profile-view
+                    class="hidden w-full items-center justify-between px-5 py-4 border-b hover:bg-gray-50 text-left"
+                    style="border-color: var(--color-border); color: var(--color-text);"
+                    aria-label="Open account details">
+                    <span class="flex items-center gap-3 text-sm font-medium">
+                        <span class="flex items-center justify-center w-9 h-9 rounded-full" style="background-color: #D9D9D9;">
+                            {% render "icon-profile-photo" %}
+                        </span>
+                        <span>{{ "header.hello" | t }} <span data-desktop-user-name></span></span>
+                    </span>
+                    <span style="color: var(--color-text);">{% render "icon-greater-than" %}</span>
+                </button>
+            {% endif %}
+
+            <button type="button" data-open-currency-view
+                class="flex w-full items-center justify-between px-5 py-4 border-b hover:bg-gray-50 text-left"
+                style="border-color: var(--color-border); color: var(--color-text);"
+                aria-label="Change currency">
+                <span class="flex items-center gap-2 text-sm font-medium">
+                    <span data-currency-label>Select currency</span>
+                </span>
+                <span style="color: var(--color-text);">{% render "icon-greater-than" %}</span>
+            </button>
+
+            {% if organization.phone != "" and organization.phone != null %}
+                <a href="tel:{{ organization.phone | escape }}"
+                    class="flex items-center gap-3 px-5 py-4 border-b hover:bg-gray-50 text-sm"
+                    style="border-color: var(--color-border); color: var(--color-text);">
+                    <span class="flex items-center" style="color: var(--color-text);">{% render "icon-phone" %}</span>
+                    <span>{{ organization.phone | escape }}</span>
+                </a>
+            {% endif %}
+
+            {% if organization.email != "" and organization.email != null %}
+                <a href="mailto:{{ organization.email | escape }}"
+                    class="flex items-center gap-3 px-5 py-4 border-b hover:bg-gray-50 text-sm"
+                    style="border-color: var(--color-border); color: var(--color-text);">
+                    <span class="flex items-center" style="color: var(--color-text);">{% render "icon-mail" %}</span>
+                    <span>{{ organization.email | escape }}</span>
+                </a>
+            {% endif %}
+
+            {% if organization.social_profiles.size > 0 %}
+                <div class="px-5 py-4">
+                    <div class="flex flex-row gap-4 flex-wrap items-center" style="color: var(--color-text);">
+                        {% for socialMedia in organization.social_profiles %}
+                            {% render "footer-social-media", socialMedia: socialMedia %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div data-currency-view class="hidden absolute inset-0 bg-white flex-col overflow-hidden z-10">
+
+            <div class="flex items-center gap-3 px-5 py-4 border-b" style="border-color: var(--color-border);">
+                <button type="button" data-currency-back class="cursor-pointer p-1" aria-label="Back" style="color: var(--color-text);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <h2 class="text-base font-semibold" style="color: var(--color-text);">Currency</h2>
+            </div>
+
+            <ul data-currency-list class="flex-1 overflow-y-auto" role="radiogroup" aria-label="Currency options">
+                <li class="px-5 py-4 text-sm" style="color: var(--color-text);" data-currency-empty>Loading…</li>
+            </ul>
+
+            <div class="p-5 border-t" style="border-color: var(--color-border);">
+                <button type="button" data-currency-apply
+                    class="btn-primary btn-primary-color btn-primary-hover w-full flex items-center justify-between px-6 py-4 text-sm font-semibold tracking-wide disabled:cursor-not-allowed">
+                    <span>APPLY</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <select data-currency-trigger class="hidden" aria-hidden="true" tabindex="-1"></select>
+    </currency-converter>
+
+    {% if organization.customer_portal.enabled %}
+        <div data-profile-view class="hidden absolute inset-0 bg-white flex-col overflow-y-auto z-10">
+
+            <div class="flex items-center gap-3 px-5 py-4 border-b" style="border-color: var(--color-border);">
+                <button type="button" data-profile-back class="cursor-pointer p-1" aria-label="Back" style="color: var(--color-text);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <span class="flex items-center justify-center w-11 h-11 rounded-full shrink-0" style="background-color: #D9D9D9;">
+                    {% render "icon-profile-photo" %}
+                </span>
+                <div class="flex flex-col min-w-0">
+                    <span class="text-base font-semibold truncate" style="color: var(--color-text);" data-desktop-user-name></span>
+                </div>
+            </div>
+
+            <a href="/account/profile" class="flex items-center justify-between px-5 py-4 border-b hover:bg-gray-50" style="border-color: var(--color-border); color: var(--color-text);">
+                <span class="text-sm font-medium">{{ "header.my_profile" | t }}</span>
+                <span style="color: var(--color-text);">{% render "icon-greater-than" %}</span>
+            </a>
+            <a href="/account/orders" class="flex items-center justify-between px-5 py-4 border-b hover:bg-gray-50" style="border-color: var(--color-border); color: var(--color-text);">
+                <span class="text-sm font-medium">{{ "header.my_orders" | t }}</span>
+                <span style="color: var(--color-text);">{% render "icon-greater-than" %}</span>
+            </a>
+            <a href="/account/addresses" class="flex items-center justify-between px-5 py-4 border-b hover:bg-gray-50" style="border-color: var(--color-border); color: var(--color-text);">
+                <span class="text-sm font-medium">{{ "header.my_addresses" | t }}</span>
+                <span style="color: var(--color-text);">{% render "icon-greater-than" %}</span>
+            </a>
+            {% if organization.customer_portal.enabled and organization.preferences.is_wishlist_enabled and organization.preferences.is_quotes_enabled %}
+                <a href="/wishlists" class="flex items-center justify-between px-5 py-4 border-b hover:bg-gray-50" style="border-color: var(--color-border); color: var(--color-text);">
+                    <span class="text-sm font-medium">{{ "header.my_wishlist" | t }}</span>
+                    <span style="color: var(--color-text);">{% render "icon-greater-than" %}</span>
+                </a>
+            {% endif %}
+            {% if organization.customer_portal.enabled and organization.preferences.is_quotes_enabled %}
+                <a href="/account/quotes" class="flex items-center justify-between px-5 py-4 border-b hover:bg-gray-50" style="border-color: var(--color-border); color: var(--color-text);">
+                    <span class="text-sm font-medium">{{ 'accounts.common.my_quotes' | t }}</span>
+                    <span style="color: var(--color-text);">{% render "icon-greater-than" %}</span>
+                </a>
+            {% endif %}
+            <a data-signout-url href="#" class="flex items-center justify-between px-5 py-4 border-b hover:bg-gray-50" style="border-color: var(--color-border); color: var(--color-text);">
+                <span class="text-sm font-medium">{{ "header.sign_out" | t }}</span>
+                <span style="color: var(--color-text);">{% render "icon-greater-than" %}</span>
+            </a>
+        </div>
+    {% endif %}
+</aside>

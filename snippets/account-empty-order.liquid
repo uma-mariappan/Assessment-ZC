@@ -1,0 +1,13 @@
+<div class="flex flex-col items-center justify-center py-16 text-center">
+    <div class="w-80">
+      {% render "icon-orders-cart" %}
+    </div>
+    <div class="flex flex-col items-center justify-center py-6">
+      <h2 class="text-2xl font-semibold">No Orders</h2>
+      <p class="text-sm mt-2">{{ emptyMsg }}</p>
+    </div>
+    <a href="/home"
+      class="btn-primary btn-primary-color btn-primary-hover px-8 py-5 rounded">
+      Continue Shopping
+    </a>
+</div>

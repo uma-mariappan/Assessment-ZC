@@ -1,0 +1,39 @@
+{% liquid
+  assign initial_collection = initialCollection
+  assign initial_heading_raw = initialHeading | default: '' | strip
+
+  if initial_heading_raw contains 't:'
+    assign initial_heading_text = initial_heading_raw | t
+  else
+    assign initial_heading_text = initial_heading_raw
+  endif
+
+  if initial_heading_text == blank
+    assign initial_heading_text = 'header.search_initial_heading_default' | t
+  endif
+
+  assign initial_products_count = 0
+  if initial_collection and initial_collection.products
+    assign initial_products_count = initial_collection.products | size
+  endif
+%}
+
+<div data-search-initial class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+  <p class="mb-4 shrink-0 text-xs font-medium uppercase tracking-[0.12em] leading-4" style="color: var(--color-text-muted, #9ca3af);">
+    {{ initial_heading_text | escape }}
+  </p>
+
+  <div data-search-initial-list class="search-popup-scroll">
+    {% if initial_products_count > 0 %}
+      {% render 'search-initial-list-items', listCollection: initial_collection %}
+    {% elsif initial_collection %}
+      <p class="m-0 p-6 text-center text-sm" style="color: var(--color-text-muted, #6b7280);">
+        {{ 'header.search_initial_no_products' | t }}
+      </p>
+    {% else %}
+      <p class="m-0 p-6 text-center text-sm" style="color: var(--color-text-muted, #6b7280);">
+        {{ 'header.search_initial_empty' | t }}
+      </p>
+    {% endif %}
+  </div>
+</div>

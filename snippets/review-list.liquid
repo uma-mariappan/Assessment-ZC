@@ -1,0 +1,141 @@
+{% liquid
+  assign rating = reviews.average_rating | default: reviews.rating_stats.overall_average | plus: 0
+  assign rating_stats = reviews.rating_stats
+%}
+
+<div class="bg-[#F4ECEF] p-4 lg:p-5 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+  <div class="flex items-center gap-3">
+    <p class="text-3xl lg:text-4xl" style="color: var(--color-primary);">{{ rating | times: 10 | round | divided_by: 10.0 }}</p>
+    <div class="flex flex-col gap-1">
+      <div class="flex gap-1 items-center">
+        {% for i in (1..5) %}
+          {% assign diff = rating | minus: i | plus: 1 %}
+          {% if diff >= 1 %}
+            {% assign percent = 100 %}
+          {% elsif diff > 0 %}
+            {% assign percent = diff | times: 100 | round %}
+          {% else %}
+            {% assign percent = 0 %}
+          {% endif %}
+          {% render "average-rating-stars", percent: percent %}
+        {% endfor %}
+      </div>
+      <p class="text-xs lg:text-sm text-[#696969]">
+        Based on {{ rating_stats.total_reviews | default: 0 }} {% if rating_stats.total_reviews == 1 %}review{% else %}reviews{% endif %}
+      </p>
+    </div>
+  </div>
+
+  {% if store.customer_portal.enabled %}
+  <div class="py-1">
+    {% if reviews.is_logged_in %}
+      {% if reviews.allow_registered_only %}
+        {% if reviews.is_reviewed %}
+          <button id="editReviewBtn" class="px-6 py-2.5 text-sm text-white flex items-center justify-center gap-2" style="background-color: var(--color-primary);">
+            Edit review
+            <span class="animate-spin h-4 w-4 hidden spinner">
+              {% render "icon-spinner" %}
+            </span>
+          </button>
+        {% else %}
+          <button id="writeReviewBtn" class="px-6 py-2.5 text-sm text-white" style="background-color: var(--color-primary);">Write a review</button>
+        {% endif %}
+      {% else %}
+        {% if reviews.is_purchased %}
+          {% if reviews.is_reviewed %}
+            <button id="editReviewBtn" class="px-6 py-2.5 text-sm text-white flex items-center justify-center gap-2" style="background-color: var(--color-primary);">
+              Edit review
+              <span class="animate-spin h-4 w-4 hidden spinner">
+                {% render "icon-spinner" %}
+              </span>
+            </button>
+          {% else %}
+            <button id="writeReviewBtn" class="px-6 py-2.5 text-sm text-white" style="background-color: var(--color-primary);">Write a review</button>
+          {% endif %}
+        {% else %}
+          <button type="button" class="px-6 py-2.5 text-sm text-white opacity-50 cursor-not-allowed" style="background-color: var(--color-primary);" disabled>Write a review</button>
+          <p class="text-red-600 text-xs mt-1.5">Only purchased users can review this product.</p>
+        {% endif %}
+      {% endif %}
+    {% else %}
+      <a href="/signin" class="inline-block px-6 py-2.5 text-sm text-white" style="background-color: var(--color-primary);">Write a review</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+{% if store.customer_portal.enabled %}
+<div class="hidden my-5 gap-3 flex flex-col" id="reviewForm" data-product-id="{{ product.id }}">
+  <div class="flex flex-col gap-1.5">
+    <p class="text-sm">Title <span class="text-red-500">*</span></p>
+    <input type="text" id="reviewTitle" class="w-full border border-[#D0D0D0] px-3 py-2.5 text-sm focus:outline-none">
+    <span id="reviewTitleError" class="text-red-500 text-xs hidden">Please enter a title.</span>
+  </div>
+
+  <div class="flex flex-col gap-1.5">
+    <p class="text-sm">Rate this product <span class="text-red-500">*</span></p>
+    <div class="flex gap-1.5" id="ratingStars">
+      {% for star in (1..5) %}
+        {% render "icon-rating-star", star: star %}
+      {% endfor %}
+    </div>
+    <span id="ratingError" class="text-red-500 text-xs hidden">Please select a rating.</span>
+  </div>
+
+  <div class="flex flex-col gap-1.5">
+    <p class="text-sm">Review <span class="text-red-500">*</span></p>
+    <textarea id="reviewContent" rows="4" placeholder="Write your review" class="w-full px-3 py-2.5 text-sm border border-[#D0D0D0] focus:outline-none resize-none"></textarea>
+    <span id="reviewContentError" class="text-red-500 text-xs hidden">Please enter review content.</span>
+  </div>
+
+  <div class="flex gap-3 mt-1">
+    <button id="submitReview" class="px-6 py-2.5 text-sm text-white flex items-center justify-center gap-2" style="background-color: var(--color-primary);">
+      Submit review
+      <span class="animate-spin h-4 w-4 spinner hidden">
+        {% render "icon-spinner" %}
+      </span>
+    </button>
+    <button id="cancelReview" type="button" class="px-6 py-2.5 text-sm border" style="border-color: var(--color-primary); color: var(--color-primary);">Cancel</button>
+  </div>
+</div>
+{% endif %}
+
+<div id="reviewsItems" class="mt-5">
+  {% if reviews.reviews and reviews.reviews.size > 0 %}
+    {% for review in reviews.reviews %}
+      {% liquid assign per_review_rating = review.rating | default: 0 | plus: 0 %}
+      <article class="border border-[#DED9DC] p-4 lg:p-5 mb-3">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <p class="text-base text-[#1F1F1F]">{{ review.user_name | default: 'Customer' }}</p>
+            <span class="bg-[#F4ECEF] text-xs px-2 py-0.5" style="color: var(--color-primary);">Verified</span>
+          </div>
+          <p class="text-xs text-[#797979]">{{ review.last_modified_time }}</p>
+        </div>
+
+        <div class="flex items-center gap-1 mt-2">
+          {% for i in (1..5) %}
+            {% if i <= per_review_rating %}
+              {% render 'icon-star-filled' %}
+            {% else %}
+              {% render 'icon-star-empty' %}
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <h4 class="mt-2 text-sm lg:text-base font-semibold text-[#1F1F1F]">{{ review.title | default: 'Great product' }}</h4>
+        <p class="mt-1.5 text-sm text-[#656565] leading-relaxed w-full md:w-[430px]">{{ review.content }}</p>
+      </article>
+    {% endfor %}
+  {% else %}
+    <p class="py-4 text-sm text-[#6B6B6B]">No reviews yet. Be the first to review this product.</p>
+  {% endif %}
+</div>
+
+<div id="pagination">
+  {% if reviews.reviews and reviews.reviews.size > 0 and reviews.page_context %}
+    {% assign current_page = reviews.page_context.current_page | plus: 0 %}
+    {% assign total_pages = reviews.page_context.total_pages | plus: 0 %}
+    {% render "review-pagination", currentPage: current_page, totalPages: total_pages %}
+  {% endif %}
+</div>

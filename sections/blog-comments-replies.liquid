@@ -1,0 +1,137 @@
+<script type="module" src="{{ "blog-comments-407010470598503.js" | asset_url }}" defer></script>
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<blog-comments-replies id="section-{{ section.id }}" data-blog-id="{{ blog.id }}" class="block">
+  <div class="w-full border-b !border-b-[var(--color-accent)]">
+    <div class="w-[90%] mx-auto page-max-width">
+      <div class="w-full max-w-[745px]">
+
+        <div page-loader class="relative inset-0 flex items-center justify-center bg-white bg-opacity-60 z-10 h-[500px] hidden">
+          <div class="flex items-center">
+            <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+            {% render "icon-page-loader" %}
+          </div>
+        </div>
+
+        <div data-comments-container id="commentsWrapper"></div>
+
+        <div class="mt-10 mb-10 flex flex-col gap-8" id="blogCommentForm" data-blog-id="{{ blog.id }}">
+          <div class="flex flex-col gap-6">
+            <h2 class="primary-font font-semibold text-[20px] md:text-[26px] body-text-color">{{ "blog_comments.comment" | t | default: 'Leave a Comments' }}</h2>
+
+            <div class="flex flex-col gap-2">
+              <label class="block text-sm leading-[22px] tracking-[0.035px] body-text-color">{{ "blog_comments.write_comment" | t | default: 'Write a Comment' }}</label>
+              <textarea id="commentContent" maxlength="5000" placeholder="{{ 'blog_comments.write_comment' | t }}"
+                class="w-full p-3 border border-[#DCDCDC] h-[120px] focus:outline-none focus:border-yellow-900 resize-none text-sm"></textarea>
+              <p class="text-red-500 text-sm hidden" data-error="comment-empty">{{ "blog_comments.comment_error_msg" | t | default: 'Comment cannot be empty' }}</p>
+            </div>
+
+            <div>
+              <input type="checkbox" id="guestCheckbox">
+              <label for="guestCheckbox" class="text-sm body-text-color">{{ "blog_comments.comment_guestbox" | t | default: 'Post as guest user' }}</label>
+              <p class="text-red-500 text-sm hidden" data-error="comment-login">{{ "blog_comments.comment_guestbox_error" | t | default: 'Log in to post as a user' }}</p>
+            </div>
+          </div>
+
+          <div>
+            {% if comments.allow_registered_only and comments.is_logged_in == false %}
+              <a href="/signin">
+                <button class="px-[57px] h-[40px] btn-primary btn-primary-color btn-primary-hover text-sm font-semibold flex items-center">
+                  {{ "blog_comments.comment_login_btn" | t | default: 'Login to Comment' }}
+                </button>
+              </a>
+            {% else %}
+              <button id="submitComment" class="px-[57px] h-[40px] btn-primary btn-primary-color btn-primary-hover text-sm font-semibold flex items-center gap-2">
+                {{ "blog_comments.post_comment" | t | default: 'Post comment' }}
+                <svg class="animate-spin h-4 w-4 hidden spinner" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="3"></circle>
+                  <path d="M4 12a8 8 0 0 1 8-8" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                </svg>
+              </button>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</blog-comments-replies>
+
+
+{% schema %}
+{
+  "name": "t:sections.blog_comments_replies.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["blog"]},
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.blog_comments_replies.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog_comments_replies.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog_comments_replies.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.blog_comments_replies.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog_comments_replies.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog_comments_replies.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.blog_comments_replies.presets.default.name" }]
+}
+{% endschema %}

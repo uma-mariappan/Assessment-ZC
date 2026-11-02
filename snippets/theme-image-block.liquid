@@ -1,0 +1,188 @@
+{% liquid
+  assign block_settings = block.settings
+  assign image_obj = block_settings.image
+  assign image_url = image_obj.url
+  assign image_ratio = block_settings.image_ratio.value | default: block_settings.image_ratio | default: 'adapt'
+  assign block_height = block_settings.height.value | default: block_settings.height | default: 'fit'
+  assign link_handle = block_settings.link.handle
+  assign layout_mode = layout | default: 'default'
+  assign ratio = '1 / 1'
+
+  case image_ratio
+    when 'landscape'
+      assign ratio = '16 / 9'
+    when 'portrait'
+      assign ratio = '4 / 5'
+    when 'square'
+      assign ratio = '1 / 1'
+    when 'adapt'
+      if image_obj.width != blank and image_obj.height != blank
+        assign ratio = image_obj.width | append: ' / ' | append: image_obj.height
+      endif
+  endcase
+
+  assign desktop_width = block_settings.width.value | default: block_settings.width | default: 'fill'
+  case desktop_width
+    when 'fit-content'
+      assign desktop_width_style = 'auto'
+    when 'custom'
+      assign desktop_width_style = block_settings.custom_width | append: '%'
+    else
+      assign desktop_width_style = '100%'
+  endcase
+
+  assign mobile_width = block_settings.width_mobile.value | default: block_settings.width_mobile | default: 'fill'
+  case mobile_width
+    when 'fit-content'
+      assign mobile_width_style = 'auto'
+    when 'custom'
+      assign mobile_width_style = block_settings.custom_width_mobile | append: '%'
+    else
+      assign mobile_width_style = '100%'
+  endcase
+
+  assign alt_text = image_obj.alt_text | default: image_obj.alt
+  if alt_text == blank
+    assign alt_text = 'common.alt_image' | t
+  endif
+
+  assign has_image = false
+  if image_url != blank and image_url != '?'
+    assign has_image = true
+  endif
+
+  assign placeholder_url = 'no-image-59606643991319.webp' | asset_url
+  assign image_loading = 'lazy'
+  assign image_fetchpriority = ''
+  assign use_fill_height = false
+  if block_height == 'fill'
+    assign use_fill_height = true
+  endif
+
+  if layout_mode == 'hero' or layout_mode == 'cover' or layout_mode == 'banner'
+    assign image_loading = 'eager'
+    assign image_fetchpriority = 'high'
+  endif
+
+  if layout_mode == 'cover'
+    assign use_fill_height = true
+    assign image_classes = 'image-block__image h-full w-full min-w-full object-cover object-center'
+    assign media_classes = 'image-block__media media card overflow-hidden relative h-full w-full'
+  endif
+
+  assign image_rotate = image_obj.rotate | default: 0
+  assign image_scale_x = image_obj.scale_x | default: 1
+  assign image_scale_y = image_obj.scale_y | default: 1
+  assign image_position_x = image_obj.position_x | default: 0
+  assign image_position_y = image_obj.position_y | default: 0
+  assign image_filter = image_obj.filter | default: 'none'
+  assign image_opacity = image_obj.opacity | default: 1
+
+  assign media_classes = 'image-block__media media card overflow-hidden relative'
+  if use_fill_height
+    assign media_classes = media_classes | append: ' h-full'
+  endif
+
+  assign image_classes = 'image-block__image w-full h-full object-cover object-center'
+  if layout_mode == 'banner' and use_fill_height
+    assign image_classes = 'image-block__image w-full h-full object-cover object-bottom'
+  elsif use_fill_height and image_ratio == 'adapt'
+    assign image_classes = 'image-block__image absolute inset-0 min-h-full h-auto object-cover object-center'
+  endif
+
+  assign root_classes = 'image-block'
+  if use_fill_height
+    assign root_classes = root_classes | append: ' h-full'
+  endif
+%}
+
+{% style %}
+  #theme-block-image-{{ block.id }} {
+    --image-ratio: {{ ratio }};
+    display: flex;
+    width: {{ mobile_width_style }};
+    max-width: 100%;
+    padding-top: {{ block_settings.padding_block_start }}px;
+    padding-bottom: {{ block_settings.padding_block_end }}px;
+    padding-left: {{ block_settings.padding_inline_start }}px;
+    padding-right: {{ block_settings.padding_inline_end }}px;
+  }
+
+  #theme-block-image-{{ block.id }} .image-block__media {
+    width: 100%;
+    aspect-ratio: var(--image-ratio);
+  }
+
+  #theme-block-image-{{ block.id }} .image-block__image {
+    aspect-ratio: var(--image-ratio);
+  }
+
+  {% if use_fill_height %}
+    #theme-block-image-{{ block.id }} {
+      height: 100%;
+    }
+    #theme-block-image-{{ block.id }} .image-block__media {
+      height: 100%;
+      aspect-ratio: auto;
+      position: relative;
+    }
+    #theme-block-image-{{ block.id }} .image-block__image {
+      aspect-ratio: auto;
+    }
+  {% endif %}
+
+  {% if has_image %}
+    #theme-block-image-{{ block.id }} .image-block__image {
+      transform: rotate({{ image_rotate }}deg) scale({{ image_scale_x }}, {{ image_scale_y }}) translate({{ image_position_x }}%, {{ image_position_y }}%);
+      filter: {{ image_filter }};
+      opacity: {{ image_opacity }};
+    }
+  {% endif %}
+
+  @media (min-width: 768px) {
+    #theme-block-image-{{ block.id }} {
+      width: {{ desktop_width_style }};
+    }
+  }
+{% endstyle %}
+
+{% capture image_markup %}
+  <div class="{{ media_classes }}">
+    {% if has_image %}
+      <picture class="block w-full h-full relative">
+        {% render 'image-resolutions', firstImage: image_obj %}
+        <img
+          src="{{ image_url }}"
+          alt="{{ alt_text | escape }}"
+          loading="{{ image_loading }}"
+          {% if image_fetchpriority != blank %}fetchpriority="{{ image_fetchpriority }}"{% endif %}
+          class="{{ image_classes }}">
+      </picture>
+    {% else %}
+      <picture class="block w-full h-full relative">
+        <img
+          src="{{ placeholder_url }}"
+          alt="{{ alt_text | escape }}"
+          loading="{{ image_loading }}"
+          class="{{ image_classes }}">
+      </picture>
+    {% endif %}
+  </div>
+{% endcapture %}
+
+{% if link_handle != blank %}
+  <a
+    id="theme-block-image-{{ block.id }}"
+    href="/{{ link_handle }}"
+    class="{{ root_classes }}"
+    {{ block.zcommerce_attributes }}>
+    {{ image_markup }}
+  </a>
+{% else %}
+  <div
+    id="theme-block-image-{{ block.id }}"
+    class="{{ root_classes }}"
+    {{ block.zcommerce_attributes }}>
+    {{ image_markup }}
+  </div>
+{% endif %}

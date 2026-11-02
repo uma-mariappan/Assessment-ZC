@@ -1,0 +1,33 @@
+{% capture selected_address %}
+  {
+    "address_id": "{{ listOfAddress.address_id | escape }}",
+    "attention": "{{ listOfAddress.attention | escape }}",
+    "address": "{{ listOfAddress.address | escape }}",
+    "city": "{{ listOfAddress.city | escape }}",
+    "state": "{{ listOfAddress.state | escape }}",
+    "zip": "{{ listOfAddress.zip | escape }}",
+    "country": "{{ listOfAddress.country | escape }}",
+    "phone": "{{ listOfAddress.phone | escape }}"
+  }
+{% endcapture %}
+
+
+<label class="flex flex-col lg:flex-row items-start py-4 pr-4 gap-4 cursor-pointer">
+  <div class="relative w-5 h-5">
+    <input type="radio" data-{{ addressLabel }}-address-id="{{ listOfAddress.address_id }}" class="peer appearance-none w-5 h-5" name="{{ radioName }}" 
+      value="{{ selected_address | escape }}" {% if isSelected %}checked{% endif %}>
+    <span class="absolute inset-0 border border-color rounded-full peer-checked:before:scale-100 
+      before:w-2 before:h-2 before:bg-sky-500 before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 
+      before:-translate-y-1/2 before:rounded-full before:scale-0 before:transition-transform before:duration-200 before:ease-in">
+    </span>
+  </div>
+  <div class="pl-3">
+    <p class="text-base font-bold pb-3">{{ listOfAddress.attention }}</p>
+    <p class="text-sm pb-3">
+      {{ listOfAddress.address }}, {{ listOfAddress.city }}
+      {% if listOfAddress.state != '' %}, {{ listOfAddress.state }}{% endif %}, 
+      {{ listOfAddress.zip }}, {{ listOfAddress.country }}.
+    </p>
+    <p class="text-sm">{{ listOfAddress.phone }}</p>
+  </div>
+</label>

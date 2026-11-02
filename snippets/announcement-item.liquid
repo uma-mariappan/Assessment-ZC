@@ -1,0 +1,17 @@
+<div {{ block.zcommerce_attributes }} data-announcement-item="{{ index }}" data-block-id="{{ block.id }}"
+  class="announcement-item w-full transition-opacity duration-500 {% unless index == 0 %}opacity-0{% else %}opacity-100{% endunless %}"
+  {% unless index == 0 %}aria-hidden="true" inert{% endunless %}>
+  <div class="flex w-full flex-col items-center justify-center gap-[6px] text-center text-xs lg:text-sm md:flex-row md:flex-nowrap md:justify-center md:gap-2">
+    {% if block.settings.announcement_text != blank %}
+      <span class="font-normal text-white md:whitespace-nowrap">{{ block.settings.announcement_text }}</span>
+    {% endif %}
+    {% if block.settings.cta_text != blank %}
+      {% assign cta_handle = block.settings.cta_url.handle %}
+      {% if cta_handle != blank %}
+        <a href="{{ cta_handle }}" class="font-semibold text-white underline md:shrink-0 md:whitespace-nowrap">{{ block.settings.cta_text }}</a>
+      {% else %}
+        <span class="font-semibold text-white underline md:shrink-0 md:whitespace-nowrap">{{ block.settings.cta_text }}</span>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

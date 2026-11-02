@@ -1,0 +1,50 @@
+{% liquid assign full_name = address.attention | split: ' '
+    assign first_name = full_name[0]
+    assign second_name = full_name[1] 
+%}
+
+<div data-address-json id="{{ address.address_id }}" 
+  class="relative p-4 md:p-6 w-full overflow-hidden bg-white border border-color">  
+  <script type="application/json">
+    {
+      "attention": {{ address.attention | json }},
+      "address_id": {{ address.address_id | json }},
+      "first_name": {{ first_name | json }},
+      "last_name": {{ second_name | json }},
+      "address": {{ address.address | json }},
+      "city": {{ address.city | json }},
+      "country": {{ address.country | json }},
+      "state": {{ address.state | json }},
+      "zip_code": {{ address.zip | json }},
+      "phone": {{ address.phone | json }},
+      "is_default": {{ isDefault | json }}
+    }
+  </script>
+  <!-- Edit Button -->
+  <div class="flex justify-between">
+    <p class="font-semibold text-lg md:text-xl pb-3">{{ address.attention }}</p>
+    <div class="flex gap-2">
+      <button class="editAddressBtn outline outline-[#CCB8A3] rounded-[32px] px-3 py-1.5 md:px-4 md:py-2 h-fit">
+        {% render "icon-edit" %}
+      </button>
+
+      {% if isDefault != 'true' %}
+        <button class="addressDeleteBtn outline outline-[#CCB8A3] rounded-[32px] px-3 py-1.5 md:px-4 md:py-2 h-fit">
+          {% render "icon-delete" %}
+        </button>
+      {% endif %}
+    </div>
+  </div>
+    
+  <!-- Address Info -->
+  <p class="text-sm md:text-[1rem] leading-6 md:leading-7">{{ address.address }},<br>{{ address.city }},<br>{{ address.state }} - {{ address.zip }},<br>
+  {{ address.country }}. <br><span class="pt-2">{{ address.phone }}</span></p>
+
+  <!-- Default Badge -->
+  {% if isDefault == 'true' %}
+    <span class="absolute bottom-4 right-4 md:bottom-6 md:right-6 text-sm md:text-base font-medium btn-primary-color px-3 py-1.5 md:px-4 md:py-2 flex rounded-[32px] gap-2">
+      {% render "icon-star" %}
+      <span>{{ 'accounts.account_address.default' | t }}</span>
+    </span>
+  {% endif %}
+</div>

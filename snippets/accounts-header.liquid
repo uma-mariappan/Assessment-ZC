@@ -1,0 +1,38 @@
+<accounts-header class="w-[90%] mx-auto page-max-width">
+    <div id="accountHeaderNoUser" class="hidden flex-row gap-3 justify-center my-8">
+        {% if organization.logo != null and organization.logo != blank %}
+          <a href="/home" class="flex items-center">
+              <picture class="block h-7">
+                {% render 'image-resolutions', firstImage: organization.logo %}
+                <img src="{{ organization.logo.url }}" class="h-7 w-auto" alt="{{ "common.alt_image" | t }}">
+              </picture>
+          </a>
+        {% else %}
+          <div class="flex flex-col">
+            <a href="/home" class="text-lg md:text-3xl">{{ organization.name }}</a>
+            <p class="text-sm md:text-base">{{ organization.tag_line }}</p>
+          </div>
+        {% endif %}
+    </div>
+    <div id="accountHeaderWithUser" class="hidden pb-5 pt-10 md:py-10">
+        <div class="flex justify-between">
+            {% if organization.logo != null and organization.logo != blank %}
+                <a href="/home" class="flex items-center">
+                    <picture class="block h-7">
+                {% render 'image-resolutions', firstImage: organization.logo %}
+                <img src="{{ organization.logo.url }}" class="h-7 w-auto" alt="{{ "common.alt_image" | t }}">
+              </picture>
+                </a>
+            {% else %}
+                <div class="flex flex-col">
+                  <a href="/home" class="text-lg md:text-3xl">{{ organization.name }}</a>
+                  <p class="text-sm md:text-base">{{ organization.tag_line }}</p>
+                </div>
+            {% endif %}
+            <div class="flex justify-between gap-2 items-center max-md:hidden">
+                <p>{{ 'accounts.common.hi' | t }}, <span data-account-header-user-name></span></p>
+                <a data-account-header-signout-url href="#" class="border-l border-color pl-2 no-underline text-blue-500">{{ 'header.sign_out' | t }}</a>
+            </div>
+        </div>
+    </div>
+</accounts-header>

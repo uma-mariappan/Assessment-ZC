@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "cart-page",
+      "settings": {
+        "mobile_horizontal_margin": 2,
+        "desktop_horizontal_margin": 5,
+        "mobile_padding_top": 40,
+        "mobile_padding_bottom": 40,
+        "desktop_padding_top": 40,
+        "desktop_padding_bottom": 40
+      }
+    }
+  },
+  "order": ["main"]
+}

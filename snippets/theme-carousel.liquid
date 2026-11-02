@@ -1,0 +1,82 @@
+{% liquid
+  assign block_settings = block.settings
+  assign carousel_bg_style = ''
+  if block_settings.background_color != blank
+    assign carousel_bg_style = 'background-color: ' | append: block_settings.background_color | append: ';'
+  endif
+  assign slide_count = 0
+  for slide_block in block.blocks
+    if slide_block.type == 'zc_theme__carousel_slide'
+      assign slide_count = slide_count | plus: 1
+    endif
+  endfor
+  assign carousel_order_class = 'order-3 md:order-2'
+  case carousel_mobile_order
+    when 1
+      assign carousel_order_class = 'order-1 md:order-2'
+    when 2
+      assign carousel_order_class = 'order-2 md:order-2'
+    when 4
+      assign carousel_order_class = 'order-4 md:order-2'
+    when 5
+      assign carousel_order_class = 'order-5 md:order-2'
+  endcase
+
+  assign carousel_layout = layout | default: 'default'
+  if carousel_layout == 'hero'
+    assign carousel_wrapper_classes = 'w-full h-[387px] md:h-full md:w-[592px] md:max-w-[592px] md:flex-shrink-0 md:flex-grow-0 min-w-0 flex flex-col ' | append: carousel_order_class
+  elsif carousel_layout == 'hero_split'
+    assign carousel_wrapper_classes = 'w-full h-[387px] md:h-full md:w-1/2 md:flex-[1_1_0] md:max-w-none min-w-0 flex flex-col ' | append: carousel_order_class
+  elsif carousel_layout == 'hero_full'
+    assign carousel_wrapper_classes = 'w-full h-[387px] md:h-full min-w-0 flex flex-col ' | append: carousel_order_class
+  else
+    assign carousel_wrapper_classes = 'w-full h-[500px] md:h-[620px] min-w-0 flex flex-col'
+  endif
+%}
+<script src="{{ 'hero-banner-carousel-301057445382111.js' | asset_url }}" defer></script>
+{% style %}
+  #theme-carousel-{{ block.id }} .hero-carousel-dot.active {
+    background-color: var(--heading-text-color);
+    border-color: var(--heading-text-color);
+  }
+  #theme-carousel-{{ block.id }} .hero-carousel-track {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #theme-carousel-{{ block.id }} .hero-carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+{% endstyle %}
+<div id="theme-carousel-{{ block.id }}" class="{{ carousel_wrapper_classes }}" {{ block.zcommerce_attributes }}>
+  <hero-banner-carousel
+    class="hero-banner-carousel-{{ section.id }} relative flex flex-col h-full w-full overflow-hidden"
+    {% if carousel_bg_style != blank %}style="{{ carousel_bg_style }}"{% endif %}
+    data-autoplay="{{ block_settings.autoplay_enabled }}"
+    data-autoplay-speed="{{ block_settings.autoplay_speed }}">
+    <div class="hero-carousel-track flex overflow-x-auto overflow-y-hidden w-full h-full snap-x snap-mandatory hide-scrollbar flex-grow">
+      {% if slide_count > 0 %}
+        {% for slide_block in block.blocks %}
+          {% if slide_block.type == 'zc_theme__carousel_slide' %}
+            {% render 'theme-carousel-slide', block: slide_block, slide_index: forloop.index0 %}
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <p class="body-text-color text-sm text-center px-6">{{ 'blocks.carousel.empty' | t }}</p>
+      {% endif %}
+    </div>
+    {% if slide_count > 1 %}
+      <div class="hero-carousel-dots absolute bottom-6 left-1/2 -translate-x-1/2 z-[2] flex items-center justify-center gap-2">
+        {% for slide_block in block.blocks %}
+          {% if slide_block.type == 'zc_theme__carousel_slide' %}
+            <button
+              type="button"
+              hero-dot-index="{{ forloop.index0 }}"
+              class="hero-carousel-dot w-[10px] h-[10px] md:w-4 md:h-4 rounded-full border border-white/70 bg-transparent cursor-pointer p-0 transition-colors duration-300 {% if forloop.first %}active{% endif %}"
+              aria-label="{{ 'blocks.carousel.aria_slide' | t: number: forloop.index }}">
+            </button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </hero-banner-carousel>
+</div>

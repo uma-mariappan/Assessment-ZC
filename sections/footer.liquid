@@ -1,0 +1,319 @@
+<script src="{{ "footer-78608520838870.js" | asset_url }}" defer></script>
+
+{% liquid
+  assign section_settings = section.settings
+  assign store_name = store.name
+  assign menu_count = 0
+%}
+
+{% assign org_logo_url = store.logo.url %}
+{% if org_logo_url == '' or org_logo_url == blank or org_logo_url == '?' or org_logo_url == null %}
+  {% assign org_logo_url = "no-image-59606643991319.webp" | asset_url %}
+{% endif %}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<app-footer class="mt-auto">
+  <footer
+    id="section-{{ section.id }}"
+    class="w-full text-white"
+    style="background-color: var(--color-primary);"
+  >
+    <div class="mx-auto w-full page-max-width px-6 md:px-10 lg:px-16">
+
+      {% assign subscribe_block = nil %}
+      {% for perBlock in section.blocks %}
+        {% if perBlock.type == 'subscribe' %}
+          {% assign subscribe_block = perBlock %}
+        {% endif %}
+      {% endfor %}
+
+      {% if subscribe_block %}
+        <div class="mb-8 lg:hidden" {{ subscribe_block.zcommerce_attributes }}>
+          {% render "footer-subscription", block: subscribe_block %}
+        </div>
+      {% endif %}
+
+      <div class="hidden lg:grid lg:grid-cols-[1fr_1fr_minmax(340px,420px)_1fr_1fr] lg:gap-10 lg:items-start">
+        {% assign menu_count = 0 %}
+        {% for perBlock in section.blocks %}
+          {% if perBlock.type == 'footer-menu' %}
+            {% assign per_footer_menu = perBlock.settings.footer_menu %}
+            {% if per_footer_menu and per_footer_menu.menu_items.size > 0 %}
+              {% assign menu_count = menu_count | plus: 1 %}
+              {% assign menu_col_order = "" %}
+              {% if menu_count == 1 %}
+                {% assign menu_col_order = "order-1" %}
+              {% elsif menu_count == 2 %}
+                {% assign menu_col_order = "order-2" %}
+              {% elsif menu_count == 3 %}
+                {% assign menu_col_order = "order-4" %}
+              {% elsif menu_count == 4 %}
+                {% assign menu_col_order = "order-5" %}
+              {% endif %}
+              {% liquid
+                assign menu_color = perBlock.settings.select_menu_color.value
+                assign menu_item_color = perBlock.settings.select_menu_item_color.value
+              %}
+              <div class="{{ menu_col_order }}" {{ perBlock.zcommerce_attributes }}>
+                <h3 class="mb-5 text-[18px] font-semibold leading-[22px]
+                  {% if menu_color == 'heading-text-color' %} heading-text-color
+                  {% elsif menu_color == 'body-text-color' %} body-text-color
+                  {% else %} alt-text-color {% endif %}">
+                  {{ per_footer_menu.title | escape }}
+                </h3>
+                <ul class="space-y-[22px]">
+                  {% for menuItem in per_footer_menu.menu_items %}
+                    <li>
+                      <a href="{{ menuItem.url }}"
+                        class="text-[14px] leading-[18px] font-normal opacity-80 hover:opacity-100 transition-opacity
+                          {% if menu_item_color == 'heading-text-color' %} heading-text-color
+                          {% elsif menu_item_color == 'body-text-color' %} body-text-color
+                          {% else %} alt-text-color {% endif %}">
+                        {{ menuItem.name | escape }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+        {% if subscribe_block %}
+          <div class="order-3 flex items-start justify-start" {{ subscribe_block.zcommerce_attributes }}>
+            {% render "footer-subscription", block: subscribe_block %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="lg:hidden">
+        {% for perBlock in section.blocks %}
+          {% if perBlock.type == 'footer-menu' %}
+            {% assign per_footer_menu = perBlock.settings.footer_menu %}
+            {% if per_footer_menu and per_footer_menu.menu_items.size > 0 %}
+              {% liquid
+                assign menu_color = perBlock.settings.select_menu_color.value
+                assign menu_item_color = perBlock.settings.select_menu_item_color.value
+              %}
+              <div class="expand-options border-t border-white/20 cursor-pointer" {{ perBlock.zcommerce_attributes }}>
+                <button type="button" class="w-full flex items-center justify-between py-[18px]" aria-expanded="false" aria-controls="footer-menu-panel-{{ perBlock.id }}">
+                  <span class="text-[14px] font-bold leading-normal
+                    {% if menu_color == 'heading-text-color' %} heading-text-color
+                    {% elsif menu_color == 'body-text-color' %} body-text-color
+                    {% else %} alt-text-color {% endif %}">
+                    {{ per_footer_menu.title | escape }}
+                  </span>
+                  <div>
+                    <span data-show-info>
+                      {% assign is_footer = true %}
+                      {% render 'icon-arrowdown', isFooter: is_footer %}
+                    </span>
+                    <span data-hide-info class="hidden">
+                      {% assign is_footer = true %}
+                      {% render 'icon-arrowup', isFooter: is_footer %}
+                    </span>
+                  </div>
+                </button>
+                <div data-descp id="footer-menu-panel-{{ perBlock.id }}" class="max-h-0 overflow-hidden">
+                  <ul class="space-y-4 pb-5">
+                    {% for menuItem in per_footer_menu.menu_items %}
+                      <li>
+                        <a href="{{ menuItem.url }}"
+                          class="text-[14px] font-normal opacity-80
+                            {% if menu_item_color == 'heading-text-color' %} heading-text-color
+                            {% elsif menu_item_color == 'body-text-color' %} body-text-color
+                            {% else %} alt-text-color {% endif %}">
+                          {{ menuItem.name | escape }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+
+        {% endfor %}
+        <div class="border-t border-white/20"></div>
+      </div>
+
+      {% liquid
+        assign footer_logo_obj = section_settings.footer_logo_img
+        assign footer_logo = section_settings.footer_logo_img.url
+        if footer_logo == '' or footer_logo == blank or footer_logo == '?' or footer_logo == null
+          assign footer_logo = "footer-logo-138402514207595.webp" | asset_url
+        endif
+      %}
+      <div class="mt-10 lg:mt-16">
+        <picture class="w-full h-auto block">
+          {% render 'image-resolutions', firstImage: footer_logo_obj %}
+          <img src="{{ footer_logo }}" class="w-full h-auto" alt="{{ store_name | escape }}" loading="lazy">
+        </picture>
+      </div>
+
+    </div>
+
+    {% if store.preferences.show_zoho_powered_by %}
+      <div class="w-full border-t border-white/20">
+        <div class="mx-auto w-full page-max-width px-6 md:px-10 lg:px-16 py-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-[14px] font-normal opacity-80 alt-text-color">{{ 'footer.powered_by' | t }} :</span>
+            {% render 'company-logo' %}
+          </div>
+          <p class="text-[14px] font-normal opacity-80 alt-text-color md:text-right">
+            {{ 'footer.copyright_prefix' | t }}{% if store.name != blank %} @ {{ store.name }}{% endif %}. {{ 'footer.copyright_suffix' | t }}
+          </p>
+        </div>
+      </div>
+    {% endif %}
+
+  </footer>
+</app-footer>
+
+{% schema %}
+{
+  "name": "t:sections.footer.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": { "templates": ["footer-group"] },
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.footer.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 48,
+      "label": "t:sections.footer.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "label": "t:sections.footer.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.footer.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 64,
+      "label": "t:sections.footer.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "label": "t:sections.footer.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.footer.settings.logo.header"
+    },
+    {
+      "type": "image_picker",
+      "id": "footer_logo_img",
+      "label": "t:sections.footer.settings.footer_logo_img.label",
+      "default": { "url": "footer-logo-138402514207595.webp", "enable_customisation": true }
+    }
+  ],
+  "presets": [{ "name": "t:sections.footer.presets.default.name" }],
+  "blocks": [
+    {
+      "type": "subscribe",
+      "name": "t:sections.footer.blocks.subscribe.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "t:sections.footer.blocks.subscribe.settings.placeholder.label",
+          "default": "t:sections.footer.blocks.subscribe.settings.placeholder.default"
+        },
+        {
+          "type": "richtext",
+          "id": "button_label",
+          "label": "t:sections.footer.blocks.subscribe.settings.button_label.label",
+          "default": "t:sections.footer.blocks.subscribe.settings.button_label.default"
+        }
+      ]
+    },
+    {
+      "type": "footer-menu",
+      "name": "t:sections.footer.blocks.menu.name",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "menu",
+          "id": "footer_menu",
+          "label": "t:sections.footer.blocks.menu.settings.footer_menu.label",
+          "default": { "display_name": "Default menu", "handle": "" }
+        },
+        {
+          "type": "header",
+          "content": "t:sections.footer.blocks.menu.settings.colors.header"
+        },
+        {
+          "type": "select",
+          "id": "select_menu_color",
+          "options": [
+            { "label": "t:sections.footer.blocks.menu.settings.menu_title_color.options.heading_color", "value": "heading-text-color" },
+            { "label": "t:sections.footer.blocks.menu.settings.menu_title_color.options.body_color", "value": "body-text-color" },
+            { "label": "t:sections.footer.blocks.menu.settings.menu_title_color.options.alternate_color", "value": "alt-text-color" }
+          ],
+          "label": "t:sections.footer.blocks.menu.settings.menu_title_color.label",
+          "default": { "display_name": "Alternate color", "value": "alt-text-color" }
+        },
+        {
+          "type": "select",
+          "id": "select_menu_item_color",
+          "options": [
+            { "label": "t:sections.footer.blocks.menu.settings.menu_item_color.options.heading_color", "value": "heading-text-color" },
+            { "label": "t:sections.footer.blocks.menu.settings.menu_item_color.options.body_color", "value": "body-text-color" },
+            { "label": "t:sections.footer.blocks.menu.settings.menu_item_color.options.alternate_color", "value": "alt-text-color" }
+          ],
+          "label": "t:sections.footer.blocks.menu.settings.menu_item_color.label",
+          "default": { "display_name": "Alternate color", "value": "alt-text-color" }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

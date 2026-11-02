@@ -1,0 +1,172 @@
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% case quote_request.status_formatted %}
+  {% when "Pending" %}
+    {% liquid
+        assign status_bg_color = "bg-[var(--color-warning)]"
+    %}
+  {% when "Converted to Quote" %}
+    {% liquid
+        assign status_bg_color = "bg-[var(--color-info)]"
+    %}
+  {% when "Rejected" %}
+    {% liquid
+        assign status_bg_color = "bg-[var(--color-error)]"
+    %}
+{% endcase %}
+
+<div id="section-{{ section.id }}" class="page-max-width w-[90%] mx-auto">
+    
+    <div>
+        <div class="flex justify-between items-center py-6 md:py-8 flex-wrap">
+            <div class="flex gap-6 items-center">
+            <a href="/account/quotes">
+                {%  render 'icon-back-btn' %}
+            </a>
+            <h1 class="text-xl md:text-[40px] md:leading-[48px] font-medium heading-text-color primary-font">{{ 'accounts.quotes.quote_request_details_title' | t }}</h1>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-row gap-6 items-center flex-wrap">
+                        <h2 class="font-semibold text-xl md:text-2xl">#{{ quote_request.quote_request_number | escape }}</h2>
+                        <span class="{{ status_bg_color }} text-sm md:text-base font-medium text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-white"></span>
+                            {{ quote_request.status_formatted | escape }}
+                        </span>
+                    </div>
+                    <div class="text-sm md:text-base">{{ 'accounts.quotes.placed_on' | t }} : <span class="font-semibold">{{ quote_request.date_formatted | escape }}</span></div>
+                </div>
+            </div>
+            {% if quote_request.estimates.size > 0 %}
+                <a href="/account/quotes/{{ quote_request.estimates[0].estimate_id }}">
+                    <button class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base font-medium">{{ 'accounts.quotes.quote_details_button' | t }}</button>
+                </a>
+            {% endif %}
+        </div>
+
+
+        <div class="p-4 md:p-8 border border-color bg-white my-6 md:my-8">
+            <h3 class="font-bold text-lg md:text-xl pb-2">{{ 'accounts.quotes.product_items' | t }}</h3>
+            <div>
+                {% for quoteItem in quote_request.line_items %}
+                    <div class="flex items-center justify-between first:border-t-0 border-t border-color pt-6 pb-6 last:pb-0 flex-wrap gap-2">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-center gap-6"> 
+                                <div class="flex w-28 h-32 md:w-36 md:h-40 rounded-lg overflow-hidden border border-slate-200">
+                                    {% assign item_image = quoteItem.image_url %}
+                                    {% if item_image == '?' or item_image == '' or item_image == null %}
+                                        {% assign item_image = "no-image-59606643991319.webp" | asset_url %}
+                                    {% endif %}
+                                    {% assign quote_item_image_obj = quoteItem.image | default: item_image %}
+                                    <a href="{{ quoteItem.product_url }}" target="_blank" class="block w-full h-full">
+                                        <picture class="block w-full h-full">
+                                            {% render 'image-resolutions', firstImage: quote_item_image_obj %}
+                                            <img src="{{ item_image }}" alt="{{ quoteItem.name | escape }}" height="80" loading="lazy" class="h-full w-auto min-w-full object-cover object-center">
+                                        </picture>
+                                    </a>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <a href="{{ quoteItem.product_url }}" target="_blank" class="font-semibold text-sm md:text-base">{{ quoteItem.name | escape }}</a>
+                                    <div class="py-1.5 px-3 md:py-2 md:px-4 rounded-[32px] border" style="background-color: var(--color-background-alt); border-color: var(--color-border); flex items-center justify-center w-fit">
+                                        <p class="text-sm md:text-base font-medium">{{ 'accounts.common.quantity' | t }} : {{ quoteItem.quantity | floor }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        
+        <div class="border border-color p-4 md:p-8 bg-white mb-40">
+            <h3 class="font-bold text-lg md:text-xl mb-4">{{ 'accounts.account_order_details.shipping_address' | t }}</h3>
+            <p class="text-sm md:text-base font-semibold mb-2">{{ quote_request.shipping_address.attention | escape }}</p>
+            <p class="text-sm md:text-base mb-2">{{ quote_request.shipping_address.address | escape }},<br>{{ quote_request.shipping_address.city | escape }},
+            <br>{{ quote_request.shipping_address.state | escape }} - {{ quote_request.shipping_address.zip | escape }},<br>{{ quote_request.shipping_address.country | escape }}.</p>
+            <p class="text-sm md:text-base">{{ quote_request.shipping_address.phone | escape }}</p>
+            <p class="text-sm md:text-base">{{ quote_request.customer.email | escape }}</p>
+        </div>
+
+    </div>
+
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.account_quote_request.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.account_quote_request.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote_request.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote_request.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.account_quote_request.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote_request.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote_request.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.account_quote_request.presets.default.name" }]
+}
+{% endschema %}

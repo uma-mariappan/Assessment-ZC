@@ -1,0 +1,211 @@
+<script src={{ "quantity-message-588403974700878.js" | asset_url }} defer></script>
+<script type="module" src={{ "quote-items-88919876879638.js" | asset_url }} defer></script>
+<script src={{ "quantity-counter-176141763398130.js" | asset_url }} defer></script>
+
+{% liquid assign section_settings = section.settings
+  assign mobile_margin = section_settings.mobile_horizontal_margin
+  assign desktop_margin = section_settings.desktop_horizontal_margin
+%}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% render "quantity-message" %}
+<div id="section-{{ section.id }}" class="w-[90%] mx-auto page-max-width">
+  <div data-quote-page class="mx-2 md:mx-[{{ mobile_margin }}rem] lg:mx-[{{ desktop_margin }}rem]">
+    {% if quote.item_count > 0 %}
+      <quote-items class="flex flex-col lg:grid lg:grid-cols-[75%,25%] mb-10">
+        <div class="m-4 h-fit">
+          <div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-white bg-opacity-60 z-50">
+            <div class="flex items-center">
+                <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+                {% render "icon-page-loader" %}
+            </div>
+        </div>
+        <div class="py-5 hidden lg:flex flex-row justify-between items-start border-b lg:border-r border-color">
+          <div class="flex flex-row gap-4 justify-between">
+            <div class="flex flex-col justify-between">
+              <p class="text-sm">{{ 'quote.items' | t }}Items</p>
+            </div>
+          </div>
+          <div class=" text-right lg:pr-4">
+            <p class="text-sm">{{ 'quote.quantity' | t }}Quantity</p>
+          </div>
+        </div>
+          {% for lineItem in quote.items %}
+            {% assign variant_id = lineItem.selected_variant.id %}
+            {% assign quote_product_img = lineItem.product.cover_media %}
+            {% if quote_product_img.url == '?' or quote_product_img.url == '' or quote_product_img.url == null %}
+              {% assign quote_product_img = "no-image-59606643991319.webp" | asset_url %}
+            {% endif %}
+            <div class="pt-5 md:pb-4 lg:pb-0 flex flex-col md:flex-row md:items-start lg:h-2/5 border-b 
+              lg:border-r border-color justify-between">
+              <div class="flex flex-row gap-2 md:gap-4">
+                <div class="flex flex-col justify-between">
+                  <a href="{{ lineItem.product.url }}" class="w-[75px] h-[70px] md:w-[115px] md:h-[110px] cursor-pointer">
+                    <picture>
+                      {% render "image-resolutions", firstImage: quote_product_img  %}
+                      <img src="{{ quote_product_img | image_url }}" alt="{{ lineItem.selected_variant.title | escape }}" height="80" loading="lazy" class="h-full w-auto min-w-full object-cover object-center">
+                    </picture>
+                  </a>
+                  <button class="btn-remove-items btn-secondary btn-secondary-color hidden lg:block w-full border border-solid px-3 py-1 
+                    cursor-pointer text-sm font-normal text-center my-4"
+                    data-remove-variant-id="{{ variant_id }}">{{ "quote.remove" | t }}Remove
+                  </button>
+                </div>
+                <div>
+                  <a href="{{ lineItem.product.url }}" class="text-xs md:text-sm cursor-pointer break-all">
+                    {{ lineItem.selected_variant.title | escape }}
+                  </a>
+                  {% comment %} <p class="text-xs md:text-sm"></p> {% endcomment %}
+                  {% for option_value in lineItem.selected_variant.options %}
+                    {% assign product_option = lineItem.product.options[forloop.index0] %}
+                    <div class="mt-2 md:mt-4 flex flex-row items-center flex-wrap gap-2">
+                      <p class="text-xs md:text-sm">{{ product_option.name | capitalize | escape }}:</p>
+                      {% if option_value contains '#' %}
+                        {% assign color_parts = option_value | split: '#' %}
+                        {% assign color_name = color_parts[0] %}
+                        {% assign color_code = '#' | append: color_parts[1] %}
+
+                        <div class="flex flex-row gap-[2px] items-center">
+                          <div class="h-3 w-3" style="background-color: {{ color_code }}"></div>
+                          <span class="text-xs md:text-sm px-1 font-semibold">{{ color_name | capitalize | escape }}</span>
+                        </div>
+                      {% else %}
+                        <span class="text-xs md:text-sm px-1 font-semibold">{{ option_value | capitalize | escape }}</span>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="hidden md:flex lg:pr-4">
+                <div class="quote-item flex flex-col items-center lg:gap-2 justify-between">
+                  {% liquid assign is_quote_page = true
+                    assign quantity_value = lineItem.quantity
+                  %}
+                  <div class="flex flex-col gap-1">
+                    {% render "quantity-counter", quantity: quantity_value, variantId: variant_id, isquotePage: is_quote_page %}
+                    <div class="qty-error-msg hidden text-xs text-center w-25 text-red-500" data-variant-id="{{ variant_id }}">{{ "product_details.qtyErrorMsg" | t }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="hidden md:flex lg:hidden [min-inline-size:18%] justify-end">
+                <button data-remove-variant-id="{{ variant_id }}" class="btn-remove-items">
+                  <span class="btn-secondary btn-secondary-color text-xs md:text-sm border border-solid px-3 py-2 lg:py-4 truncate
+                    cursor-pointer font-normal text-center">
+                    {{ "quote.remove" | t }}Remove
+                  </span>
+                </button>
+              </div>
+              <div class="flex flex-row gap-3 justify-between flex-wrap md:hidden py-5">
+                <div class="flex flex-row gap-3 quote-item">
+                  {% liquid assign is_quote_page = true
+                    assign quantity_value = lineItem.quantity 
+                  %}
+                  <div class="flex flex-col gap-1">
+                    {% render "quantity-counter", quantity: quantity_value, variantId: variant_id, isquotePage: is_quote_page %}
+                    <div class="qty-error-msg hidden text-xs text-center w-25 text-red-500" data-variant-id="{{ variant_id }}">{{ "product_details.qtyErrorMsg" | t }}</div>
+                  </div>
+                </div>
+                <button data-remove-variant-id="{{ variant_id }}" class="btn-remove-items">
+                  <span class="btn-secondary btn-secondary-color text-xs md:text-sm border border-solid px-3 py-2 lg:py-4 cursor-pointer font-normal text-center">
+                    {{ "quote.remove" | t }}Remove
+                  </span>
+                </button>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="flex flex-col">
+          <div class="flex flex-col md:flex-row-reverse lg:flex-col gap-4 my-5 sticky top-[165px]">
+            <a data-request-quote-btn href="{{storefrontHomeUrl}}/checkout" class="w-full btn-primary btn-primary-color btn-primary-hover btn-medium-width flex items-center justify-center cursor-pointer px-2 py-2">
+              <span class="text-xs md:text-sm font-normal">{{ "quote.checkout" | t }}Request Quote</span>
+            </a>
+            <a href="{{storefrontHomeUrl}}/" class="w-full border border-solid btn-secondary btn-secondary-color btn-secondary-hover px-2 py-2 
+              text-center cursor-pointer">
+              <span class="text-xs md:text-sm font-normal">{{ "common.continue_shopping_btn" | t }}</span>
+            </a>
+          </div>
+        </div>
+      </quote-items>
+    {% else %}
+      {% render "quote-empty" , sectionSettings: section_settings %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.quote.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["quote"]},
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.quote.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.quote.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.quote.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.quote.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.quote.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.quote.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.quote.presets.default.name" }]
+}
+{% endschema %}

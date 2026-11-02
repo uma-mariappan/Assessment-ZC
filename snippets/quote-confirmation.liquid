@@ -1,0 +1,37 @@
+<div class="py-16 px-4">
+  <span class="pt-24 flex justify-center">
+    {% assign quote_success_img = "quote-success.webp" | asset_url %}
+     <div class="flex justify-center w-56">
+      <picture>
+        {% render 'image-resolutions', firstImage: quote_success_img %}
+        <img src="{{ quote_success_img }}" height="224" alt="quote-success-image" loading="lazy" class="h-[224px] w-auto min-w-full object-cover object-center">
+      </picture>
+</div>
+  </span>
+<div>
+  <div class="px-4 flex flex-col justify-center primary-font">
+    <p class="text-[40px] leadding-[48px] font-semibold heading-text-color text-center">{{ "quote-status.blocks.quote-confirmation.success_congratulations_msg" | t }}</p>
+    <p class="text-[40px] leadding-[48px] font-semibold heading-text-color text-center">{{ "quote-status.blocks.quote-confirmation.success_msg" | t }}</p>
+  </div>
+  <div class="flex flex-col items-center">
+      <div class="grid grid-cols-2 py-8">
+        <div class="text-right px-3 text-base">
+            <p class="py-2">{{ "quote-status.blocks.quote-confirmation.order_id" | t }}</p>
+            <p class="py-2">{{ "quote-status.blocks.quote-confirmation.bill_amount" | t }}</p>
+            <p class="py-2">{{ "quote-status.blocks.quote-confirmation.quote_method" | t }}</p>
+        </div>
+        <div>
+          <p class="py-2">:<span class="font-semibold px-2 text-center"> {{ quoteStatus.salesorder_number }}</span></p>
+          <p class="py-2">: <span class="font-semibold px-2 text-center">{{  quoteStatus.currency_code }} {{
+               quoteStatus.total }}</span></p>
+          <p class="py-2">: <span class="font-semibold px-2 text-center">{{ quoteStatus.quote_mode_formatted }}</span></p>
+        </div>
+      </div>
+    <p class="pb-5">{{ "quote-status.blocks.quote-confirmation.thankyou_msg" | t }}</p>
+    <a href="{{storefrontRootUrl}}/home">
+      <div class="px-8 py-4 rounded-[32px] btn-primary-color btn-primary-hover text-base font-medium">
+        {{ "quote-status.continue_btn" | t }}</div>
+  </a>
+  </div>
+</div>
+</div>

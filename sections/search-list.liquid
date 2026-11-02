@@ -1,0 +1,186 @@
+<script src="{{ 'search-list-363323315651147.js' | asset_url }}" defer></script>
+{% liquid
+  assign wishlist_enabled = false
+  if store.customer_portal.enabled and store.preferences.is_wishlist_enabled
+    assign wishlist_enabled = true
+  endif
+%}
+{% if wishlist_enabled %}
+<script type="module" src="{{ 'product-wishlist-943862380239332.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% liquid
+  assign searchObject = search
+  assign section_settings = section.settings
+%}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<search-list id="section-{{ section.id }}" data-search-list>
+  <div class="max-w-[1400px] w-full mx-auto px-4 lg:px-8">
+    <div class="border-b py-4 md:py-6" style="border-color: var(--color-border);">
+      <p id="searchText" class="text-xl md:text-2xl capitalize font-medium" style="color: var(--color-heading);"></p>
+    </div>
+
+    <div class="py-6 md:py-10 pb-16 md:pb-20">
+      <div class="w-full">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'product-card' %}
+              {% if searchObject.products.size > 0 %}
+                {% liquid
+                  assign card_gap_value = 8
+                  assign card_size_value = 'small'
+                  for block_item in section.blocks
+                    if block_item.type == 'product-card'
+                      assign card_gap_value = block_item.settings.card_gap | default: 8
+                      assign card_size_value = block_item.settings.card_size.value | default: 'small'
+                      break
+                    endif
+                  endfor
+
+                  if card_size_value == 'small'
+                    assign grid_cols_lg = 'lg:grid-cols-4'
+                  elsif card_size_value == 'medium'
+                    assign grid_cols_lg = 'lg:grid-cols-3'
+                  else
+                    assign grid_cols_lg = 'lg:grid-cols-2'
+                  endif
+                %}
+                {% if wishlist_enabled %}
+                <product-wishlist class="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 {{ grid_cols_lg }} lg:gap-x-8 lg:gap-y-12" {{ block.zcommerce_attributes }}>
+                {% else %}
+                <div class="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 {{ grid_cols_lg }} lg:gap-x-8 lg:gap-y-12" {{ block.zcommerce_attributes }}>
+                {% endif %}
+                  {% for perProduct in searchObject.products %}
+                    {% render "product-list-card", perProduct: perProduct %}
+                  {% endfor %}
+                {% if wishlist_enabled %}
+                </product-wishlist>
+                {% else %}
+                </div>
+                {% endif %}
+              {% else %}
+                <p class="font-bold flex justify-center py-20 text-3xl w-full" style="color: var(--color-heading);">{{ 'search.no_results' | t }}</p>
+              {% endif %}
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</search-list>
+
+{% schema %}
+{
+  "name": "t:sections.search_list.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": { "templates": ["search"] },
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.search_list.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.search_list.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.search_list.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.search_list.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.search_list.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.search_list.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product-card",
+      "name": "t:sections.search_list.blocks.product_card.name",
+      "settings": [
+        {
+          "type": "range",
+          "id": "card_gap",
+          "min": 0,
+          "max": 40,
+          "step": 2,
+          "unit": "px",
+          "label": "t:sections.search_list.blocks.product_card.settings.card_gap.label",
+          "default": 8
+        },
+        {
+          "type": "select",
+          "id": "card_size",
+          "options": [
+            {
+              "value": "small",
+              "label": "t:sections.search_list.blocks.product_card.settings.card_size.option__1.label"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.search_list.blocks.product_card.settings.card_size.option__2.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.search_list.blocks.product_card.settings.card_size.option__3.label"
+            }
+          ],
+          "label": "t:sections.search_list.blocks.product_card.settings.card_size.label",
+          "default": { "display_name": "t:sections.search_list.blocks.product_card.settings.card_size.option__1.label", "value": "small" }
+        }
+      ]
+    }
+  ],
+  "presets": [{ "name": "t:sections.search_list.presets.default.name" }]
+}
+{% endschema %}

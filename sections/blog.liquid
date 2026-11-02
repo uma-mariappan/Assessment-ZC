@@ -1,0 +1,155 @@
+{% liquid
+  assign image_object = blog.image | default: blog.banner | default: blog.featuredImage | default: blog.featured_image
+  assign image_url = blog.image.url | default: blog.banner.url | default: blog.featuredImage.url | default: blog.featured_image.url | default: blog.featured_image | default: blog.image | default: blog.banner
+  if image_url == blank or image_url == '?'
+    assign image_url = 'no-image-59606643991319.webp' | asset_url
+  endif
+
+  assign tag_label = ''
+  if blog.tags and blog.tags.size > 0
+    assign tag_label = blog.tags[0].name
+  endif
+
+  assign blog_author = blog.author_name | default: blog.author | default: 'Sofia Chen'
+  assign blog_date = blog.published_at | default: blog.created_at | default: blog.updated_at | default: blog.last_modified_time
+  if blog_date != blank
+    assign formatted_date = blog_date | date: '%b %d, %Y'
+  else
+    assign formatted_date = 'Feb 18, 2026'
+  endif
+
+  assign bg_value = section.settings.background_color.value | default: section.settings.background_color | default: 'primary'
+%}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<div id="section-{{ section.id }}" class="w-full pt-10 md:pt-14 {% if bg_value == 'secondary' %}bg-secondary-color{% else %}bg-primary-color{% endif %}">
+  <div class="w-[90%] mx-auto page-max-width">
+    <nav class="mb-8 flex flex-wrap items-center gap-2 text-sm md:mb-10 body-text-color opacity-70" aria-label="Breadcrumb">
+      <a href="/" class="hover:underline">{{ 'blog.breadcrumb_home' | t | default: 'Home' }}</a>
+      <span aria-hidden="true">&gt;</span>
+      <a href="/blogs" class="hover:underline">{{ 'blog.breadcrumb_blogs' | t | default: 'Blogs' }}</a>
+      <span aria-hidden="true">&gt;</span>
+      <span class="font-medium heading-text-color">{{ blog.title | escape }}</span>
+    </nav>
+
+    <div class="grid grid-cols-1 items-start gap-8 pb-10 md:gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-12 lg:pb-12">
+      <div>
+        {% if tag_label != blank %}
+          <span class="inline-block btn-primary btn-primary-color px-4 py-2 text-base uppercase tracking-wider">{{ tag_label | escape }}</span>
+        {% endif %}
+        <h1 class="mt-5 primary-font text-2xl leading-[1.08] tracking-[-0.015em] md:text-4xl lg:text-5xl uppercase heading-text-color font-bold">
+          {{ blog.title | escape }}
+        </h1>
+      </div>
+
+      <div>
+        <picture class="w-full block lg:h-[430px]">
+          {% render 'image-resolutions', firstImage: image_object %}
+          <img src="{{ image_url }}" alt="{{ blog.title | escape }}" height="450" loading="eager" class="h-full w-auto min-w-full object-cover object-center lg:h-[430px]">
+        </picture>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t border-[var(--color-accent)]"></div>
+
+  <div class="w-[90%] mx-auto page-max-width py-10 md:py-12">
+    <article class="blog-content max-w-[780px] text-left text-base leading-[1.75] md:text-lg body-text-color">
+      {{ blog.content }}
+    </article>
+
+    <div class="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm md:text-lg body-text-color opacity-70">
+      <span>{{ formatted_date | escape }}</span>
+      <span>&bull;</span>
+      <span>{{ blog_author | escape }}</span>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.blog.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": { "templates": ["blog"] },
+  "settings": [
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.blog.settings.background_color.label",
+      "options": [
+        { "label": "t:sections.blog.settings.background_color.option__1.label", "value": "primary" },
+        { "label": "t:sections.blog.settings.background_color.option__2.label", "value": "secondary" }
+      ],
+      "default": { "display_name": "t:sections.blog.settings.background_color.default", "value": "primary" }
+    },
+    {
+      "type": "header",
+      "content": "t:sections.blog.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.blog.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.blog.presets.default.name" }]
+}
+{% endschema %}

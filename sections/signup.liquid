@@ -1,0 +1,104 @@
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% if store.customer_portal.signup_enabled %}
+    <script src={{ "portal-signup-503543321320256.js" | asset_url }} defer></script>
+    <script src="{{ store.customer_portal.signup_url }}" defer></script>
+
+    {% assign signup_style = "" %}
+    
+    {% if signup_style == "popup" %}
+        <div id="section-{{ section.id }}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded shadow-lg w-full max-w-[640px] relative">
+                {% render "signup-popup-slider" %}
+            </div>
+        </div>
+    {% elsif signup_style == "right-align" %}
+        <div id="section-{{ section.id }}" class="fixed inset-0 bg-black bg-opacity-50 flex justify-end z-50">
+            <div class="bg-white shadow-lg w-full max-w-[520px] grid content-center h-full relative">
+                {% render "signup-popup-slider" %}
+            </div>
+        </div>
+    {% else %}
+        <div id="section-{{ section.id }}" class="flex-grow flex flex-col relative">
+            {% render "signup-popup-slider", signupFields: signup_fields %}
+        </div>
+    {% endif %}
+{% else %}
+    {% render "signup-disabled" %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:sections.signup.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.signup.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.signup.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.signup.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.signup.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.signup.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.signup.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.signup.presets.default.name" }]
+}
+{% endschema %}

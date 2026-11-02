@@ -1,0 +1,106 @@
+<script type="module" src={{ "checkout-coupon-14734005365352.js" | asset_url }} defer></script>
+
+{% unless hideCouponForm %}
+  <form id="couponForm" class="{% if checkoutDetails.coupon.size > 0 %}hidden{% endif %}">
+    <div class="flex flex-row items-center">
+      <div class="w-full">
+        <input type="text" name="coupon_code" id="couponCode" class="border border-color py-1 pl-4 pr-7 w-full"
+        placeholder="Coupon Code">
+      </div>
+      <div class="ml-4">
+        <button type="submit" class="text-xs px-2 py-2.5 rounded-sm btn-primary btn-primary-color min-w-20 min-h-12">
+          {{ "checkout.blocks.coupon.apply_btn" | t }}
+        </button>
+      </div>
+    </div>
+    <p class="text-red-600 pt-2 text-sm hidden" id="invalidCoupon"></p>
+    <p id="emptyCoupon" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+  </form>
+{% endunless %}
+
+{% unless hideCouponForm %}
+  <div class="couponApplied {% if checkoutDetails.coupon.size == 0 %}hidden{% endif %}">
+    <div class="flex flex-row items-center">
+      <div>
+        <p class="text-sm">{{ "checkout.blocks.coupon.code" | t }} <b class="font-semibold" id="couponValue">{{ checkoutDetails.coupon.coupon_code }}</b></p>
+        <p class="text-xs font-normal pt-2" id="couponAppliedValue"  data-code="{{ checkoutDetails.coupon.coupon_code }}">{{ "checkout.blocks.coupon.applied" | t }}</p>
+      </div>
+      <div class="grow text-end lg:mt-5">
+        <button type="button" id="couponRemove" class="border-solid border border-color p-2 text-xs lg:text-sm btn-primary btn-primary-color">{{ "checkout.blocks.coupon.remove" | t }}</button>
+      </div>
+    </div>
+  </div>
+{% endunless %}
+
+<form id="orderSummaryForm">
+  <div class="my-5">
+    <div class="border-y border-color py-3">
+      <p class="text-md my-4 heading-text-color primary-font">{{ "checkout.blocks.coupon.order_summary" | t }}
+        {% if checkoutDetails.customer.shipping_charge_id != nil %}
+        <span class="text-xs text-sky-500 cursor-pointer" id="showShippingDetails">{{ "checkout.blocks.coupon.show_details" | t }}</span>
+        <span class="text-xs text-sky-500 cursor-pointer hidden" id="hideShippingDetails">{{ "checkout.blocks.coupon.hide_details" | t }}</span>
+        {% endif %}
+      </p>
+      <div class="my-3">
+          <div class="flex justify-between">
+            <p class="text-sm">Subtotal ({{checkoutDetails.line_items | size}} Items)</p>
+            <p class="text-sm" id="formSubtotal">{{checkoutDetails.sub_total_exclusive_of_discount_formatted}}</p>
+            <input type="text" class="hidden" name="formSubtotal" value="{{checkoutDetails.sub_total}}">
+          </div>
+      </div>
+      <div class="my-3 couponApplied {% if checkoutDetails.coupon.size == 0 %}hidden{% endif %}">
+        <div class="flex justify-between">
+          <p class="text-sm">{{ "checkout.blocks.coupon.coupon" | t }}</p>
+          <p class="text-sm" id="couponDiscount"> - {{checkoutDetails.discount_total_formatted}}</p>
+          <input type="text" class="hidden" name="formCoupon" value="{{checkoutDetails.coupon.discount}}">
+        </div>
+      </div>
+      {% if checkoutDetails.customer.shipping_address != nil %}
+        <div class="my-3">
+          <div class="flex justify-between">
+            <p class="text-sm">{{ "checkout.blocks.coupon.tax" | t }}</p>
+            <p class="text-sm" id="formTax">{{checkoutDetails.tax_total_formatted}}</p>
+            <input type="text" class="hidden" name="formTax" value="{{checkoutDetails.tax_total}}">
+          </div>
+        </div>
+      {% endif %}
+      {% if checkoutDetails.customer.shipping_charge_id != nil %} 
+        {% for shippingCharge in checkoutDetails.shipping_charge_details %}
+          {% if shippingCharge.shipping_charge_id == checkoutDetails.customer.shipping_charge_id %}
+            <div class="my-3">
+              <div class="flex justify-between">
+                <p class="text-sm">Shipping</p>
+                <p class="text-sm" id="shippingCharge">{{shippingCharge.shipping_charge_formatted}}</p>
+                <input type="text" class="hidden" name="formShipping" value="{{shippingCharge.shipping_charge}}">
+              </div>
+            </div>
+            <div class="my-3 hidden" id="shippingChargeDetail">
+              <div class="flex justify-between">
+                <p class="text-slate-500 text-xs w-1/3">{{shippingCharge.delivery_title}}</p>
+                <p class="text-slate-500 text-xs">{{shippingCharge.shipping_charge_formatted}}</p>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <div class="my-3 hidden offlineServiceCharge">
+          <div class="flex justify-between">
+            <p class="text-sm">{{ "checkout.blocks.coupon.service_charge" | t }}</p>
+            <p class="text-sm offlinePaymentCharge" id="offlineCharge"></p>
+            <input type="text" class="hidden" name="formOfflineCharge">
+          </div>
+        </div>
+        <div class="my-3 hidden" id="offlineChargeDetail">
+          <div class="flex justify-between">
+            <p class="text-slate-500 text-xs w-1/3">{{ "checkout.blocks.coupon.offline_payment" | t }}</p>
+            <p class="text-slate-500 text-xs offlinePaymentCharge"></p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  
+    <div class="flex justify-between pt-5">
+      <p class="text-sm">{{ "checkout.blocks.coupon.total" | t }}</p>
+      <p class="text-sm font-bold" id="totalAmount">{{checkoutDetails.total_formatted}}</p>
+    </div>
+  </div>
+</form>

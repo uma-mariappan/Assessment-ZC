@@ -1,0 +1,77 @@
+{% assign current = current_page | default: 1 %}
+{% assign total = total_pages | default: 0 %}
+
+{% if total > 1 %}
+{% assign page_window = 1 %}
+{% assign first_index = 1 %}
+{% assign max_pages_before_dots = 4 %}
+{% assign last_visible_page = total | minus: 1 %}
+{% assign prev_page = current | minus: 1 %}
+{% assign next_page = current | plus: 1 %}
+
+<div class="flex items-center justify-center flex-wrap gap-1 py-4">
+
+  {% if current > 1 %}
+    <button type="button" class="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center transition btn-secondary-color btn-secondary-hover" data-comments-page="{{ prev_page }}">
+      {% render 'icon-pagination-prev' %}
+    </button>
+  {% else %}
+    <button type="button" class="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center cursor-not-allowed opacity-50 pointer-events-none text-black" disabled>
+      {% render 'icon-pagination-prev' %}
+    </button>
+  {% endif %}
+
+  {% if total <= max_pages_before_dots %}
+    {% for i in (1..total) %}
+      <button type="button" class="w-7 h-7 lg:w-8 lg:h-8 text-xs flex items-center justify-center cursor-pointer rounded-full {% if i == current %}bg-[#FDF2F8] heading-text-color border border-color{% else %}heading-text-color hover:border hover:border-yellow-900 transition{% endif %}" data-comments-page="{{ i }}">
+        {{ i }}
+      </button>
+    {% endfor %}
+  {% else %}
+    {% if current == 1 %}
+      {% assign start_page = 2 %}
+      {% assign end_page = 3 %}
+    {% elsif current == total %}
+      {% assign start_page = total | minus: 2 %}
+      {% assign end_page = total | minus: 1 %}
+    {% else %}
+      {% assign start_page = current | minus: page_window %}
+      {% assign end_page = current | plus: page_window %}
+    {% endif %}
+    {% if start_page < 2 %}{% assign start_page = 2 %}{% endif %}
+    {% if end_page > last_visible_page %}{% assign end_page = last_visible_page %}{% endif %}
+
+    <button type="button" class="w-7 h-7 lg:w-8 lg:h-8 text-xs flex items-center justify-center cursor-pointer rounded-full {% if first_index == current %}bg-[#FDF2F8] heading-text-color border border-color{% else %}heading-text-color hover:border hover:border-yellow-900 transition{% endif %}" data-comments-page="{{ first_index }}">
+      {{ first_index }}
+    </button>
+
+    {% if start_page > 2 %}
+      <span class="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center heading-text-color">…</span>
+    {% endif %}
+
+    {% for i in (start_page..end_page) %}
+      <button type="button" class="w-7 h-7 lg:w-8 lg:h-8 text-xs flex items-center justify-center cursor-pointer rounded-full {% if i == current %}bg-[#FDF2F8] heading-text-color border border-color{% else %}heading-text-color hover:border hover:border-yellow-900 transition{% endif %}" data-comments-page="{{ i }}">
+        {{ i }}
+      </button>
+    {% endfor %}
+
+    {% if end_page < last_visible_page %}
+      <span class="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center heading-text-color">…</span>
+    {% endif %}
+
+    <button type="button" class="w-7 h-7 lg:w-8 lg:h-8 text-xs flex items-center justify-center cursor-pointer rounded-full {% if total == current %}bg-[#FDF2F8] heading-text-color border border-color{% else %}heading-text-color hover:border hover:border-yellow-900 transition{% endif %}" data-comments-page="{{ total }}">
+      {{ total }}
+    </button>
+  {% endif %}
+
+  {% if current < total %}
+    <button type="button" class="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center transition btn-secondary-color btn-secondary-hover" data-comments-page="{{ next_page }}">
+      {% render 'icon-pagination-next' %}
+    </button>
+  {% else %}
+    <button type="button" class="w-7 h-7 lg:w-8 lg:h-8 flex items-center justify-center cursor-not-allowed opacity-50 pointer-events-none text-black" disabled>
+      {% render 'icon-pagination-next' %}
+    </button>
+  {% endif %}
+</div>
+{% endif %}

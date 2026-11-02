@@ -1,0 +1,92 @@
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<div id="section-{{ section.id }}" class="theme-portal-form-container">
+	<iframe title="Sign in form" src="{{ store.customer_portal.signin_url }}&css_url={{ "signin-424024153007789.css" | asset_path }}"
+		class="signin-iframe block mx-auto w-[80%] md:w-[90%]" style="border: none;">
+	</iframe>
+
+	<div class="user-signin-help">
+		<span class="signup-option">{{ 'accounts.auth.signup_help' | t }}
+			<a href="/signup">{{ 'accounts.auth.sign_up' | t }}</a>
+		</span>
+		<span class="forgot-password">
+			<a href="/forgotpassword">{{ 'accounts.auth.forgot_password_short' | t }}</a>
+		</span>
+	</div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.signin.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.signin.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.signin.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.signin.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.signin.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.signin.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.signin.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.signin.presets.default.name" }]
+}
+{% endschema %}

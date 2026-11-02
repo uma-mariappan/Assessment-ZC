@@ -1,0 +1,299 @@
+<script src="{{ 'blog-post-slider-568331365395164.js' | asset_url }}" defer></script>
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+  #section-{{ section.id }} [data-blog-post-track] {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #section-{{ section.id }} [data-blog-post-track]::-webkit-scrollbar {
+    display: none;
+  }
+  #section-{{ section.id }} .bp-scrollbar-track {
+    background-color: rgba(var(--border-color), 0.2);
+  }
+  #section-{{ section.id }} .bp-scrollbar-thumb {
+    background-color: var(--heading-text-color);
+  }
+{% endstyle %}
+
+{% liquid
+  assign section_settings = section.settings
+  assign bp_bg_value = section_settings.background_color.value | default: section_settings.background_color | default: 'primary'
+%}
+
+<blog-post-slider id="section-{{ section.id }}" class="block w-full {% if bp_bg_value == 'secondary' %}bg-secondary-color{% else %}bg-primary-color{% endif %}">
+  <div class="w-[90%] page-max-width mx-auto">
+    <div class="flex flex-col gap-4 md:gap-6 items-start mb-10 md:mb-12">
+      {% render_blocks %}
+    </div>
+
+    {% assign has_blog_card = false %}
+    <div data-blog-post-instance>
+      <div
+        data-blog-post-track
+        class="flex gap-4 md:gap-6 overflow-x-auto overflow-y-hidden pb-2 scroll-smooth snap-x snap-mandatory"
+      >
+        {% for perBlock in section.blocks %}
+          {% if perBlock.type == 'blog-card' %}
+            {% assign has_blog_card = true %}
+            <article class="flex-shrink-0 snap-start w-[70vw] sm:w-[280px] md:w-[320px] lg:w-[333px] blog-card blog-card-color card overflow-hidden flex flex-col" {{ perBlock.zcommerce_attributes }}>
+              {% render 'blog-post-card', blog_card_block: perBlock %}
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if has_blog_card %}
+        <div class="bp-scrollbar-track mt-6 h-[2px] relative hidden" data-blog-post-scrollbar>
+          <div class="bp-scrollbar-thumb absolute top-0 left-0 h-[2px]" style="width: 40%; left: 0;" data-blog-post-scroll-thumb></div>
+        </div>
+      {% else %}
+        <p class="text-center heading-text-color opacity-70 py-10">
+          Add at least one Blog card block.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</blog-post-slider>
+
+{% schema %}
+{
+  "name": "t:sections.blog_posts.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {
+    "templates": [
+      "index"
+    ]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.blog_posts.settings.background_color.label",
+      "options": [
+        {
+          "label": "t:sections.blog_posts.settings.background_color.options.primary",
+          "value": "primary"
+        },
+        {
+          "label": "t:sections.blog_posts.settings.background_color.options.secondary",
+          "value": "secondary"
+        }
+      ],
+      "default": {
+        "display_name": "Primary",
+        "value": "primary"
+      }
+    },
+    {
+      "type": "header",
+      "content": "t:sections.blog_posts.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog_posts.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog_posts.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.blog_posts.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog_posts.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.blog_posts.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "zc_theme__text",
+      "name": "t:blocks.text.name"
+    },
+    {
+      "type": "zc_theme__button",
+      "name": "t:blocks.button.name"
+    },
+    {
+      "type": "blog-card",
+      "name": "t:sections.blog_posts.blocks.blog_card.name",
+      "settings": [
+        {
+          "type": "blog",
+          "id": "blog",
+          "label": "t:sections.blog_posts.blocks.blog_card.settings.blog.label",
+          "default": {
+            "display_name": "",
+            "handle": ""
+          }
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.blog_posts.presets.default.name",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "blog-posts-title": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "Makeup & Beauty Tips that will make your life easier",
+            "select_font_family": {
+              "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "t:blocks.text.settings.select_text_color.options.heading_text_color.label",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "t:blocks.text.settings.mobile_text_size.options.text_2xl.label",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "blog-posts-button": {
+          "type": "zc_theme__button",
+          "settings": {
+            "button_text": "Visit our Blogs",
+            "button_url": {
+              "display_name": "t:blocks.button.settings.button_url.default",
+              "handle": "blogs"
+            },
+            "select_button_style": {
+              "display_name": "t:blocks.button.settings.select_button_style.options.primary.label",
+              "value": "primary"
+            }
+          }
+        },
+        "blog-post-card-1": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "blog-post-card-2": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "blog-post-card-3": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "blog-post-card-4": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "blog-post-card-5": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        }
+      },
+      "block_order": [
+        "blog-posts-title",
+        "blog-posts-button",
+        "blog-post-card-1",
+        "blog-post-card-2",
+        "blog-post-card-3",
+        "blog-post-card-4",
+        "blog-post-card-5"
+      ]
+    }
+  ]
+}
+{% endschema %}

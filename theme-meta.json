@@ -1,0 +1,10 @@
+{
+  "theme_name": "Pink Beauty",
+  "theme_version": "1.0.3",
+  "test_theme_version": "1.0.3",
+  "keywords": [],
+  "thumbnail_images": {
+    "desktop_image": "thumbnail_images/desktop.png",
+    "mobile_image": "thumbnail_images/mobile.png"
+  }
+}

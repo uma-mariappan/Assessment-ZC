@@ -1,0 +1,18 @@
+{
+  "layout": "accounts",
+  "sections": {
+    "account-tab": {
+      "type": "account-tab-navigation",
+      "settings": {
+        "mobile_padding_top": 40,
+        "mobile_padding_bottom": 40,
+        "desktop_padding_top": 40,
+        "desktop_padding_bottom": 40
+      }
+    },
+    "order-review": {
+      "type": "account-order-review"
+    }
+  },
+  "order": ["account-tab", "order-review"]
+}

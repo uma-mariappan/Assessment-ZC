@@ -1,0 +1,98 @@
+{% liquid
+  assign featured_image = perProduct.cover_media
+  assign product_image = featured_image | image_url
+  assign product_url = perProduct.url
+  assign rating = perProduct.average_rating | default: 0 | plus: 0
+%}
+
+{% if product_image == '?' or product_image == '' %}
+  {% assign product_image = "no-image-59606643991319.webp" | asset_url %}
+{% endif %}
+
+<div data-product class="w-full h-full">
+  <div class="product-card product-card-color card flex flex-col w-full h-full overflow-hidden group border border-transparent hover:border-current focus-within:border-current" style="color: var(--color-primary);">
+    <div class="relative w-full aspect-square media media-color overflow-hidden">
+      {% if perProduct.on_sale %}
+        <div class="absolute top-2 left-2 md:top-3 md:left-3 z-10 btn-primary btn-primary-color text-[9px] md:text-xs font-medium px-2 py-1 md:px-3 md:py-1.5">
+          Sale
+        </div>
+      {% endif %}
+
+      {% if store.customer_portal.enabled and store.preferences.is_wishlist_enabled and perProduct.variants.size == 1 %}
+        {% render 'wishlist-container', perProduct: perProduct %}
+      {% endif %}
+
+      <a href="{{ product_url }}" class="block w-full h-full">
+        <picture class="block w-full h-full">
+          {% render 'image-resolutions', firstImage: featured_image %}
+          <img
+            src="{{ product_image }}"
+            alt="{{ perProduct.title | escape }}"
+            class="h-full w-auto min-w-full object-cover object-center"
+            loading="lazy"
+            height="300">
+        </picture>
+      </a>
+
+      {% render 'quick-view', perProduct: perProduct %}
+    </div>
+
+    <a href="{{ product_url }}" class="block px-2 py-2 md:p-3 flex flex-col gap-1 md:gap-1.5 flex-grow">
+      <div class="flex items-start justify-between gap-2 md:pt-5">
+          <span class="text-[11px] md:text-xs heading-text-color font-normal line-clamp-1">
+            {{ perProduct.short_description | strip_html }}
+          </span>
+        <div class="flex gap-0.5 flex-shrink-0" aria-hidden="true">
+          {% for i in (1..5) %}
+            {% if i <= perProduct.average_rating %}
+              {% render 'icon-star-filled' %}
+            {% else %}
+              {% render 'icon-star-empty' %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <p class="text-sm md:text-base font-medium body-text-color line-clamp-1 md:pt-2">
+        {{ perProduct.title | capitalize }}
+      </p>
+
+      <div class="flex items-center justify-between gap-2 flex-wrap mt-auto">
+        <span class="text-sm md:text-base font-normal body-text-color">
+          {% if perProduct.price_min == perProduct.price_max %}
+            {{ perProduct.price_min_formatted }}
+          {% else %}
+            {{ perProduct.price_min_formatted }} - {{ perProduct.price_max_formatted }}
+          {% endif %}
+        </span>
+        {% if perProduct.options.size > 0 %}
+          {% assign color_option_found = false %}
+          {% for option in perProduct.options %}
+            {% unless color_option_found %}
+              {% assign has_color_values = false %}
+              {% for value in option.values %}
+                {% if value.data != blank %}
+                  {% assign has_color_values = true %}
+                  {% break %}
+                {% endif %}
+              {% endfor %}
+              {% if has_color_values %}
+                {% assign color_option_found = true %}
+                <div class="flex gap-2 md:gap-2.5 items-center">
+                  {% for value in option.values %}
+                    {% if value.data != blank %}
+                      <span
+                        class="block w-3 h-3 md:w-3.5 md:h-3.5 rounded-full flex-shrink-0"
+                        style="background-color: {{ value.data }};{% if forloop.first %} outline: 1px solid var(--color-primary); outline-offset: 2px;{% endif %}"
+                        aria-label="{{ value.name | escape }}"></span>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endunless %}
+          {% endfor %}
+        {% endif %}
+      </div>
+    </a>
+  </div>
+</div>

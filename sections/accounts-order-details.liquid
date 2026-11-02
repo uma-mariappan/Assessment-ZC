@@ -1,0 +1,325 @@
+{% liquid
+  assign list_of_orders = orders.salesorder
+  assign sales_return = list_of_orders.salesreturns
+  assign status = ""
+  assign display_status = ""
+  assign makeCancelReturnVisible = false
+  assign status_bg_color = ""
+%}
+
+{% if list_of_orders.order_status == "pending" %}
+  {% assign status = "Pending" %}
+{% elsif list_of_orders.order_status == "confirmed" %}
+  {% if list_of_orders.shipped_status == "pending" or list_of_orders.shipped_status == "partially_shipped" %}
+    {% assign status = "Confirmed" %}
+  {% elsif list_of_orders.shipped_status == "shipped" or list_of_orders.shipped_status == "ready_for_delivery" %}
+    {% assign status = "Shipped" %}
+  {% elsif list_of_orders.shipped_status == "fulfilled" %}
+    {% assign status = "Delivered" %}
+  {% endif %}
+{% elsif list_of_orders.order_status == "closed" or list_of_orders.order_status == "cancelled" or list_of_orders.order_status == "void" %}
+  {% if list_of_orders.shipped_status == "" %}
+    {% assign status = "Cancelled" %}
+  {% elsif list_of_orders.shipped_status == "fulfilled" %}
+    {% assign status = "Delivered" %}
+  {% endif %}
+{% endif %}
+
+{% case status %}
+  {% when "Pending" %}
+    {% assign status_bg_color = "bg-[var(--color-warning)]" %}
+  {% when "Confirmed", "Shipped" %}
+    {% assign status_bg_color = "bg-[var(--color-info)]" %}
+  {% when "Delivered" %}
+    {% assign status_bg_color = "bg-[var(--color-success)]" %}
+  {% when "Cancelled" %}
+    {% assign status_bg_color = "bg-[var(--color-error)]" %}
+{% endcase %}
+
+{% assign display_status = status %}
+{% if status == "Shipped" %}
+  {% if list_of_orders.pickup_location_id == "" %}
+  {% else %}
+    {% assign display_status = "accounts.account_order.status_reached" | t %}
+  {% endif %}
+{% elsif status == "Delivered" %}
+  {% if list_of_orders.pickup_location_id == "" %}
+  {% else %}
+    {% assign display_status = "accounts.account_order.status_completed" | t %}
+  {% endif %}
+{% endif %}
+
+{% for order_item in list_of_orders.line_items %}
+  {% if list_of_orders.is_dropshipped == false %}
+    {% if order_item.quantity_to_cancel == 0 %}
+    {% else %}
+      {% if order_item.line_item_type == "service" %}
+      {% else %}
+        {% assign makeCancelReturnVisible = true %}
+      {% endif %}
+    {% endif %}
+    {% if order_item.quantity_to_return == 0 %}
+    {% else %}
+      {% assign makeCancelReturnVisible = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% if sales_return.size > 0 %}
+  {% assign sales_item_id = "" %}
+  {% for salesReturn in sales_return %}
+    {% for salesItems in salesReturn.line_items %}
+      {% if salesItems.salesorder_item_id == "" %}
+      {% else %}
+        {% if sales_item_id == "" %}
+          {% assign sales_item_id = salesItems.salesorder_item_id %}
+        {% else %}
+          {% assign sales_item_id = sales_item_id | append: "," | append: salesItems.salesorder_item_id %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  {% assign sales_item_id_list = sales_item_id | split: "," %}
+{% endif %}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<div id="section-{{ section.id }}" class="w-[90%] mx-auto page-max-width">
+    <div class="">
+      <!-- Page Header -->
+      <div class="flex justify-between items-center py-6 md:py-8 flex-wrap">
+        <div class="flex gap-6 items-center">
+          <a href="/account/orders">
+            {%  render 'icon-back-btn' %}
+          </a>
+          <h1 class="text-xl md:text-[40px] md:leading-[48px] font-medium heading-text-color primary-font">{{ 'accounts.account_order_details.order_details' | t }}</h1>
+        </div>
+      </div>
+  
+      <!-- Order Info -->
+      <div class="">
+        <div class="flex flex-wrap justify-between items-center gap-4 pb-6">
+          <div class="flex items-center gap-3">
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-row gap-6 items-center flex-wrap">
+                    <h2 class="font-semibold text-xl md:text-2xl">#{{ list_of_orders.salesorder_number | escape }}</h2>
+                    <span class="{{ status_bg_color }} text-sm md:text-base font-medium text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-white"></span>
+                        {{ display_status | escape }}
+                    </span>
+                </div>
+                <div class="text-sm md:text-base">{{ 'accounts.account_order.placed_on' | t }} : <span class="font-semibold">{{ list_of_orders.created_time_formatted | escape }}</span></div>
+            </div>
+          </div>
+          <div class="flex flex-row gap-4 flex-wrap">
+            {% if status == "Pending" or status == "Confirmed" %}
+              {% if makeCancelReturnVisible %}
+                <a href="{{ list_of_orders.salesorder_id }}/status">
+                  <button class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base font-medium">{{ 'accounts.account_order_details.request_cancellation_btn' | t }}</button>
+                </a>
+              {% endif %}
+            {% elsif status == "Delivered" %}
+              {% assign invoice_id = "" %}
+              {% for invoice in list_of_orders.invoices %}
+                {% assign invoice_id = invoice.invoice_id %}
+              {% endfor %}
+              {% if invoice_id == "" %}
+              {% else %}
+                <a href="/portal/orders/invoice/{{ invoice_id }}" target="_blank">
+                  <button class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base font-medium">{{ 'accounts.account_order_details.print_invoice_btn' | t }}</button>
+                </a>
+              {% endif %}
+              {% if makeCancelReturnVisible %}
+                <a href="/account/orders/{{ list_of_orders.salesorder_id }}/status">
+                  <button class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base font-medium">{{ 'accounts.account_order_details.return_btn' | t }}</button>
+                </a>
+              {% endif %}
+            {% endif %}
+            {% if store.preferences.buy_again_enabled %}
+              {% if status == "Pending" %}
+              {% else %}
+                <button type="button" class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base font-medium" data-buy-again data-order-line-items="{{ list_of_orders.line_items | json | escape }}">
+                  {{ 'accounts.account_order.buy_again' | t }}
+                </button>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+
+        {% if list_of_orders.packages.size > 0 %}
+          {% for package in list_of_orders.packages %}
+            <div class="mb-6 text-sm">
+              {{ 'accounts.account_order_details.delivered_on' | t }} : <span>{{ package.shipment_date_formatted | escape }}</span>
+            </div>
+          {% endfor %}
+        {% endif %}
+  
+        <!-- Address & Payment Info -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mt-6 mb-8">
+          <!-- Shipping Address -->
+          <div class="border border-color p-4 md:p-8 bg-white">
+            <h3 class="font-bold text-lg md:text-xl mb-4">{{ 'accounts.account_order_details.shipping_address' | t }}</h3>
+            <p class="text-sm md:text-base font-semibold mb-2">{{ list_of_orders.shipping_address.attention | escape }}</p>
+            <p class="text-sm md:text-base mb-2">{{ list_of_orders.shipping_address.address | escape }},<br>{{ list_of_orders.shipping_address.city | escape }},
+            <br>{{ list_of_orders.shipping_address.state | escape }} - {{ list_of_orders.shipping_address.zip | escape }},<br>{{ list_of_orders.shipping_address.country | escape }}.</p>
+            <p class="text-sm md:text-base">{{ list_of_orders.shipping_address.phone | escape }}</p>
+            <p class="text-sm md:text-base">{{ list_of_orders.customer_email | escape }}</p>
+          </div>
+  
+          <!-- Payment Information -->
+          <div class="border border-color p-4 md:p-8 bg-white">
+            <h3 class="font-bold text-lg md:text-xl mb-4">{{ 'accounts.account_order_details.payment_information' | t }}</h3>
+            <div class="flex justify-between text-sm md:text-base mb-2">
+              <span>{{ 'accounts.account_order_details.sub_total' | t }}</span>
+              <span class="font-semibold">{{ list_of_orders.sub_total_formatted | escape }}</span>
+            </div>
+            <div class="flex justify-between text-sm md:text-base mb-2">
+              <span>{{ 'accounts.account_order_details.shipping_msg' | t }}</span>
+              <span class="font-semibold">{{ list_of_orders.shipping_charge_exclusive_of_tax_formatted | escape }}</span>
+            </div>
+            <div class="flex justify-between text-sm md:text-base mb-2">
+              <span>{{ 'accounts.account_order_details.tax' | t }}</span>
+              <span class="font-semibold">{{ list_of_orders.tax_total_formatted | escape }}</span>
+            </div>
+            <div class="flex justify-between items-center text-sm md:text-base font-semibold border-t border-[var(--color-border)] mb-3">
+              <span class="mt-3">{{ 'accounts.account_order_details.total' | t }}</span>
+              <span class="font-semibold">{{ list_of_orders.total_formatted | escape }}</span>
+            </div>
+            <div class="text-sm md:text-base flex justify-between">
+              <span>{{ 'accounts.account_order_details.payment_method' | t }}</span><br>
+              <span class="font-semibold">{{ list_of_orders.adjustment_description | escape }}</span>
+            </div>
+          </div>
+        </div>
+  
+
+        <div class="p-4 md:p-8 border border-color bg-white mb-20 md:mb-40">
+          <h3 class="font-bold text-lg md:text-xl pb-2">{{ 'accounts.account_order_details.items' | t }}</h3>
+          <div>
+            {% for orderItem in list_of_orders.line_items %}
+              <div class="flex items-center justify-between first:border-t-0 border-t border-color pt-6 pb-6 last:pb-0 flex-wrap gap-2">
+                <div class="flex flex-col gap-3">
+                  <div class="flex items-center gap-6"> 
+                    <div class="flex w-28 h-32 md:w-36 md:h-40 rounded-lg overflow-hidden border border-slate-200">
+                      {% assign item_image = orderItem.image_url %}
+                      {% if item_image == '?' or item_image == '' or item_image == null %}
+                        {% assign item_image = "no-image-59606643991319.webp" | asset_url %}
+                      {% endif %}
+                      {% assign order_item_image_obj = orderItem.image | default: item_image %}
+                      <a href="{{ orderItem.product_url }}" target="_blank" class="block w-full h-full">
+                        <picture class="block w-full h-full">
+                          {% render 'image-resolutions', firstImage: order_item_image_obj %}
+                          <img src="{{ item_image }}" alt="{{ orderItem.name | escape }}" height="80" loading="lazy" class="h-full w-auto min-w-full object-cover object-center">
+                        </picture>
+                      </a>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                      <a href="{{ orderItem.product_url }}" target="_blank" class="font-semibold text-sm md:text-base">{{ orderItem.name | escape }}</a>
+                      {% render 'order-item-custom-fields', orderItem: orderItem %}
+                      <p class="text-lg md:text-xl py-2">{{ orderItem.sales_rate_formatted | escape }}</p>
+                      <div class="py-1.5 px-3 md:py-2 md:px-4 rounded-[32px] border" style="background-color: var(--color-background-alt); border-color: var(--color-border); flex items-center justify-center w-fit">
+                          <p class="text-sm md:text-base font-medium">{{ 'accounts.common.quantity' | t }} : {{ orderItem.quantity | floor }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  {% if sales_item_id_list contains orderItem.line_item_id %}
+                    <div class="border border-dashed" style="border-color: var(--color-border); background-color: var(--color-background-alt); p-[10px] text-sm">
+                        {{ 'accounts.account_order_details.cancel_request_msg' | t }}..
+                      <a href="/account/orders/{{ list_of_orders.salesorder_id }}/status" class="font-medium">{{ 'accounts.account_order_details.check_status' | t }}</a>
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="flex flex-col gap-3 text-start sm:text-end">
+                  <div class="flex flex-col gap-2">
+                    <span class="block text-sm md:text-base">{{ 'accounts.account_order_details.amount' | t }}</span>
+                    <span class="font-semibold text-xl md:text-2xl">{{ orderItem.item_total_formatted | escape }}</span>
+                  </div>
+                  {% if status == "Delivered" %}
+                    <a href="/account/orders/postreviews/{{ list_of_orders.salesorder_id }}/{{ orderItem.product_id }}" class="inline-flex items-center justify-center px-4 py-2 md:px-6 md:py-3 rounded-[32px] btn-primary btn-primary-color btn-primary-hover text-sm md:text-base font-medium whitespace-nowrap">
+                      {{ "reviews_ratings.write_btn" | t }}
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% schema %}
+{
+  "name": "t:sections.accounts_order_details.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.accounts_order_details.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.accounts_order_details.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.accounts_order_details.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.accounts_order_details.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.accounts_order_details.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.accounts_order_details.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.accounts_order_details.presets.default.name" }]
+}
+{% endschema %}

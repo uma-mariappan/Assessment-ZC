@@ -1,0 +1,108 @@
+{% assign shippingChargeDetails =  checkoutDetails.shipping_charge_details %}
+{% liquid
+  assign is_address_locked = false
+  if checkoutDetails.address_completed == true
+    assign is_address_locked = true
+  endif
+%}
+
+{% render "shipping-billing-information", checkoutDetails: checkoutDetails, allowAddressChange: false %}
+
+{% unless is_address_locked %}
+  <div class="border-b pt-7 border-color">
+      <h4 class="heading-text-color primary-font">{{ "checkout.blocks.shipping-methods.title" | t }}</h4>
+      <div class="lg:flex lg:flex-row py-4 pr-4 items-center">
+          {% for details in shippingChargeDetails %}
+              {% if checkoutDetails.customer.shipping_charge_id == details.shipping_charge_id %}
+                  <div>
+                      <p>{{details.name}}</p>
+                      <p class="text-sm pb-3">{{details.shipping_charge_formatted}}  ({{details.delivery_title}})</p>
+                  </div>
+                  <div class="grow lg:text-end mt-5">
+                      <button type="button" id="editShippingMethods" class="btn-secondary btn-secondary-color btn-secondary-hover
+                          p-2 text-xs lg:text-sm">{{ "checkout.blocks.common.change_btn" | t }}</button>
+                  </div>
+              {% endif %}
+          {% endfor %}
+      </div>
+  </div>
+{% endunless %}
+
+<div id="reviewOrder">
+    <div class="py-4">
+        <h4 class="my-6 heading-text-color primary-font">{{ "checkout.blocks.checkout-steps.review_order_payment" | t }}</h4>
+        <table class="w-full">
+            <thead class="border-b hidden lg:table-header-group md:table-header-group border-color">
+                <tr>
+                    <th class="text-left font-normal pb-4">{{ "checkout.blocks.review-order.items" | t }}</th>
+                    <th class="pb-4">&nbsp;</th>
+                    <th class="text-left font-normal pb-4">{{ "checkout.blocks.review-order.quantity" | t }}</th>
+                    <th class="text-left font-normal pb-4">{{ "checkout.blocks.review-order.subtotal" | t }}</th>
+                </tr>
+            </thead>
+            <tbody class="py-4 border-y border-color">
+                {% assign count = 0 %}
+                {% assign size = checkoutDetails.line_items | size %}
+                {% for lineItems in checkoutDetails.line_items %}
+                    {% liquid assign count = count | plus: 1 
+                    assign image_url = lineItems.image_url | prepend: ImgSrcDomain | append: "?organization_id=" | append: organizationId 
+                    %}
+                    {% if image_url == null or image_url == '?' or image_url == '' %}
+                        {% assign image_url = "no-image-59606643991319.webp" | asset_url %}
+                    {% else %}
+                        {% assign prefix = image_url | slice: 0, 17 %}
+                        {% if prefix == '?organization_id' %}
+                            {% assign image_url = "no-image-59606643991319.webp" | asset_url %}
+                        {% endif %}
+                    {% endif %}
+
+                    <tr class="{% if size > count %} border-b border-dashed border-color {% endif %}">
+                        <td class="w-full flex flex-row py-6">
+                            <div>
+                                {% assign review_line_image_obj = lineItems.image | default: lineItems.image_url %}
+                                <a href="{{ lineItems.url }}" target="_blank" rel="noreferrer noopener">
+                                    <picture>
+                                        {% render 'image-resolutions', firstImage: review_line_image_obj %}
+                                        <img alt="Cart Image" class="rounded-xl h-28 lg:h-32 w-auto min-w-full object-cover object-center"
+                                            src="{{ image_url }}" height="128" loading="lazy"
+                                            srcset="
+                                            {{ lineItems.image_url | prepend:ImgSrcDomain }}?organization_id={{ organizationId }}&width=200 200w,
+                                            {{ lineItems.image_url | prepend:ImgSrcDomain }}?organization_id={{ organizationId }}&width=400 400w,
+                                            {{ lineItems.image_url | prepend:ImgSrcDomain }}?organization_id={{ organizationId }}&width=600 600w,
+                                            {{ lineItems.image_url | prepend:ImgSrcDomain }}?organization_id={{ organizationId }}&width=800 800w">
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="pl-4 lg:hidden md:hidden">
+                                <div><a class="text-sm font-light tracking-wide" href="{{ lineItems.url }}" target="_blank" rel="noreferrer noopener">{{lineItems.name}}</a></div>
+                                <div class="pt-2"><span class="text-base font-bold tracking-wide">{{checkoutDetails.currency_symbol}}{{lineItems.rate}}</span></div>
+                                <div class="pt-2"><span class="font-light tracking-wide">Quantity:&nbsp;</span><span class="text-sm font-light tracking-wide">{{lineItems.quantity}}</span></div>
+                                <div class="pt-2"><span class="text-sm font-light tracking-wide">{{checkoutDetails.currency_symbol}}{{lineItems.item_total}}</span></div>
+                                {% render 'order-item-custom-fields', orderItem: lineItems %}
+                            </div>
+                        </td>
+                        <td class="w-2/5 hidden lg:table-cell md:table-cell">
+                            <p >{{lineItems.name}}</p>
+                            <p>{{checkoutDetails.currency_symbol}}{{lineItems.rate}}</p>
+                            {% render 'order-item-custom-fields', orderItem: lineItems %}
+                        </td>
+                        <td class="w-1/5 hidden lg:table-cell md:table-cell"><p>{{lineItems.quantity}}</p>
+                        </td>
+                        <td class="w-1/5 hidden lg:table-cell md:table-cell"><p>{{checkoutDetails.currency_symbol}}{{lineItems.item_total}}</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="py-4">
+        {% render "payment-options", checkoutDetails: checkoutDetails %}
+    </div>
+</div>
+<div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 z-50">
+    <div class="flex items-center">
+        <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+        {% render "icon-page-loader" %}
+    </div>
+</div>

@@ -1,0 +1,188 @@
+<script type="module" src="{{ "account-order-500088322021866.js" | asset_url }}" defer></script>
+
+{% assign list_of_orders = orders.salesorders%}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<account-order id="section-{{ section.id }}">
+  <div class="w-[90%] mx-auto page-max-width">
+    <div class="min-h-screen">
+      <div class="py-6 md:py-8">
+        <h1 class="text-xl md:text-[40px] md:leading-[48px] font-medium heading-text-color primary-font">{{ 'accounts.common.my_orders' | t  }}</h1>
+      </div>
+      
+      <div class="flex flex-wrap justify-between items-center gap-4 pb-6 md:pb-8">
+        <div class="flex space-x-3 md:space-x-6">
+          <button id="onGoingOrders" class="pb-2 md:pb-4 font-semibold text-base md:text-lg border-solid border-b-2 border-color">
+            {{ 'accounts.account_order.ongoing_orders' | t }}
+          </button>
+          <button id="pastOrders" class="pb-2 md:pb-4 text-base md:text-lg border-solid">
+             {{ 'accounts.account_order.past_orders' | t }}
+          </button>
+        </div>
+        <div class="flex items-center space-x-1 text-xs md:text-sm cursor-pointer py-2 px-3 md:py-3 md:px-6 border border-color rounded-[32px]">
+          {% render "icon-account-calender" %}
+          <select id="orderDateFilter" class="h-fit bg-transparent text-xs md:text-sm">
+            <option value="1" class="pl-1 pr-4"> {{ 'accounts.account_order.last_month' | t }}</option>
+            <option value="3" class="pl-1 pr-4" selected> {{ 'accounts.account_order.last_three_months' | t }}</option>
+            <option value="6" class="pl-1 pr-4"> {{ 'accounts.account_order.last_six_months' | t }}</option>
+            <option value="12" class="pl-1 pr-4"> {{ 'accounts.account_order.last_year' | t }}</option>
+          </select>        
+        </div>
+      </div>
+
+      <div id="sectionOngoingOrder" class="flex flex-col gap-6 mb-40">
+
+        {% assign has_ongoing_orders = false %}
+
+        {% for order in list_of_orders %}
+
+          {% assign status = "" %}
+          {% assign show_ongoing = false %}
+
+          {% if order.order_status == "pending" %}
+            {% assign status = "Pending" %}
+            {% assign show_ongoing = true %}
+
+          {% elsif order.order_status == "confirmed" %}
+            {% if order.shipped_status == "pending" or order.shipped_status == "partially_shipped" %}
+              {% assign status = "Confirmed" %}
+              {% assign show_ongoing = true %}
+            {% elsif order.shipped_status == "shipped" or order.shipped_status == "ready_for_delivery" %}
+              {% assign status = "Shipped" %}
+              {% assign show_ongoing = true %}
+            {% endif %}
+          {% endif %}
+
+          {% if show_ongoing %}
+            {% assign has_ongoing_orders = true %}
+            {% render "account-order-list", orderDetail: order, orderStatus: status %}
+          {% endif %}
+
+        {% endfor %}
+
+        {% unless has_ongoing_orders %}
+          {% assign empty_message = "accounts.account_order.empty_ongoing" | t %}
+          {% render "account-empty-order", emptyMsg: empty_message %}
+        {% endunless %}
+
+      </div>
+
+      <div id="sectionPastOrder" class="hidden flex flex-col gap-6 mb-40">
+
+        {% assign has_past_orders = false %}
+
+        {% for order in list_of_orders %}
+
+          {% assign status = "" %}
+          {% assign show_past = false %}
+
+          {% if order.order_status == "closed" or order.order_status == "cancelled" or order.order_status == "void" or order.order_status == "confirmed" %}
+            {% if order.shipped_status == "" %}
+              {% assign status = "Cancelled" %}
+              {% assign show_past = true %}
+            {% elsif order.shipped_status == "fulfilled" %}
+              {% assign status = "Delivered" %}
+              {% assign show_past = true %}
+            {% endif %}
+          {% endif %}
+
+          {% if show_past %}
+            {% assign has_past_orders = true %}
+            {% render "account-order-list", orderDetail: order, orderStatus: status %}
+          {% endif %}
+
+        {% endfor %}
+
+        {% unless has_past_orders %}
+          {% assign empty_message = "accounts.account_order.empty_past" | t %}
+          {% render "account-empty-order", emptyMsg: empty_message %}
+        {% endunless %}
+
+      </div>
+
+    </div>
+    <div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 z-10">
+      <div class="flex items-center">
+          <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+          {% render "icon-page-loader" %}
+      </div>
+    </div>
+  </div>
+</account-order>
+
+{% schema %}
+{
+  "name": "t:sections.account_order.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.account_order.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_order.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_order.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.account_order.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_order.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_order.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.account_order.presets.default.name" }]
+}
+{% endschema %}

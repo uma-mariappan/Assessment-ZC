@@ -1,0 +1,245 @@
+{% if content_for_checkout %}
+  {{ content_for_checkout }}
+{% else %}
+<script type="module" src={{ "checkout-address-563269978574597.js" | asset_url }} defer></script>
+<script type="module" src={{ "checkout-dispatch-400681252308797.js" | asset_url }} defer></script>
+<script type="module" src={{ "checkout-payment-364504482608998.js" | asset_url }} defer></script>
+<script type="module" src={{ "checkout-quote-request-732460320115431.js" | asset_url }} defer></script>
+<script defer>window.checkout_data = {{ checkout | json }}</script>
+
+{% liquid assign checkoutDetails =  checkout
+  assign section_settings = section.settings
+  assign available_payment_methods = checkoutDetails.payment_methods
+  assign mobile_horizontal_margin = section_settings.mobile_horizontal_margin
+  assign desktop_margin = section_settings.desktop_horizontal_margin
+  assign checkout_address = checkoutDetails.contact_info
+  assign current_user = null
+  assign billing_address = checkoutDetails.billing_address
+  assign shipping_address = checkoutDetails.shipping_address
+  assign is_quote_details_flow = false
+  if checkoutDetails.estimate_id != nil and checkoutDetails.estimate_id != blank
+    assign is_quote_details_flow = true
+  endif
+  assign is_quote_request_flow = false
+  if checkoutDetails.is_quote and is_quote_details_flow == false
+    assign is_quote_request_flow = true
+  endif
+  assign show_checkout_payment = false
+  if checkout.address_completed == true
+    assign show_checkout_payment = true
+  elsif checkoutDetails.customer.shipping_address and checkoutDetails.customer.shipping_charge_id
+    assign show_checkout_payment = true
+  elsif is_quote_details_flow and checkoutDetails.customer.shipping_address
+    assign show_checkout_payment = true
+  endif
+%}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<div id="checkoutDetailsJson" class="hidden">{{ checkoutDetails | json }}</div>
+
+
+<div id="section-{{ section.id }}" class="m-4 h-fit">
+  <div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-white bg-opacity-60 z-50">
+    <div class="flex items-center">
+        <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+        {% render "icon-page-loader" %}
+    </div>
+</div>
+
+{% if available_payment_methods.size == 0 %}
+  {% assign available_payment_methods = checkoutDetails.offline_payment_methods %}
+{% endif %}
+
+<div class="w-[90%] mx-auto" id="coupon-result">
+  <div class="mx-auto page-max-width">
+    {% if checkout.line_items.size == 0 %}
+      {% render "cart-empty" , sectionSettings: section_settings %}
+    {% elsif available_payment_methods.size != 0 %}
+      <div class="my-4 mt-32 mx-0 lg:mx-[{{ desktop_margin }}rem]">
+        <div class="w-full">
+          <div class="py-5">
+            <ul class="flex flex-row">
+              <li class="flex flex-row gap-2 items-center">
+                <a class="text-sm" href="/home">{{ 'checkout.home' | t }}</a>
+                {% render "icon-greater-than" %}
+              </li>
+              {% if is_quote_request_flow %}
+                <li class="flex flex-row gap-2 items-center">
+                  <a class="text-sm" href="/quote">View Quote</a>
+                  {% render "icon-greater-than" %}
+                </li>
+                <li class="flex flex-row gap-2 items-center heading-text-color">
+                  <a class="text-sm" href="javascript:void(0)">Request Quote</a>
+                </li>
+              {% elsif is_quote_details_flow %}
+                <li class="flex flex-row gap-2 items-center">
+                  <a class="text-sm" href="/account/quotes">Quotes</a>
+                  {% render "icon-greater-than" %}
+                </li>
+                <li class="flex flex-row gap-2 items-center heading-text-color">
+                  <a class="text-sm" href="javascript:void(0)">{{ 'checkout.checkout' | t }}</a>
+                </li>
+              {% else %}
+                <li class="flex flex-row gap-2 items-center">
+                  <a class="text-sm" href="/cart">{{ 'checkout.view_cart' | t }}</a>
+                  {% render "icon-greater-than" %}
+                </li>
+                <li class="flex flex-row gap-2 items-center heading-text-color">
+                  <a class="text-sm" href="javascript:void(0)">{{ 'checkout.checkout' | t }}</a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
+          <div>
+            {% render "checkout-steps", checkoutDetails: checkoutDetails, isQuoteRequestFlow: is_quote_request_flow, isQuoteDetailsFlow: is_quote_details_flow %}
+
+            <div class="lg:flex lg:flex-row gap-8" id="checkout-container">
+              <div class="{% if is_quote_request_flow %} lg:w-[100%] {% else %} lg:w-[60%] {% endif %}">
+                <div id="checkoutAddressTemplate"
+                  class="{% if checkoutDetails.customer.shipping_address == nil and checkoutDetails.customer.shipping_charge_id == nil %}block{% else %}hidden{% endif %}">
+                  <checkout-user-address data-is-quote="{{checkout.is_quote}}" data-quote-id="{{checkout.checkout_id}}" data-quote-checkout-flow="{% if is_quote_details_flow %}quote_details{% elsif is_quote_request_flow %}quote_request{% else %}cart{% endif %}">
+                    {% render "customer-information", checkoutDetails: checkoutDetails, checkoutAddress: checkout_address, 
+                      currentUser: current_user, shippingAddress: shipping_address, billingAddress: billing_address %}
+                  </checkout-user-address>
+                </div>
+                <div id="checkoutShippingTemplate"
+                  class="{% if checkoutDetails.customer.shipping_address and checkoutDetails.customer.shipping_charge_id == nil and checkout.is_quote == false and checkout.address_completed == false %}block{% else %}hidden{% endif %}">
+                  <checkout-dispatch>
+                    {% render "shipping-methods", checkoutDetails: checkoutDetails %}
+                  </checkout-dispatch>
+                </div>
+                <div id="requestQuoteTemplate"
+                  class="{% if checkoutDetails.customer.shipping_address and checkoutDetails.customer.shipping_charge_id == nil and is_quote_request_flow %}block{% else %}hidden{% endif %}">
+                  <checkout-quote-request>
+                    {% render "checkout-quote-request", checkoutDetails: checkoutDetails %}
+                  </checkout-quote-request>
+                </div>
+                <div id="checkoutPaymentTemplate"
+                  class="
+                  {% if show_checkout_payment %}
+                    block
+                  {% else %}
+                    hidden
+                  {% endif %}
+                ">
+                  <checkout-order-payment data-estimate-id="{{ checkout.estimate_id }}" data-checkout-id="{{ checkout.checkout_id }}">
+                    {% render "review-order", checkoutDetails: checkoutDetails %}
+                  </checkout-order-payment>
+                </div>
+              </div>
+              {% unless is_quote_request_flow %}
+                <div class="grow lg:w-[40%] lg:border-l border-color">
+                  <div class="sticky top-[150px] py-6 lg:pl-8 md:pl-8">
+                    <checkout-coupon>
+                      {% render "coupon", checkoutDetails: checkoutDetails, hideCouponForm: is_quote_details_flow %}
+                    </checkout-coupon>
+                  </div>
+                </div>
+              {% endunless %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="flex flex-col gap-1 h-full w-full mt-[12rem] md:mt-36 justify-center items-center pb-[50px]">
+      <p class="text-lg md:text-3xl">{{ "checkout.enable_payment_method_label" | t }}</p>
+      <p class="text-sm md:text-base text-center text-red-600">{{ "checkout.additional_message" | t }}</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endif %}
+
+
+{% schema %}
+{
+  "name": "t:sections.checkout.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["checkout"]},
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.checkout.title"
+    },
+    {
+      "type": "range",
+      "id": "desktop_horizontal_margin",
+      "label": "t:sections.checkout.settings.desktop_horizontal_margin.label",
+      "min": 0,
+      "max": 7,
+      "unit": "rem",
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "t:sections.checkout.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.checkout.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.checkout.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.checkout.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.checkout.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.checkout.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.checkout.presets.default.name" }]
+}
+{% endschema %}

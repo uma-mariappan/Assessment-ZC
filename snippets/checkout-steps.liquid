@@ -1,0 +1,59 @@
+<div class="py-8 hidden lg:block md:block">
+  <div class="my-6">
+    <ul class="flex justify-center">
+      {% if isQuoteRequestFlow %}
+        <li class="after:content-['---------'] after:mx-2 checkout-steps-color">
+          <span id="addressPage" class="pb-2 text-sm 
+          {% if checkoutDetails.customer.shipping_address == nil and checkoutDetails.customer.shipping_charge_id == nil %}
+          border-b border-color
+          {% else %}opacity-45{% endif %}"
+          >{{ "checkout.blocks.checkout-steps.address" | t }}</span>
+        </li>
+        <li>
+          <span id="dispatchPage" class="pb-2 text-sm
+          {% if checkoutDetails.customer.shipping_address != nil and checkoutDetails.customer.shipping_charge_id == nil %}
+          border-b border-color
+          {% else %}opacity-45{% endif %}"
+          >Request quote</span>
+        </li>
+      {% elsif isQuoteDetailsFlow %}
+        <li class="after:content-['---------'] after:mx-2 checkout-steps-color">
+          <span id="addressPage" class="pb-2 text-sm 
+          {% if checkoutDetails.customer.shipping_address == nil and checkoutDetails.customer.shipping_charge_id == nil %}
+          border-b border-color
+          {% else %}opacity-45{% endif %}"
+          >{{ "checkout.blocks.checkout-steps.address" | t }}</span>
+        </li>
+        <li>
+          <span id="reviewOrderPage" class="pb-2 text-sm
+          {% if checkoutDetails.customer.shipping_address != nil %}
+          border-b border-color
+          {% else %}opacity-45{% endif %}"
+          >{{ "checkout.blocks.checkout-steps.review_order_payment" | t }}</span>
+        </li>
+      {% else %}
+        <li class="after:content-['---------'] after:mx-2 checkout-steps-color">
+          <span id="addressPage" class="pb-2 text-sm 
+          {% if checkoutDetails.customer.shipping_address == nil and checkoutDetails.customer.shipping_charge_id == nil %}
+          border-b border-color
+          {% else %}opacity-45{% endif %}"
+          >{{ "checkout.blocks.checkout-steps.address" | t }}</span>
+        </li>
+        <li class="after:content-['---------'] after:mx-2 checkout-steps-color">
+          <span id="dispatchPage" class="pb-2 text-sm
+          {% if checkoutDetails.customer.shipping_address != nil and checkoutDetails.customer.shipping_charge_id == nil %}
+          border-b border-color
+          {% else %}opacity-45{% endif %}"
+          >{{ "checkout.blocks.checkout-steps.dispatch" | t }}</span>
+        </li>
+        <li>
+          <span id="reviewOrderPage" class="pb-2 text-sm
+          {% if checkoutDetails.customer.shipping_address != nil and checkoutDetails.customer.shipping_charge_id != nil %}
+          border-b border-color
+          {% else %}opacity-45{% endif %}"
+          >{{ "checkout.blocks.checkout-steps.review_order_payment" | t }}</span>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</div>

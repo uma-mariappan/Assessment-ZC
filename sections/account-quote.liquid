@@ -1,0 +1,116 @@
+<script src="{{ "account-quote-207029581510071.js" | asset_url }}" defer></script>
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<account-quote id="section-{{ section.id }}">
+  <div class="w-[90%] mx-auto page-max-width">
+    <div class="min-h-screen">
+      <div class="py-6 md:py-8 flex flex-wrap items-center justify-between gap-4">
+        <h1 class="text-xl md:text-[40px] md:leading-[48px] font-medium heading-text-color primary-font">{{ 'accounts.quotes.title' | t }}</h1>
+        <div class="flex items-center space-x-1 text-xs md:text-sm cursor-pointer py-2 px-3 md:py-3 md:px-6 border border-color rounded-[32px]">
+          {% render "icon-account-calender" %}
+          <select id="quoteStatusFilter" class="h-fit bg-transparent text-xs md:text-sm">
+            <option value="All" selected class="pl-1 pr-4">{{ 'accounts.quotes.filter_all' | t }}</option>
+            <option value="Submitted" class="pl-1 pr-4">{{ 'accounts.quotes.filter_submitted' | t }}</option>
+            <option value="Converted" class="pl-1 pr-4">{{ 'accounts.quotes.filter_converted' | t }}</option>
+            <option value="Declined" class="pl-1 pr-4">{{ 'accounts.quotes.filter_declined' | t }}</option>
+          </select>        
+        </div>
+      </div>
+      
+    
+      <div id="sectionQuoteList" class="flex flex-col gap-6 mb-40">
+        {% if quotes.size == 0 %}
+          {% assign empty_message = "accounts.quotes.empty" | t %}
+          {% render "account-empty-order", emptyMsg: empty_message %}
+        {% else %}
+          {% for quote in quotes %}
+            {% render "account-quote-list", quoteDetail: quote %}
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    <div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 z-10">
+      <div class="flex items-center">
+          <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+          {% render "icon-page-loader" %}
+      </div>
+    </div>
+  </div>
+</account-quote>
+
+{% schema %}
+{
+  "name": "t:sections.account_quote.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.account_quote.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.account_quote.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_quote.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.account_quote.presets.default.name" }]
+}
+{% endschema %}

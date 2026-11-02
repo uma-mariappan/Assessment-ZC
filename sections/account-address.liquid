@@ -1,0 +1,376 @@
+<script type="module" src="{{ "account-address-483793497327048.js" | asset_url }}" defer></script>
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% liquid assign contact_address = addresses.contact.addresses
+  assign default_address = addresses.contact.shipping_address
+  assign is_default_address_empty = 'false' 
+  assign default_address_size = 0
+%}
+{% if default_address.address_id != blank or default_address.address_id != '' %}
+  {% liquid assign is_default_address_empty = 'true'
+    assign default_address_size = 1
+    assign size_of_default_address = default_address_size | plus: contact_address.size
+  %}
+{% endif %}
+{% if contact_address != empty %}
+  {% assign size_of_address = contact_address | size %}
+{% endif %}
+
+{% if default_address.size == 0 %}
+  {% assign first_address = true %}
+{% else %}
+  {% assign first_address = false %}
+{% endif %}
+
+
+<account-address id="section-{{ section.id }}" data-first-address="{{ first_address }}">
+  <div class="w-[90%] mx-auto page-max-width">
+    <div class="min-h-screen mb-20 md:mb-40">
+      <div class="flex flex-wrap justify-between gap-4 py-6 md:py-8">
+        <div class="flex gap-6 items-center">
+          <h1 class="text-xl md:text-[40px] md:leading-[48px] font-medium heading-text-color primary-font">{{ 'accounts.common.my_address' | t }}</h1>
+        </div>
+        <button id="addNewAddressBtn" type="button" class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base font-medium">
+         <span>+ {{ 'accounts.account_address.new_address' | t }}</span>
+       </button>
+      </div>
+      <div id="createdAddress" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        
+        {% if contact_address.size > 0 or default_address.size > 0 %}
+          {% if is_default_address_empty != 'false' %}
+            {% assign is_default = 'true' %}
+            {% render "account-address-card", address: default_address, sizeOfAddress: size_of_default_address, isDefault: is_default %}
+          {% endif %}
+      
+          {% if contact_address != empty %}
+            {% assign is_default = 'false' %}
+            {% for address in contact_address %}
+              {% render "account-address-card", address: address, sizeOfAddress: size_of_address, isDefault: is_default %}
+            {% endfor %}
+          {% endif %}
+        {% else %}
+          <div class="w-full text-center">
+            <p class="text-xl text-slate-400">{{ 'accounts.account_address.no_address' | t }}</p>
+          </div>
+        {% endif %}
+      </div>
+      
+
+      <div id="newAddress" class="p-4 md:p-8 border border-color bg-white hidden">
+        <!-- Profile Card -->
+        <div class="w-full">
+      
+          <form id="createAddressForm" class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            <!-- First Name -->
+            <div class="pb-6">
+              <label class="block text-base font-semibold mb-2">
+                {{ 'accounts.common.first_name' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="first_name"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <!-- Last Name -->
+            <div class="pb-6">
+              <label class="block text-base font-semibold mb-2">
+                 {{ 'accounts.common.last_name' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="last_name"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <!-- Address -->
+            <div class="md:row-span-2 pb-6 w-full">
+              <label class="block text-base font-semibold mb-2">
+                 {{ 'accounts.common.address' | t }} <span class="text-red-500">*</span>
+              </label>
+              <textarea name="address"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base h-[140px] md:h-[172px]"></textarea>
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <!-- City -->
+            <div class="pb-6">
+              <label class="block text-base font-semibold mb-2">
+                 {{ 'accounts.common.city' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="city"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <!-- Country -->
+            <div class="relative pb-6 w-full">
+              <label class="block text-base font-semibold mb-2">
+                 {{ 'accounts.common.country' | t }} <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <select name="country"
+                  class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg appearance-none text-sm md:text-base h-fit">
+                  <option value=""> {{ 'accounts.account_address.select_country' | t }}</option>
+                </select>
+                <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
+                  {% render "icon-down-arrow" %}
+                </span>
+              </div>
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <!-- State -->
+            <div class="relative pb-6">
+              <label class="block text-base font-semibold mb-2">
+                 {{ 'accounts.common.state' | t }} <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <select name="state"
+                  class="w-full appearance-none border border-[var(--color-border)] p-3 md:p-4 h-fit rounded-lg text-sm md:text-base">
+                  <option value=""> {{ 'accounts.account_address.select_state' | t }}</option>
+                </select>
+                <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
+                  {% render "icon-down-arrow" %}
+                </span>
+              </div>
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <!-- Zip Code -->
+            <div class="pb-6 w-full">
+              <label class="block text-base font-semibold mb-2">
+                 {{ 'accounts.account_address.zip_code' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="zip"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <!-- Phone -->
+            <div class="pb-6">
+              <label class="block text-base font-semibold mb-2">
+                 {{ 'accounts.account_address.phone_number' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="phone"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+      
+            <!-- Default address checkbox -->
+            <div class="col-span-1 md:col-span-2 flex items-center gap-2 pb-8">
+              <label class="text-sm md:text-base font-semibold cursor-pointer">
+                <input type="checkbox" name="defaultCheckbox" class="mr-1">{{ 'accounts.account_address.make_default_address' | t }}
+              </label>
+            </div>
+      
+            <!-- Buttons -->
+            <div class="flex gap-4 justify-end col-span-1 md:col-span-2">
+              <button id="cancelAddressBtn" type="reset" class="px-4 py-3 md:px-8 md:py-5 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base">{{ 'accounts.common.cancel_btn' | t }}</button>
+              <button type="submit" class="px-4 py-3 md:px-8 md:py-5 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base"> {{ 'accounts.account_address.save_btn' | t }}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="editAddress" class="p-4 md:p-8 border border-color bg-white hidden">
+        <div class="w-full">
+      
+          <form id="editAddressForm" class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            <input type="hidden" name="attention">
+            <!-- First Name -->
+            <div class="pb-6">
+              <label class="block text-base font-semibold mb-2">
+                {{ 'accounts.common.first_name' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="first_name"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+                <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+      
+            <!-- Last Name -->
+            <div class="pb-6">
+              <label class="block text-base font-semibold mb-2">
+                {{ 'accounts.common.last_name' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="last_name"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+                <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+      
+            <!-- Address -->
+            <div class="md:row-span-2 pb-6 w-full">
+              <label class="block text-base font-semibold mb-2">
+                {{ 'accounts.common.address' | t }} <span class="text-red-500">*</span>
+              </label>
+              <textarea name="address" class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base h-[140px] md:h-[172px]">
+              </textarea>
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+      
+            <!-- City -->
+            <div class="pb-6">
+              <label class="block text-base font-semibold mb-2">
+                {{ 'accounts.common.city' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="city"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+                <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+      
+            <!-- Country -->
+            <div class="relative pb-6 w-full">
+              <label class="block text-base font-semibold mb-2">
+                {{ 'accounts.common.country' | t }} <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <select name="country"
+                  class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg appearance-none text-sm md:text-base h-fit">
+                  <option value=""> {{ 'accounts.account_address.select_country' | t }}</option>
+                </select>
+                <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
+                  {% render "icon-down-arrow" %}
+                </span>
+              </div>
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <!-- State -->
+            <div class="relative pb-6">
+              <label class="block text-base font-semibold mb-2">
+                {{ 'accounts.common.state' | t }} <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <select name="state"
+                  class="w-full appearance-none border border-[var(--color-border)] p-3 md:p-4 h-fit rounded-lg text-sm md:text-base">
+                  <option value=""> {{ 'accounts.account_address.select_state' | t }}</option>
+                </select>
+                <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
+                  {% render "icon-down-arrow" %}
+                </span>
+              </div>
+              <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <!-- Zip Code -->
+            <div class="pb-6 w-full">
+              <label class="block text-base font-semibold mb-2">
+                {{ 'accounts.account_address.zip_code' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="zip"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+                <p class="text-red-500 text-xs mt-1 hidden error-msg">{{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+
+            <div class="pb-6">
+              <label class="block text-base font-semibold mb-2">
+                {{ 'accounts.account_address.phone_number' | t }} <span class="text-red-500">*</span>
+              </label>
+              <input type="text" name="phone"
+                class="w-full border border-[var(--color-border)] p-3 md:p-4 rounded-lg text-sm md:text-base">
+                <p class="text-red-500 text-xs mt-1 hidden error-msg"> {{ 'accounts.common.required_msg' | t }}</p>
+            </div>
+      
+            <!-- Default address checkbox -->
+            <div class="col-span-1 md:col-span-2 flex items-center gap-2 pb-8">
+              <label class="text-sm md:text-base font-semibold cursor-pointer">
+                <input type="checkbox" name="defaultCheckbox" class="mr-1"> {{ 'accounts.account_address.make_default_address' | t }}
+              </label>
+            </div>
+      
+            <!-- Buttons -->
+            <div class="flex gap-4 justify-end col-span-1 md:col-span-2">
+              <button id="cancelEditAddressBtn" type="reset" class="px-4 py-3 md:px-8 md:py-5 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base">{{ 'accounts.common.cancel_btn' | t }}</button>
+              <button type="submit" class="px-4 py-3 md:px-8 md:py-5 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base">
+                {{ 'accounts.account_address.update_btn' | t }}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div id="messageNotification" class="opacity-0 transition-all duration-500">
+      {% render "account-message-notification" %}
+    </div>
+    <div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 z-10">
+      <div class="flex items-center">
+          <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+          {% render "icon-page-loader" %}
+      </div>
+    </div>
+  </div>
+</account-address>
+
+{% schema %}
+{
+  "name": "t:sections.account_address.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.account_address.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_address.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_address.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.account_address.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_address.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_address.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.account_address.presets.default.name" }]
+}
+{% endschema %}

@@ -1,0 +1,66 @@
+{% liquid
+  assign availableProduct = perProduct.initial_variant.available
+  if perProduct.initial_variant == null
+    assign availableProduct = perProduct.available
+  endif
+  unless isWishlistPage
+    assign isWishlistPage = false
+  endunless
+%}
+
+<add-to-cart>
+  <form
+    id="product-form"
+    method="post"
+    action="/addtocart"
+    data-product='{{ perProduct | json | escape }}'
+    data-wish-list="{{ isWishlistPage }}"
+    {% if isQuickView %}data-product-quick-view="true"{% endif %}
+  >
+    <input class="hidden" name="variant_id" type="text" value="{{ variantId }}">
+
+    <div class="flex items-center gap-1">
+      <button
+        type="submit"
+        data-add-to-cart
+        data-available="{{ availableProduct }}"
+        class="flex-1 h-[50px] flex items-center justify-center text-base font-normal text-center text-white transition-colors {% unless availableProduct %}hidden{% endunless %}"
+        style="background-color: var(--color-primary);"
+      >
+        <span class="btn-text">Add to Cart</span>
+        <span class="hidden spinner">Loading...</span>
+      </button>
+
+      <button
+        type="submit"
+        data-out-of-stock
+        disabled
+        class="flex-1 h-[50px] flex items-center justify-center text-base font-normal text-center text-white opacity-60 {% if availableProduct %}hidden{% endif %}"
+        style="background-color: var(--color-primary);"
+      >
+        Out of stock
+      </button>
+
+      {% if store.customer_portal.enabled and store.preferences.is_wishlist_enabled and isWishlistPage != true %}
+        <product-wishlist>
+          <div data-variant-id="{{ variantId }}" class="product-wishlist flex-shrink-0">
+            <button type="button"
+              aria-label="Toggle wishlist"
+              aria-pressed="false"
+              class="wishlist-removed w-[50px] h-[50px] flex items-center justify-center border transition-colors"
+              style="border-color: var(--color-primary); color: var(--color-primary);">
+              {% render 'icon-wishlist' %}
+            </button>
+          </div>
+        </product-wishlist>
+      {% endif %}
+    </div>
+  </form>
+
+  {% unless isQuickView %}
+  <div data-cart-popup
+    class="hidden fixed right-4 top-28 md:top-32 w-[90%] max-w-[320px] bg-white shadow-2xl rounded-md z-[80] border"
+    style="border-color: var(--color-border, #E5E5E5);"
+    role="dialog" aria-label="Cart added"></div>
+  {% endunless %}
+</add-to-cart>

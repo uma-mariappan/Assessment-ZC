@@ -1,0 +1,149 @@
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% liquid
+  assign heading = section.settings.heading | default: 'Recommended Products'
+  assign wishlist_enabled = false
+  if store.customer_portal.enabled and store.preferences.is_wishlist_enabled
+    assign wishlist_enabled = true
+  endif
+%}
+
+{% if wishlist_enabled %}
+<script type="module" src="{{ 'product-wishlist-943862380239332.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% if recommendations and recommendations.size > 0 %}
+  <section id="section-{{ section.id }}" class="w-full">
+    <div class="w-[90%] mx-auto page-max-width">
+      {% if heading != blank %}
+        <h2 class="text-[20px] md:text-[26px] font-bold primary-font heading-text-color text-center mb-6 md:mb-8">
+          {{ heading | escape }}
+        </h2>
+      {% endif %}
+
+      {% if wishlist_enabled %}
+      <product-wishlist class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 md:gap-6 pb-4 custom-scrollbar">
+      {% else %}
+      <div class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 md:gap-6 pb-4 custom-scrollbar">
+      {% endif %}
+        {% for recommended in recommendations %}
+          {% if product.id != recommended.id %}
+            {% render 'product-card', perProduct: recommended %}
+          {% endif %}
+        {% endfor %}
+      {% if wishlist_enabled %}
+      </product-wishlist>
+      {% else %}
+      </div>
+      {% endif %}
+    </div>
+  </section>
+{% else %}
+  <script type="module" src="{{ 'recommended-products-867146561918653.js' | asset_url }}" defer></script>
+  <script type="module" src="{{ 'quick-view-492041322519430.js' | asset_url }}" defer></script>
+
+  <recommended-products data-product-id="{{ product.id }}" class="hidden block w-full">
+    <section id="section-{{ section.id }}" class="w-full">
+      <div class="w-[90%] mx-auto page-max-width">
+        {% if heading != blank %}
+          <h2 class="text-[20px] md:text-[26px] font-medium primary-font text-center mb-8 md:mb-10" style="color: var(--color-heading);">
+            {{ heading | escape }}
+          </h2>
+        {% endif %}
+
+        <div id="recommendedProductsList" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4 md:gap-6 pb-4 custom-scrollbar">
+          <div class="flex justify-center py-10 w-full">
+            <span class="animate-spin h-8 w-8">{% render "icon-spinner" %}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </recommended-products>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:sections.recommended_products.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["product"]},
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.recommended_products.settings.heading.label",
+      "default": "t:sections.recommended_products.settings.heading.default"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.recommended_products.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.recommended_products.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.recommended_products.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.recommended_products.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.recommended_products.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.recommended_products.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.recommended_products.presets.default.name"
+    }
+  ]
+}
+{% endschema %}

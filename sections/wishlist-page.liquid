@@ -1,0 +1,133 @@
+<script type="module" src="{{ 'wishlist-page-596754102220853.js' | asset_url }}" defer></script>
+<script type="module" src="{{ 'add-to-cart-514496733357978.js' | asset_url }}" defer></script>
+<script src="{{ 'quantity-message-588403974700878.js' | asset_url }}" defer></script>
+
+{% liquid
+  assign is_cart_popup = true
+  assign is_wishlist_page = true
+%}
+
+{% render 'quantity-message' %}
+
+<div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 z-50">
+  <div class="flex items-center gap-3">
+    <span class="text-2xl" style="color: var(--color-primary);">{{ 'common.loader' | t }}</span>
+    {% render 'icon-page-loader' %}
+  </div>
+</div>
+
+<div id="section-{{ section.id }}" class="w-full">
+  <wishlist-page class="block w-[90%] max-w-[1280px] mx-auto py-10 md:py-16">
+    <div class="flex flex-col gap-6 md:gap-10">
+
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h1 class="text-2xl md:text-3xl font-medium" style="color: var(--color-heading);">
+          {{ 'accounts.account_wishlist.title' | t }}
+        </h1>
+        <div class="flex border border-color w-full sm:w-72" style="border-color: var(--color-primary);">
+          <input data-search-input name="q" type="search"
+            placeholder="{{ 'search.placeholder' | t }}"
+            class="w-full bg-transparent px-3 py-2 text-sm focus:outline-none [appearance:textfield] [&::-webkit-search-cancel-button]:hidden"
+            style="color: var(--color-heading);">
+        </div>
+      </div>
+
+      <div id="productList">
+        {% if wishlists.size == 0 %}
+          <p class="text-center text-base md:text-lg py-16" style="color: var(--color-text-muted);">
+            {{ 'accounts.account_wishlist.no_products_found' | t }}
+          </p>
+        {% else %}
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {% for wishlist in wishlists %}
+              {% liquid
+                assign product_id = wishlist.id
+                assign featured_image = wishlist.cover_media
+                if featured_image == blank
+                  assign featured_image = wishlist.media.first
+                endif
+                assign product_image = featured_image.url
+                if product_image == blank
+                  assign product_image = featured_image | image_url
+                endif
+                if product_image == '?' or product_image == '' or product_image == null
+                  assign product_image = 'no-image-59606643991319.webp' | asset_url
+                endif
+                assign product_url = wishlist.url
+                if wishlist.id
+                  if product_url contains '?'
+                    assign product_url = product_url | append: '&variant=' | append: wishlist.id
+                  else
+                    assign product_url = product_url | append: '?variant=' | append: wishlist.id
+                  endif
+                endif
+              %}
+
+              <div data-wishlist-product data-variant-id="{{ wishlist.id }}"
+                class="product-card product-card-color card flex flex-col w-full h-full overflow-hidden">
+
+                <div class="relative w-full aspect-square media media-color overflow-hidden">
+                  <a href="{{ product_url }}" class="block w-full h-full">
+                    <picture class="block w-full h-full">
+                      {% render 'image-resolutions', firstImage: featured_image %}
+                      <img src="{{ product_image }}"
+                        alt="{{ featured_image.alt | default: wishlist.title | escape }}"
+                        height="300" loading="lazy"
+                        class="h-full w-auto min-w-full object-cover object-center">
+                    </picture>
+                  </a>
+                </div>
+
+                <div class="p-3 flex flex-col gap-2 flex-grow">
+                  <p data-wishlist-title class="text-sm md:text-base font-medium line-clamp-2 body-text-color">
+                    {{ wishlist.title | escape }}
+                  </p>
+
+                  <div class="flex items-baseline gap-2 flex-wrap">
+                    <span class="text-sm md:text-base font-semibold" style="color: var(--color-heading);">
+                      {{ wishlist.price_formatted }}
+                    </span>
+                    {% if wishlist.label_price > 0 %}
+                      <s class="text-xs" style="color: var(--color-text-muted);">
+                        {{ wishlist.label_price_formatted }}
+                      </s>
+                      <span class="text-xs" style="color: var(--color-primary);">
+                        {{ wishlist.discount_percentage }}{{ 'common.offer' | t }}
+                      </span>
+                    {% endif %}
+                  </div>
+
+                  <div class="flex items-stretch gap-2 mt-auto pt-2">
+                    <div class="flex-1">
+                      {% render 'add-to-cart',
+                        isCartPopup: is_cart_popup,
+                        variantId: product_id,
+                        perProduct: wishlist,
+                        isWishlistPage: is_wishlist_page %}
+                    </div>
+                    <button type="button" aria-label="{{ 'cart.remove' | t }}"
+                      class="delete-btn border flex-shrink-0 w-[50px] h-[50px] flex items-center justify-center transition-colors"
+                      style="border-color: var(--color-primary); color: var(--color-primary);">
+                      {% render 'icon-delete' %}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </wishlist-page>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.wishlist_page.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["account-wishlist"]},
+  "settings": [],
+  "presets": [{ "name": "t:sections.wishlist_page.presets.default.name" }]
+}
+{% endschema %}

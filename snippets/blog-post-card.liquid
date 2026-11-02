@@ -1,0 +1,83 @@
+{% liquid
+  assign blog = blog_card_block.settings.blog
+
+  assign has_blog = false
+  if blog.handle != blank and blog.handle != ''
+    assign has_blog = true
+  endif
+
+  if has_blog
+    assign blog_title = blog.title | default: 'Blog Title'
+    assign blog_excerpt = blog.content | strip_html | truncate: 150
+    assign blog_date = blog.published_at | default: blog.created_at | date: '%b %d, %Y'
+    assign blog_author = blog.author | default: ''
+    assign blog_url = '/blog/' | append: blog.handle
+
+    assign blog_image_object = blog.image | default: blog.banner | default: blog.featuredImage | default: blog.featured_image
+    assign blog_image = blog.image.url
+    if blog_image == blank or blog_image == null
+      assign blog_image = blog.banner.url | default: blog.featuredImage.url | default: blog.featured_image.url
+    endif
+
+    assign blog_category = ''
+    if blog.tags and blog.tags.size > 0
+      assign blog_category = blog.tags[0].name
+    endif
+  else
+    assign blog_title = 'Blog Title'
+    assign blog_excerpt = 'Blog description will appear here once a blog is selected from the block settings.'
+    assign blog_date = ''
+    assign blog_author = ''
+    assign blog_image = ''
+    assign blog_category = ''
+    assign blog_url = '/blogs'
+  endif
+
+  if blog_image == blank or blog_image == '?' or blog_image == null
+    assign blog_image = 'no-image-59606643991319.webp' | asset_url
+  endif
+%}
+
+<a href="{{ blog_url }}" class="block relative w-full aspect-[4/3] overflow-hidden">
+  <picture class="block w-full h-full">
+    {% render 'image-resolutions', firstImage: blog_image_object %}
+    <img
+      src="{{ blog_image }}"
+      alt="{{ blog_title | escape }}"
+      height="250" loading="lazy"
+      class="h-full w-auto min-w-full object-cover object-center">
+  </picture>
+  {% if blog_category != blank %}
+    <div class="absolute top-3 left-3 md:top-4 md:left-4 btn-primary btn-primary-color px-2 py-0.5 md:px-3 md:py-1">
+      <span class="text-[10px] md:text-xs font-normal uppercase tracking-wider">{{ blog_category | escape }}</span>
+    </div>
+  {% endif %}
+</a>
+
+<div class="p-3 md:p-6 flex flex-col gap-2 md:gap-3 flex-grow">
+  {% if blog_date != blank or blog_author != blank %}
+    <div class="flex items-center gap-2 text-[10px] md:text-xs text-gray-500">
+      {% if blog_date != blank %}
+        <span>{{ blog_date }}</span>
+      {% endif %}
+      {% if blog_author != blank %}
+        <span>•</span>
+        <span>{{ blog_author | escape }}</span>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <h3 class="text-sm md:text-lg font-semibold body-text-color leading-snug line-clamp-2 min-h-[36px] md:min-h-[44px]">
+    {{ blog_title | escape }}
+  </h3>
+
+  {% if blog_excerpt != blank %}
+    <p class="text-xs md:text-base text-gray-500 leading-relaxed line-clamp-3">
+      {{ blog_excerpt }}
+    </p>
+  {% endif %}
+
+  <a href="{{ blog_url }}" tabindex="-1" aria-hidden="true" class="text-sm md:text-base font-medium heading-text-color underline mt-auto">
+    Read More
+  </a>
+</div>

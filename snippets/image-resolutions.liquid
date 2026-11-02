@@ -1,0 +1,109 @@
+{% assign resolution_image = firstImage.resolutions %}
+
+{% if resolution_image != blank %}
+  {% assign wp2560 = '' %}
+  {% assign wp2048 = '' %}
+  {% assign wp1280 = '' %}
+  {% assign wp1024 = '' %}
+  {% assign wp640 = '' %}
+  {% assign wp320 = '' %}
+  {% assign wp0 = '' %}
+  {% assign png2560 = '' %}
+  {% assign png2048 = '' %}
+  {% assign png1280 = '' %}
+  {% assign png1024 = '' %}
+  {% assign png640 = '' %}
+  {% assign png320 = '' %}
+  {% assign png0 = '' %}
+
+  {% for res in resolution_image %}
+    {% assign rw = res.width | plus: 0 %}
+    {% if res.format == 'webp' %}
+      {% if rw == 2560 %}
+        {% assign wp2560 = res.url %}
+      {% elsif rw == 2048 %}
+        {% assign wp2048 = res.url %}
+      {% elsif rw == 1280 %}
+        {% assign wp1280 = res.url %}
+      {% elsif rw == 1024 %}
+        {% assign wp1024 = res.url %}
+      {% elsif rw == 640 %}
+        {% assign wp640 = res.url %}
+      {% elsif rw == 320 %}
+        {% assign wp320 = res.url %}
+      {% elsif rw == 0 %}
+        {% assign wp0 = res.url %}
+      {% endif %}
+    {% elsif res.format == 'png' %}
+      {% if rw == 2560 %}
+        {% assign png2560 = res.url %}
+      {% elsif rw == 2048 %}
+        {% assign png2048 = res.url %}
+      {% elsif rw == 1280 %}
+        {% assign png1280 = res.url %}
+      {% elsif rw == 1024 %}
+        {% assign png1024 = res.url %}
+      {% elsif rw == 640 %}
+        {% assign png640 = res.url %}
+      {% elsif rw == 320 %}
+        {% assign png320 = res.url %}
+      {% elsif rw == 0 %}
+        {% assign png0 = res.url %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% if wp2560 != blank %}<source srcset="{{ wp2560 | escape }}" media="(min-width: 1536px)" type="image/webp">{% endif %}
+  {% if png2560 != blank %}<source srcset="{{ png2560 | escape }}" media="(min-width: 1536px)" type="image/png">{% endif %}
+  {% if wp2048 != blank %}<source srcset="{{ wp2048 | escape }}" media="(min-width: 1280px)" type="image/webp">{% endif %}
+  {% if png2048 != blank %}<source srcset="{{ png2048 | escape }}" media="(min-width: 1280px)" type="image/png">{% endif %}
+  {% if wp1280 != blank %}<source srcset="{{ wp1280 | escape }}" media="(min-width: 1024px)" type="image/webp">{% endif %}
+  {% if png1280 != blank %}<source srcset="{{ png1280 | escape }}" media="(min-width: 1024px)" type="image/png">{% endif %}
+  {% if wp1024 != blank %}<source srcset="{{ wp1024 | escape }}" media="(min-width: 768px)" type="image/webp">{% endif %}
+  {% if png1024 != blank %}<source srcset="{{ png1024 | escape }}" media="(min-width: 768px)" type="image/png">{% endif %}
+  {% if wp640 != blank %}<source srcset="{{ wp640 | escape }}" media="(min-width: 480px)" type="image/webp">{% endif %}
+  {% if png640 != blank %}<source srcset="{{ png640 | escape }}" media="(min-width: 480px)" type="image/png">{% endif %}
+  {% if wp320 != blank %}<source srcset="{{ wp320 | escape }}" media="(max-width: 479px)" type="image/webp">{% endif %}
+  {% if png320 != blank %}<source srcset="{{ png320 | escape }}" media="(max-width: 479px)" type="image/png">{% endif %}
+
+  {% if wp0 != blank and wp2560 == blank and wp2048 == blank and wp1280 == blank and wp1024 == blank and wp640 == blank and wp320 == blank %}
+    <source srcset="{{ wp0 | escape }}" type="image/webp">
+  {% endif %}
+  {% if png0 != blank and png2560 == blank and png2048 == blank and png1280 == blank and png1024 == blank and png640 == blank and png320 == blank %}
+    <source srcset="{{ png0 | escape }}" type="image/png">
+  {% endif %}
+
+{% else %}
+  {% assign base_url = firstImage.url | default: firstImage %}
+  {% if base_url != blank and base_url != '?' %}
+    {% assign base_url_str = base_url | append: '' %}
+    {% if base_url_str contains '.webp' %}
+      {% assign ext = '.webp' %}
+      {% assign mime = 'image/webp' %}
+      {% assign stem = base_url_str | split: '.webp' | first %}
+    {% elsif base_url_str contains '.png' %}
+      {% assign ext = '.png' %}
+      {% assign mime = 'image/png' %}
+      {% assign stem = base_url_str | split: '.png' | first %}
+    {% elsif base_url_str contains '.jpg' %}
+      {% assign ext = '.jpg' %}
+      {% assign mime = 'image/jpeg' %}
+      {% assign stem = base_url_str | split: '.jpg' | first %}
+    {% elsif base_url_str contains '.jpeg' %}
+      {% assign ext = '.jpeg' %}
+      {% assign mime = 'image/jpeg' %}
+      {% assign stem = base_url_str | split: '.jpeg' | first %}
+    {% else %}
+      {% assign ext = '' %}
+    {% endif %}
+
+    {% if ext != '' and stem contains '://' %}
+      <source srcset="{{ stem }}-w2560{{ ext }}" media="(min-width: 1536px)" type="{{ mime }}">
+      <source srcset="{{ stem }}-w2048{{ ext }}" media="(min-width: 1280px)" type="{{ mime }}">
+      <source srcset="{{ stem }}-w1280{{ ext }}" media="(min-width: 1024px)" type="{{ mime }}">
+      <source srcset="{{ stem }}-w1024{{ ext }}" media="(min-width: 768px)" type="{{ mime }}">
+      <source srcset="{{ stem }}-w640{{ ext }}" media="(min-width: 480px)" type="{{ mime }}">
+      <source srcset="{{ stem }}-w320{{ ext }}" media="(max-width: 479px)" type="{{ mime }}">
+    {% endif %}
+  {% endif %}
+{% endif %}

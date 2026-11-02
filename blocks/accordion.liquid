@@ -1,0 +1,256 @@
+{% render 'theme-accordion', block: block %}
+
+{% schema %}
+{
+  "name": "t:blocks.accordion.name",
+  "blocks": [
+    {
+      "type": "zc_theme__accordion_row",
+      "name": "t:blocks.accordion_row.name"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.accordion.presets.default.name",
+      "blocks": {
+        "row-1": {
+          "type": "zc_theme__accordion_row",
+          "blocks": {
+            "question": {
+              "type": "zc_theme__text",
+              "settings": {
+                "text": "t:blocks.accordion_row.settings.question.default",
+                "select_font_family": {
+                  "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+                  "value": "primary"
+                },
+                "select_text_color": {
+                  "display_name": "t:blocks.text.settings.select_text_color.options.heading_text_color.label",
+                  "value": "heading-text-color"
+                },
+                "desktop_text_size": {
+                  "display_name": "t:blocks.text.settings.desktop_text_size.options.text_base.label",
+                  "value": "text-base"
+                },
+                "mobile_text_size": {
+                  "display_name": "t:blocks.text.settings.mobile_text_size.options.text_sm.label",
+                  "value": "text-sm"
+                },
+                "desktop_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "mobile_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "padding_block_start": 0,
+                "padding_block_end": 0,
+                "padding_inline_start": 0,
+                "padding_inline_end": 0
+              }
+            },
+            "answer": {
+              "type": "zc_theme__text",
+              "settings": {
+                "text": "t:blocks.accordion_row.settings.answer.default",
+                "select_font_family": {
+                  "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+                  "value": "primary"
+                },
+                "select_text_color": {
+                  "display_name": "t:blocks.text.settings.select_text_color.options.body_text_color.label",
+                  "value": "body-text-color"
+                },
+                "desktop_text_size": {
+                  "display_name": "t:blocks.text.settings.desktop_text_size.options.text_base.label",
+                  "value": "text-base"
+                },
+                "mobile_text_size": {
+                  "display_name": "t:blocks.text.settings.mobile_text_size.options.text_sm.label",
+                  "value": "text-sm"
+                },
+                "desktop_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "mobile_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "padding_block_start": 0,
+                "padding_block_end": 0,
+                "padding_inline_start": 0,
+                "padding_inline_end": 0
+              }
+            }
+          },
+          "block_order": [
+            "question",
+            "answer"
+          ]
+        },
+        "row-2": {
+          "type": "zc_theme__accordion_row",
+          "blocks": {
+            "question": {
+              "type": "zc_theme__text",
+              "settings": {
+                "text": "t:blocks.accordion.presets.default.settings.row_2_question",
+                "select_font_family": {
+                  "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+                  "value": "primary"
+                },
+                "select_text_color": {
+                  "display_name": "t:blocks.text.settings.select_text_color.options.heading_text_color.label",
+                  "value": "heading-text-color"
+                },
+                "desktop_text_size": {
+                  "display_name": "t:blocks.text.settings.desktop_text_size.options.text_base.label",
+                  "value": "text-base"
+                },
+                "mobile_text_size": {
+                  "display_name": "t:blocks.text.settings.mobile_text_size.options.text_sm.label",
+                  "value": "text-sm"
+                },
+                "desktop_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "mobile_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "padding_block_start": 0,
+                "padding_block_end": 0,
+                "padding_inline_start": 0,
+                "padding_inline_end": 0
+              }
+            },
+            "answer": {
+              "type": "zc_theme__text",
+              "settings": {
+                "text": "t:blocks.accordion_row.settings.answer.default",
+                "select_font_family": {
+                  "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+                  "value": "primary"
+                },
+                "select_text_color": {
+                  "display_name": "t:blocks.text.settings.select_text_color.options.body_text_color.label",
+                  "value": "body-text-color"
+                },
+                "desktop_text_size": {
+                  "display_name": "t:blocks.text.settings.desktop_text_size.options.text_base.label",
+                  "value": "text-base"
+                },
+                "mobile_text_size": {
+                  "display_name": "t:blocks.text.settings.mobile_text_size.options.text_sm.label",
+                  "value": "text-sm"
+                },
+                "desktop_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "mobile_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "padding_block_start": 0,
+                "padding_block_end": 0,
+                "padding_inline_start": 0,
+                "padding_inline_end": 0
+              }
+            }
+          },
+          "block_order": [
+            "question",
+            "answer"
+          ]
+        },
+        "row-3": {
+          "type": "zc_theme__accordion_row",
+          "blocks": {
+            "question": {
+              "type": "zc_theme__text",
+              "settings": {
+                "text": "t:blocks.accordion.presets.default.settings.row_3_question",
+                "select_font_family": {
+                  "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+                  "value": "primary"
+                },
+                "select_text_color": {
+                  "display_name": "t:blocks.text.settings.select_text_color.options.heading_text_color.label",
+                  "value": "heading-text-color"
+                },
+                "desktop_text_size": {
+                  "display_name": "t:blocks.text.settings.desktop_text_size.options.text_base.label",
+                  "value": "text-base"
+                },
+                "mobile_text_size": {
+                  "display_name": "t:blocks.text.settings.mobile_text_size.options.text_sm.label",
+                  "value": "text-sm"
+                },
+                "desktop_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "mobile_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "padding_block_start": 0,
+                "padding_block_end": 0,
+                "padding_inline_start": 0,
+                "padding_inline_end": 0
+              }
+            },
+            "answer": {
+              "type": "zc_theme__text",
+              "settings": {
+                "text": "t:blocks.accordion_row.settings.answer.default",
+                "select_font_family": {
+                  "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+                  "value": "primary"
+                },
+                "select_text_color": {
+                  "display_name": "t:blocks.text.settings.select_text_color.options.body_text_color.label",
+                  "value": "body-text-color"
+                },
+                "desktop_text_size": {
+                  "display_name": "t:blocks.text.settings.desktop_text_size.options.text_base.label",
+                  "value": "text-base"
+                },
+                "mobile_text_size": {
+                  "display_name": "t:blocks.text.settings.mobile_text_size.options.text_sm.label",
+                  "value": "text-sm"
+                },
+                "desktop_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "mobile_font_weight": {
+                  "display_name": "Light",
+                  "value": "light"
+                },
+                "padding_block_start": 0,
+                "padding_block_end": 0,
+                "padding_inline_start": 0,
+                "padding_inline_end": 0
+              }
+            }
+          },
+          "block_order": [
+            "question",
+            "answer"
+          ]
+        }
+      },
+      "block_order": [
+        "row-1",
+        "row-2",
+        "row-3"
+      ]
+    }
+  ]
+}
+{% endschema %}

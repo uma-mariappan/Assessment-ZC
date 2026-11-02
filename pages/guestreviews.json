@@ -1,0 +1,9 @@
+{
+  "layout": "guest-review",
+  "sections": {
+    "guest-reviews": {
+      "type": "guest-reviews"
+    }
+  },
+  "order": ["guest-reviews"]
+}

@@ -1,0 +1,360 @@
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% liquid
+  assign section_settings = section.settings
+  assign bg_type = section_settings.background_color.value | default: section_settings.background_color | default: 'primary'
+  assign desktop_title_size = section_settings.desktop_title_size.value | default: 'text-lg'
+  assign mobile_title_size = section_settings.mobile_title_size.value | default: 'text-base'
+  assign desktop_desc_size = section_settings.desktop_description_size.value | default: 'text-base'
+  assign mobile_desc_size = section_settings.mobile_description_size.value | default: 'text-sm'
+%}
+
+<section
+  id="section-{{ section.id }}"
+  class="w-full {% if bg_type == 'secondary' %}bg-secondary-color{% else %}bg-primary-color{% endif %}"
+>
+  <div class="w-[90%] page-max-width mx-auto">
+    <div class="text-center mb-8 md:mb-10">
+      {% render_blocks %}
+    </div>
+    {% assign badge_count = 0 %}
+    {% for block in section.blocks %}
+      {% if block.type == 'badge' %}
+        {% assign badge_count = badge_count | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+    <div class="{% if badge_count >= 4 %}grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8{% else %}flex flex-wrap justify-center gap-6 md:gap-8{% endif %}">
+      {% for block in section.blocks %}
+        {% if block.type != 'badge' %}
+          {% continue %}
+        {% endif %}
+        {% assign block_settings = block.settings %}
+        {% assign badge_text = block_settings.badge_text %}
+        {% assign badge_description = block_settings.badge_description %}
+        {% assign badge_image = block_settings.badge_image %}
+        {% assign show_bg = block_settings.show_background_color %}
+        {% assign badge_bg_color = block_settings.background_color %}
+
+        <div class="flex flex-col items-center text-center gap-5 {% unless badge_count >= 4 %}w-[calc(50%-12px)] md:w-[220px]{% endunless %}" {{ block.zcommerce_attributes }}>
+          <div
+            class="relative flex items-center justify-center rounded-full flex-shrink-0 w-[100px] h-[100px] md:w-[140px] md:h-[140px]"
+            style="border: 1px solid rgb(var(--border-color));{% if show_bg and badge_bg_color != blank %} background-color: {{ badge_bg_color }};{% endif %}"
+          >
+            {% if badge_image != blank and badge_image.url != blank %}
+              <picture class="block w-12 h-12 md:w-20 md:h-20">
+                {% render 'image-resolutions', firstImage: badge_image %}
+                <img
+                  src="{{ badge_image.url }}"
+                  alt="{{ badge_text | escape }}"
+                  height="60" loading="lazy"
+                  class="h-full w-auto min-w-full object-contain object-center"
+                >
+              </picture>
+            {% else %}
+              {% assign text_lower = badge_text | downcase %}
+              {% if text_lower contains 'cruelty' or text_lower contains 'cruelity' or text_lower contains 'eco' %}
+                {% assign icon_inset = 'p-1.5 md:p-2.5' %}
+              {% else %}
+                {% assign icon_inset = '' %}
+              {% endif %}
+              <div class="flex items-center justify-center w-12 h-12 md:w-20 md:h-20 {{ icon_inset }} [&>svg]:w-full [&>svg]:h-full">
+                {% if text_lower contains 'cruelty' or text_lower contains 'cruelity' %}
+                  {% render 'icon-cruelity' %}
+                {% elsif text_lower contains 'natural' %}
+                  {% render 'icon-natural' %}
+                {% elsif text_lower contains 'delivery' %}
+                  {% render 'icon-delivery' %}
+                {% elsif text_lower contains 'eco' %}
+                  {% render 'icon-eco' %}
+                {% else %}
+                  {% render 'icon-natural' %}
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="flex flex-col gap-2">
+            {% if badge_text != blank %}
+              <p class="primary-font font-bold body-text-color {{ mobile_title_size }} md:{{ desktop_title_size }} leading-snug">
+                {{ badge_text | escape }}
+              </p>
+            {% endif %}
+            {% if badge_description != blank %}
+              <p class="body-text-color opacity-70 {{ mobile_desc_size }} md:{{ desktop_desc_size }} leading-relaxed">
+                {{ badge_description }}
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <p class="text-center py-8 w-full">No badges configured.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.rotating_badges.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": { "templates": ["index"] },
+  "settings": [
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.rotating_badges.settings.background_color.label",
+      "options": [
+        { "label": "t:sections.rotating_badges.settings.background_color.options.primary", "value": "primary" },
+        { "label": "t:sections.rotating_badges.settings.background_color.options.secondary", "value": "secondary" }
+      ],
+      "default": { "display_name": "Primary", "value": "primary" }
+    },
+    {
+      "type": "select",
+      "id": "desktop_title_size",
+      "label": "t:sections.rotating_badges.settings.desktop_title_size.label",
+      "options": [
+        { "label": "t:sections.rotating_badges.settings.title_size.options.small", "value": "text-base" },
+        { "label": "t:sections.rotating_badges.settings.title_size.options.medium", "value": "text-lg" },
+        { "label": "t:sections.rotating_badges.settings.title_size.options.large", "value": "text-xl" }
+      ],
+      "default": { "display_name": "Medium", "value": "text-lg" },
+      "meta": "desktop"
+    },
+    {
+      "type": "select",
+      "id": "mobile_title_size",
+      "label": "t:sections.rotating_badges.settings.mobile_title_size.label",
+      "options": [
+        { "label": "t:sections.rotating_badges.settings.title_size.options.small", "value": "text-sm" },
+        { "label": "t:sections.rotating_badges.settings.title_size.options.medium", "value": "text-base" },
+        { "label": "t:sections.rotating_badges.settings.title_size.options.large", "value": "text-lg" }
+      ],
+      "default": { "display_name": "Medium", "value": "text-base" },
+      "meta": "mobile"
+    },
+    {
+      "type": "select",
+      "id": "desktop_description_size",
+      "label": "t:sections.rotating_badges.settings.desktop_description_size.label",
+      "options": [
+        { "label": "t:sections.rotating_badges.settings.description_size.options.small", "value": "text-sm" },
+        { "label": "t:sections.rotating_badges.settings.description_size.options.medium", "value": "text-base" },
+        { "label": "t:sections.rotating_badges.settings.description_size.options.large", "value": "text-lg" }
+      ],
+      "default": { "display_name": "Medium", "value": "text-base" },
+      "meta": "desktop"
+    },
+    {
+      "type": "select",
+      "id": "mobile_description_size",
+      "label": "t:sections.rotating_badges.settings.mobile_description_size.label",
+      "options": [
+        { "label": "t:sections.rotating_badges.settings.description_size.options.small", "value": "text-xs" },
+        { "label": "t:sections.rotating_badges.settings.description_size.options.medium", "value": "text-sm" },
+        { "label": "t:sections.rotating_badges.settings.description_size.options.large", "value": "text-base" }
+      ],
+      "default": { "display_name": "Medium", "value": "text-sm" },
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.rotating_badges.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.rotating_badges.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.rotating_badges.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.rotating_badges.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.rotating_badges.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.rotating_badges.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "blocks": [
+    { "type": "zc_theme__text", "name": "t:blocks.text.name" },
+    { "type": "zc_theme__button", "name": "t:blocks.button.name" },
+    { "type": "zc_theme__image", "name": "t:blocks.image.name" },
+    { "type": "zc_theme__carousel", "name": "t:blocks.carousel.name" },
+    { "type": "zc_theme__accordion", "name": "t:blocks.accordion.name" },
+    {
+      "type": "badge",
+      "name": "t:sections.rotating_badges.blocks.badge.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "t:sections.rotating_badges.blocks.badge.settings.badge_text.label",
+          "default": "t:sections.rotating_badges.blocks.badge.settings.badge_text.default"
+        },
+        {
+          "type": "richtext",
+          "id": "badge_description",
+          "label": "t:sections.rotating_badges.blocks.badge.settings.badge_description.label",
+          "default": "t:sections.rotating_badges.blocks.badge.settings.badge_description.default"
+        },
+        {
+          "type": "image_picker",
+          "id": "badge_image",
+          "label": "t:sections.rotating_badges.blocks.badge.settings.badge_image.label",
+          "default": {
+            "url": "",
+            "enable_customisation": true
+          }
+        },
+        {
+          "type": "checkbox",
+          "id": "show_background_color",
+          "label": "t:sections.rotating_badges.blocks.badge.settings.show_background_color.label",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "t:sections.rotating_badges.blocks.badge.settings.background_color.label",
+          "default": "#FFD9E6"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.rotating_badges.presets.default.name",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "desktop_title_size": {
+          "display_name": "Medium",
+          "value": "text-lg"
+        },
+        "mobile_title_size": {
+          "display_name": "Medium",
+          "value": "text-base"
+        },
+        "desktop_description_size": {
+          "display_name": "Medium",
+          "value": "text-base"
+        },
+        "mobile_description_size": {
+          "display_name": "Medium",
+          "value": "text-sm"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "badge-1": {
+          "type": "badge",
+          "settings": {
+            "badge_text": "t:sections.rotating_badges.blocks.badge.settings.badge_text.default",
+            "badge_description": "Responsibly made, ethically created, never tested on animals.",
+            "badge_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "show_background_color": false,
+            "background_color": "#FFD9E6"
+          }
+        },
+        "badge-2": {
+          "type": "badge",
+          "settings": {
+            "badge_text": "100% Natural",
+            "badge_description": "Made with pure, wholesome ingredients sourced directly from nature's best.",
+            "badge_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "show_background_color": false,
+            "background_color": "#FFD9E6"
+          }
+        },
+        "badge-3": {
+          "type": "badge",
+          "settings": {
+            "badge_text": "Global Delivery",
+            "badge_description": "We deliver your orders to doorsteps around the world.",
+            "badge_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "show_background_color": false,
+            "background_color": "#FFD9E6"
+          }
+        },
+        "badge-4": {
+          "type": "badge",
+          "settings": {
+            "badge_text": "Eco-friendly",
+            "badge_description": "Sustainable choices that protect and preserve our beautiful planet.",
+            "badge_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "show_background_color": false,
+            "background_color": "#FFD9E6"
+          }
+        }
+      },
+      "block_order": ["badge-1", "badge-2", "badge-3", "badge-4"]
+    }
+  ]
+}
+{% endschema %}

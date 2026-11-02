@@ -1,0 +1,120 @@
+{
+  "layout": "theme",
+  "sections": {
+    "error": {
+      "type": "404",
+      "blocks": {
+        "img": {
+          "type": "error-img",
+          "settings": {
+            "error_img": "error-404-457481534159166.webp"
+          }
+        },
+        "heading": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "Page not Found",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "BASE",
+              "value": "text-base"
+            },
+            "mobile_text_size": {
+              "display_name": "BASE",
+              "value": "text-base"
+            },
+            "desktop_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "mobile_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "sub_heading": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "Sorry, there is no webpage matching your request",
+            "select_font_family": {
+              "display_name": "Secondary",
+              "value": "secondary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "BASE",
+              "value": "text-base"
+            },
+            "mobile_text_size": {
+              "display_name": "BASE",
+              "value": "text-base"
+            },
+            "desktop_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "mobile_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "description": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "You would have typed the wrong address. Web page you are looking for has been moved or does not exist",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "BASE",
+              "value": "text-base"
+            },
+            "mobile_text_size": {
+              "display_name": "BASE",
+              "value": "text-base"
+            },
+            "desktop_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "mobile_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        }
+      },
+      "block_order": ["img", "heading", "sub_heading", "description"]
+    }
+  },
+  "order": ["error"]
+}

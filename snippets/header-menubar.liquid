@@ -1,0 +1,192 @@
+{% if menuAllignment == "drawer" %}
+    <ul class="flex flex-col" data-header-menu-list>
+        {% for menu in menubarlist %}
+          <li class="relative">
+            <div class="flex items-center justify-between px-6 py-3 rounded-lg transition peer" style="color: var(--color-heading);">
+              <a href="{{ menu.url }}" class="flex-1">
+                {{ menu.name | escape }}
+              </a>
+              {% if menu.child_items.size > 0 %}
+                <span class="ml-2">{% render 'icon-arrowright-black' %}</span>
+              {% endif %}
+            </div>
+
+            {% if menu.child_items.size > 0 %}
+              <ul class="hidden absolute top-0 left-full bg-white shadow-md w-48 py-2
+                         peer-hover:block hover:block z-50" style="border: 0.5px solid var(--color-primary);">
+                {% for childMenu in menu.child_items %}
+                  <li class="relative">
+                    <div class="flex items-center justify-between px-3 py-2 transition peer" style="color: var(--color-heading);">
+                      <a href="{{ childMenu.url }}" class="flex-1 hover:opacity-70">
+                        {{ childMenu.name | capitalize | escape }}
+                      </a>
+                      {% if childMenu.child_items.size > 0 %}
+                        <span class="ml-2">{% render 'icon-arrowright-black' %}</span>
+                      {% endif %}
+                    </div>
+
+                    {% if childMenu.child_items.size > 0 %}
+                      <ul class="hidden absolute left-full bg-white shadow-md w-48 py-2
+                                 peer-hover:block hover:block" style="top:-7px; border: 0.5px solid var(--color-primary);">
+                        {% for subChildMenu in childMenu.child_items %}
+                          <li>
+                            <a href="{{ subChildMenu.url }}" class="block px-3 py-2 transition hover:opacity-70">
+                              {{ subChildMenu.name | capitalize | escape }}
+                            </a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+{% elsif menuType == "1" %}
+    <div class="relative flex flex-row justify-center z-50 h-full items-center" data-menubar>
+        {% for menu in menubarlist %}
+        <div class="relative group {{ menu.name | replace: ' ', '-' }} h-full" data-menu-item>
+            <div class="flex gap-2 items-center h-full">
+                <a href="{{ menu.url }}" class="text-base whitespace-nowrap cursor-pointer hover:[text-shadow:0.5px_0_currentColor] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)]" style="color: var(--color-primary);"
+                    {% if menu.child_items.size > 0 %} aria-haspopup="true"{% endif %}>
+                    {{ menu.name | escape }}
+                </a>
+                <span class="{% if menu.child_items.size > 0 %} transition-transform duration-500 ease-in-out rotate-0 group-hover:rotate-180 group-focus-within:rotate-180
+                    {% else %} hidden {% endif %}">
+                    {% render 'icon-arrowdown-black' %}
+                </span>
+            </div>
+            {% if menu.child_items.size > 0 %}
+            <div class="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block group-focus-within:block">
+                <div class="bg-white shadow-lg w-[221px]" style="border: 0.5px solid var(--color-primary);">
+                <ul>
+                    {% for childMenu in menu.child_items %}
+                    <li class="group/child relative bg-white h-[50px] flex items-center hover:bg-[#FDF2F8]">
+                        <a href="{{ childMenu.url }}"
+                            class="flex items-center justify-between gap-2 w-full px-5 py-2 text-base cursor-pointer text-[var(--color-text)] group-hover/child:text-[var(--color-heading)]">
+                            <span class="whitespace-nowrap">{{ childMenu.name | capitalize | escape }}</span>
+                            {% if childMenu.child_items.size > 0 %}
+                            <span class="shrink-0 transition-transform duration-300 ease-in-out group-hover/child:rotate-90 group-focus-within/child:rotate-90">
+                                {% render 'icon-arrowright-black' %}
+                            </span>
+                            {% endif %}
+                        </a>
+                        {% if childMenu.child_items.size > 0 %}
+                        <ul class="hidden group-hover/child:block group-focus-within/child:block absolute left-full bg-white w-[221px] shadow-lg z-50"
+                            style="border: 0.5px solid var(--color-primary); top: -0.5px;">
+                            {% for subChildMenu in childMenu.child_items %}
+                            <li class="group/sub h-[50px] flex items-center bg-white hover:bg-[#FDF2F8]">
+                                <a href="{{ subChildMenu.url }}"
+                                    class="block w-full px-5 py-2 text-sm cursor-pointer text-[var(--color-text)] group-hover/sub:text-[var(--color-heading)]">
+                                    {{ subChildMenu.name | capitalize | escape }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="relative group h-full hidden" data-menu-more>
+            <div class="flex gap-2 items-center h-full">
+                <span class="text-base cursor-pointer hover:[text-shadow:0.5px_0_currentColor] transition" style="color: var(--color-primary);" tabindex="0" aria-haspopup="true">
+                    {{ 'header.more' | t }}
+                </span>
+                <span class="transition-transform duration-500 ease-in-out rotate-0 group-hover:rotate-180 group-focus-within:rotate-180">
+                    {% render 'icon-arrowdown-black' %}
+                </span>
+            </div>
+            <div class="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block group-focus-within:block">
+                <div class="bg-white shadow-lg w-[221px]" style="border: 0.5px solid var(--color-primary);">
+                    <ul data-more-list></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="flex justify-center h-full items-center" data-menubar-mega>
+        {% for menu in menubarlist %}
+            <div class="cursor-pointer group h-full flex items-center">
+                <div data-categoryheader class="cursor-pointer flex gap-2 items-center">
+                    <a href="{{ menu.url }}" class="text-base transition hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)]" style="color: var(--color-primary);"
+                        {% if menu.child_items.size > 0 %} aria-haspopup="true"{% endif %}>{{ menu.name | escape }}</a>
+                    <span arrow-down
+                        class="{% if menu.child_items.size > 0 %} transition-transform duration-500 ease-in-out rotate-0 {% else %} hidden {% endif %}">
+                        {% render 'icon-arrowdown-black' %}
+                    </span>
+                </div>
+                {% if menu.child_items.size > 0 %}
+                    {% assign hasSubmenu = false %}
+                    {% for childMenu in menu.child_items %}
+                        {% if childMenu.child_items.size > 0 %}
+                            {% assign hasSubmenu = true %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if hasSubmenu %}
+                        <div class="absolute top-full z-50 hidden group-hover:block group-focus-within:block" style="left: 50%; margin-left: -50vw; width: 100vw;">
+                            <div class="bg-white w-full shadow-[0px_-5px_4px_0px_rgba(191,191,191,0.15)]">
+                                <div class="max-w-[1400px] mx-auto flex py-10 px-8 gap-6">
+                                    <div class="flex-1 grid grid-cols-5 gap-6">
+                                        {% for childMenu in menu.child_items %}
+                                            <div class="flex flex-col">
+                                                <a href="{{ childMenu.url }}" class="text-base font-semibold pb-2 border-b mb-3 w-fit" style="color: var(--color-primary); border-color: var(--color-primary);">
+                                                    {{ childMenu.name | capitalize | escape }}
+                                                </a>
+                                                {% if childMenu.child_items.size > 0 %}
+                                                    <ul class="flex flex-col gap-3 mt-3">
+                                                        {% for subChildMenu in childMenu.child_items %}
+                                                            <li>
+                                                                <a href="{{ subChildMenu.url }}" class="text-sm body-text-color transition hover:opacity-70">
+                                                                    {{ subChildMenu.name | capitalize | escape }}
+                                                                </a>
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% if megaMenuImage != blank %}
+                                        <div class="w-[300px] flex-shrink-0 flex flex-col">
+                                            <picture class="block w-full h-[225px]">
+                                                {% render 'image-resolutions', firstImage: megaMenuImage %}
+                                                <img src="{{ megaMenuImage.url }}" alt="{{ megaMenuUrl.display_name | escape }}" class="h-full w-auto min-w-full object-cover object-center" loading="lazy" height="225">
+                                            </picture>
+                                            {% if megaMenuUrl != blank %}
+                                                <a href="{{ megaMenuUrl.handle }}" class="flex items-center justify-center h-[43px] text-sm font-medium text-white" style="background-color: var(--color-primary);">
+                                                    {{ megaMenuUrl.display_name | escape }}
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="absolute z-50 w-[221px] hidden group-hover:block group-focus-within:block top-full">
+                            <div class="bg-white shadow-lg" style="border: 0.5px solid var(--color-primary);">
+                                <ul class="flex flex-col">
+                                    {% for childMenu in menu.child_items %}
+                                        <li class="group/child relative bg-white h-[50px] flex items-center hover:bg-[#FDF2F8]">
+                                            <a href="{{ childMenu.url }}" class="block w-full px-5 py-2 text-base cursor-pointer text-[var(--color-text)] group-hover/child:text-[var(--color-heading)]">
+                                                {{ childMenu.name | capitalize | escape }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

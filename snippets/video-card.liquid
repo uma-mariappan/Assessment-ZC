@@ -1,0 +1,65 @@
+{% liquid
+  assign block_settings = video_block.settings
+  assign video_url = block_settings.video_media.url | default: block_settings.video_media | default: ''
+  assign video_object_fit = block_settings.video_object_fit.value | default: block_settings.video_object_fit | default: 'cover'
+  assign card_bg = block_settings.card_bg_color | default: '#FDF2F8'
+  assign product_image = block_settings.product_image
+  assign product_name = block_settings.product_name
+  assign product_link = block_settings.product_url.handle | default: ''
+%}
+
+{% if product_link != blank %}
+  <a href="/{{ product_link }}" class="relative block overflow-hidden">
+{% else %}
+  <div class="relative block overflow-hidden">
+{% endif %}
+
+  <div class="relative w-full overflow-hidden bg-gray-200" style="aspect-ratio: 9 / 16;">
+    {% if video_url != blank %}
+      <video
+        class="absolute inset-0 w-full h-full {% if video_object_fit == 'contain' %}object-contain{% else %}object-cover{% endif %}"
+        style="object-fit: {{ video_object_fit }}; object-position: center;"
+        src="{{ video_url.video.url }}"
+        playsinline
+        muted
+        loop
+        autoplay
+        preload="metadata">
+      </video>
+    {% else %}
+      <div class="w-full h-full flex items-center justify-center text-sm body-text-color opacity-50">
+        {{ 'sections.video_stories.empty_video' | t }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="flex items-center gap-2 md:gap-3 p-2 md:p-3" style="background-color: {{ card_bg }};">
+    {% liquid
+      assign product_img_url = product_image.url
+      if product_img_url == blank or product_img_url == '' or product_img_url == '?'
+        assign product_img_url = 'video-card-product-img-879862157571571.webp' | asset_url
+      endif
+    %}
+    <div class="w-9 h-9 md:w-[62px] md:h-[62px] flex-shrink-0 overflow-hidden">
+      <picture class="block w-full h-full">
+        {% render 'image-resolutions', firstImage: product_image %}
+        <img
+          src="{{ product_img_url }}"
+          alt="{{ product_name | strip_html | escape }}"
+          height="62"
+          loading="lazy"
+          class="h-full w-auto min-w-full max-w-none object-cover object-center">
+      </picture>
+    </div>
+    {% if product_name != blank %}
+      <p class="text-xs md:text-base font-medium body-text-color leading-tight line-clamp-2">
+        {{ product_name }}
+      </p>
+    {% endif %}
+  </div>
+
+{% if product_link != blank %}
+  </a>
+{% else %}
+  </div>
+{% endif %}

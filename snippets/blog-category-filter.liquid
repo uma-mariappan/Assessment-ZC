@@ -1,0 +1,41 @@
+{% liquid
+  assign category_list = available_categories
+
+  assign active_category_name = current_category | default: '' | strip
+  assign is_all_active = true
+  if active_category_name != blank
+    assign is_all_active = false
+  endif
+%}
+{% if category_list != blank and category_list.size > 0 %}
+  <nav
+    class="blog-category-filter mt-6 flex flex-wrap items-center justify-center gap-3 md:mt-8"
+    aria-label="{{ 'blog_layout.filter_by_category' | t }}"
+  >
+    <a
+      href="/blogs"
+      class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium md:px-5 md:py-2.5 no-underline 
+      {% if is_all_active %}btn-primary btn-primary-color{% else %}btn-secondary btn-secondary-color btn-secondary-hover{% endif %}"
+      {% if is_all_active %}aria-current="page"{% endif %}
+    >
+      {{ 'blog_layout.all_categories' | t }}
+    </a>
+
+    {% for blog_category_item in category_list %}
+      {% if blog_category_item.handle != blank %}
+        {% assign is_category_active = false %}
+        {% if active_category_name != blank and active_category_name == blog_category_item.name %}
+          {% assign is_category_active = true %}
+        {% endif %}
+        <a
+          href="/blogs/{{ blog_category_item.handle }}"
+          class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium md:px-5 md:py-2.5 no-underline 
+          {% if is_category_active %}btn-primary btn-primary-color{% else %}btn-secondary btn-secondary-color btn-secondary-hover{% endif %}"
+          {% if is_category_active %}aria-current="page"{% endif %}
+        >
+          {{ blog_category_item.name | escape }}
+        </a>
+      {% endif %}
+    {% endfor %}
+  </nav>
+{% endif %}

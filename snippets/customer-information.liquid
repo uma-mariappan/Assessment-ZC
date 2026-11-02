@@ -1,0 +1,138 @@
+{% assign checkout_contact_address = checkoutAddress.contact %}
+<form id="addressForm">
+  <div>
+    <div id="listOfAddress" class="{% unless checkout_contact_address.shipping_address.size > 0 %}hidden{% endunless %}">
+
+      <h4 class="heading-text-color primary-font">{{ "checkout.blocks.shipping-and-billing-information.shipping_title" | t }}</h4>
+      <p class="heading-text-color primary-font">{{ 'checkout.blocks.shipping-and-billing-information.select_shipping_address_label' | t }}</p>
+      <div id="changeShippingAddress">
+        {% assign shipping_label = 'shipping' %}
+        {% liquid assign default_shipping_address = checkout_contact_address.shipping_address 
+            assign is_default_address = true
+            assign radio_attrbiute_name = 'shipping_address'
+        %}
+
+        {% if default_shipping_address.address_id  == shippingAddress.address_id or shippingAddress.size == 0 %}
+          {% assign is_selected = true %}
+        {% else %}
+          {% assign is_selected = false %}
+        {% endif %}
+
+        {% if default_shipping_address.size > 0 %}
+          <div class="mt-3 border-b border-solid border-color">
+            {% render "saved-checkout-address", addressLabel: shipping_label, listOfAddress: default_shipping_address, 
+              isSelected: is_selected, radioName: radio_attrbiute_name %}
+          </div>
+        {% endif %}
+
+        {% for listOfAddress in checkout_contact_address.addresses %}
+          {% if listOfAddress.address_id  == shippingAddress.address_id %}
+            {% assign is_selected = true %}
+          {% else %}
+            {% assign is_selected = false %}
+          {% endif %}
+          <div class="mt-3 border-b border-solid border-color">
+            {% render "saved-checkout-address", addressLabel: shipping_label, listOfAddress: listOfAddress, 
+              isSelected: is_selected, radioName: radio_attrbiute_name %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div id="newAddress" class="{% if checkout_contact_address.shipping_address.size > 0 %}hidden{% endif %}">
+      {% render "shipping-information", checkoutDetails: checkoutDetails, currentUser: currentUser %}
+    </div>
+
+    {% if shippingAddress.address_id  == billingAddress.address_id or shippingAddress == null %}
+      {% assign billing_checked = true %}
+    {% else %}
+      {% assign billing_checked = false %}
+    {% endif %}
+
+    <div id="billingCheckboxElement" class="flex flex-row my-5 {% if checkout_contact_address.shipping_address.size > 0 %}hidden{% endif %}">
+      <label class="text-sm font-normal">
+        <input type="checkbox" {% if billing_checked %}checked{% endif %} id="billingCheckbox" name="billingCheckbox">
+        {{ "checkout.blocks.customer-information.checkbox_label" | t }}
+      </label>
+    </div>
+
+
+
+    <div id="addressListBillingCheckboxElement" class="flex flex-row my-5 {% unless checkout_contact_address.shipping_address.size > 0 %}hidden{% endunless %}">
+      <label class="text-sm font-normal">
+        <input type="checkbox" {% if billing_checked %}checked{% endif %} id="addressListBillingCheckbox" name="addressListBillingCheckbox">
+        {{ "checkout.blocks.customer-information.checkbox_label" | t }}
+      </label>
+    </div>
+
+    <div id="newBillingAdress" class="{% if checkout_contact_address.shipping_address.size > 0 %}hidden{% endif %}">
+          {% render "billing-information", checkoutDetails: checkoutDetails %}
+    </div>
+
+      <div id="listOfBillingAddress" class="{% if billing_checked %}hidden{% endif %}">
+        {% assign billing_label = 'billing' %}
+        <h4 class="heading-text-color primary-font {% unless checkout_contact_address.shipping_address.size > 0  %}hidden{% endunless %}">{{ "checkout.blocks.shipping-and-billing-information.billing_title" | t }}</h4>
+        <p class="heading-text-color primary-font {% unless checkout_contact_address.shipping_address.size > 0  %}hidden{% endunless %}">{{ 'checkout.blocks.shipping-and-billing-information.select_billing_address_label' | t }}</p>
+        <div id="changeBillingAddress">
+          {% liquid assign default_shipping_address = checkout_contact_address.shipping_address 
+              assign is_default_address = true
+              assign radio_attrbiute_name = 'billing_address'
+          %}
+
+          {% if default_shipping_address.address_id  == billingAddress.address_id or billingAddress.size == 0 %}
+            {% assign is_selected = true %}
+          {% else %}
+            {% assign is_selected = false %}
+          {% endif %}
+  
+          {% if default_shipping_address %}
+            <div class="mt-3 border-b border-solid border-color">
+              {% render "saved-checkout-address", addressLabel: billing_label, listOfAddress: default_shipping_address, 
+                isSelected: is_selected, radioName: radio_attrbiute_name %}
+            </div>
+          {% endif %}
+  
+          {% for listOfAddress in checkout_contact_address.addresses %}
+            {% if listOfAddress.address_id  == billingAddress.address_id %}
+              {% assign is_selected = true %}
+            {% else %}
+              {% assign is_selected = false %}
+            {% endif %}
+            <div class="mt-3 border-b border-solid border-color">
+              {% render "saved-checkout-address", addressLabel: billing_label, listOfAddress: listOfAddress, 
+                isSelected: is_selected, radioName: radio_attrbiute_name %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+  </div>
+
+  {% if currentUser != null and checkout_contact_address.shipping_address.size > 0 %}
+    <div class="my-4">
+      <a id="addNewAddress" class="inline-flex gap-2 items-center cursor-pointer">
+        <span>{% render "icon-plus-blue" %}</span>
+        <span class="heading-text-color text-base">{{ 'checkout.blocks.shipping-and-billing-information.add_new_address_label' | t }}</span>
+      </a>
+    </div>
+  {% endif %}
+
+  <div>
+    <p class="text-red-500 text-sm hidden" id="outOfStock"></p>
+    <p class="text-red-500 text-sm hidden" id="emptyShippingAddress">{{ "checkout.blocks.common.empty_shipping_address" | t }}</p>
+    <p class="text-red-500 text-sm hidden" id="emptyBillingAddress">{{ "checkout.blocks.common.empty_billing_address" | t }}</p>
+  </div>
+  <div class="px-auto lg:py-10 py-4 flex justify-center lg:justify-end gap-4" id="addressSubmit">
+    <button id="cancelBtn" type="button" class="btn-secondary  btn-secondary-color btn-secondary-hover hidden px-4 py-2 rounded-sm flex flex-row items-center justify-center">{{ 'accounts.common.cancel_btn' | t }}</button>
+    <button type="submit" class="px-3 py-2 rounded-sm flex flex-row btn-primary btn-primary-color min-h-14 min-w-36 justify-center items-center">
+      {{ "checkout.blocks.common.continue_btn" | t }}
+      <span class="animate-spin h-6 w-8 hidden spinner">
+        {% render "icon-spinner" %}
+      </span>
+    </button>
+  </div>
+</form>
+<div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 z-50">
+  <div class="flex items-center">
+      <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+      {% render "icon-page-loader" %}
+  </div>
+</div>

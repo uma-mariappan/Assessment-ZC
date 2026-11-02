@@ -1,0 +1,9 @@
+<div>
+    <p class="primary-font heading-text-color text-xl md:text-2xl mb-2 md:mb-4">{{ "cart.save_for_later" | t }}</p>
+    <div id="product-list" class="mb-4 flex grid-spacing overflow-x-scroll overflow-y-hidden scroll-smooth 
+        snap-x snap-mandatory mobile-custom-scrollbar pb-3 desktop-custom-scrollbar pb-3">
+        {% for perProduct in saveForLater %}
+            {% render "save-for-later-card", perProduct: perProduct %}
+        {% endfor %}
+    </div>
+</div>

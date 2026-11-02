@@ -1,0 +1,42 @@
+{% liquid assign product_variant = perProduct.variant
+    assign featured_image = perProduct.product.cover_media
+    assign product_image = featured_image.url
+    assign variant_id = product_variant.id
+    assign line_item_id = perProduct.id
+    assign product_url = perProduct.product.url
+%}
+
+{% if product_image == '?' or product_image == '' or product_image == null %}
+    {% assign product_image = "no-image-59606643991319.webp" | asset_url %}
+{% endif %}
+
+<div data-product class=" flex-shrink-0 snap-start">
+    <div class="trigger-div group w-64 relative product-card card h-90">
+        <div class="overflow-hidden w-full relative h-64">
+            <shimmer-effect>
+                <div class="img-loader hidden"></div>
+                <picture>
+                    {% render "image-resolutions", firstImage: featured_image  %}
+                    <img src="{{ product_image }}" alt="{{ "common.alt_image" | t }}"
+                        class="h-full w-auto min-w-full object-cover object-center duration-700 group-hover:scale-125">
+                </picture>
+            </shimmer-effect>
+        </div>
+        <div class="px-6 py-4">
+            <a href="{{ product_url }}">
+                <p class="truncate text-sm md:text-base font-semibold whitespace-nowrap overflow-hidden text-ellipsis primary-font">{{ product_variant.title }}</p>
+            </a>
+            <span class="text-sm">{{ product_variant.price_formatted }}</span>
+        </div>
+        <div class="flex justify-between px-6">
+            <button data-variant-id="{{ variant_id }}" data-line-item-id="{{ line_item_id }}" class="btn-move-cart">
+                <span class="btn-primary btn-primary-color text-xs border border-solid px-3 py-2 cursor-pointer font-normal text-center">
+                  Move to cart  
+                </span>
+            </button>
+            <button data-line-item-id="{{ line_item_id }}" class="btn-remove">
+                {% render "icon-delete" %}
+            </button>
+        </div>
+    </div>
+</div>

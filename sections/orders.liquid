@@ -1,0 +1,169 @@
+{% liquid assign section_settings = section.settings %}
+
+<div class="page-max-width w-[90%] mx-auto">
+    <div class="py-8 px-{{ section_settings.mobile_padding_size }} md:px-[{{ section_settings.desktop_padding_size }}rem] my-40 bg-color">
+        <div class="mx-2 lg:mx-4">
+            <div class="py-5">
+                {% render_blocks type: "zc_theme__text" %}
+            </div>
+            <div class="border-b border-color"></div>
+            <div class="flex flex-col lg:flex-row justify-start py-5">
+                <div class="flex flex-row items-center lg:justify-between gap-1">
+                    <p class="font-semibold text-sm lg:text-lg heading-text-color primary-font">{{ "orders.order_id" | t }}</p>
+                    <span>:</span>
+                    <p class="font-normal text-base">{{ payment_status.salesorder_number | escape }}</p>
+                </div>
+                <div class="border-color lg:border-r-[1px] mx-4 my-1"></div>
+                <div class="flex flex-row items-center lg:justify-between gap-1">
+                    <p class="font-semibold text-sm lg:text-lg heading-text-color primary-font">{{ "orders.placed_on" | t }}</p>
+                    <span>:</span>
+                    <p class="font-normal text-base">{{ payment_status.date | escape }}</p>
+                </div>
+                <div class="border-color lg:border-r-[1px] mx-4 my-1"></div>
+                <div class="flex flex-row items-center gap-1">
+                    <p class="font-semibold text-sm lg:text-lg heading-text-color heading-text-color primary-font">{{ "orders.total" | t }}</p>
+                    <span>:</span>
+                    <p class="font-normal text-base">{{ payment_status.currency_symbol | escape }}{{ payment_status.total | escape }}</p>
+                </div>
+            </div>
+            <div class="py-5 px-6 border-dotted border-2 flex flex-row justify-center lg:justify-start border-color">
+                <div class="flex flex-row items-center gap-2">
+                    <p class="font-normal text-sm lg:text-lg heading-text-color primary-font">{{ "orders.order_status" | t }}</p>
+                    <span>:</span>
+                    <div class="border py-1 px-3 border-color">
+                        <p class="font-normal text-base">{{ payment_status.order_status | escape }}</p>
+                    </div>
+                </div>
+            </div>
+    
+            {% for item in payment_status.line_items %}
+                <div class="border border-color p-2 lg:p-4 my-6">
+                    <div class="flex flex-col lg:flex-row justify-center lg:justify-between mx-2 lg:mx-6">
+                        <div class="flex flex-col lg:flex-row gap-4 items-center">
+                            {% assign order_item_image = item.image | default: item.image_url %}
+                            <picture class="block h-28 w-28">
+                                {% render 'image-resolutions', firstImage: order_item_image %}
+                                <img src="{{ item.image.url | default: item.image_url }}" alt="{{ item.name | escape }}" height="112" loading="lazy" class="h-28 w-auto min-w-full object-cover object-center">
+                            </picture>
+                            <p>{{ item.name | escape }}</p>
+                        </div>
+                        <div class="flex flex-row justify-center gap-2 my-4">
+                            <p class="text-sm lg:text-lg font-semibold">{{ "orders.amount" | t }}</p>
+                            <span class="lg:hidden">:</span>
+                            <p class="text-sm font-semibold lg:text-lg lg:hidden">{{ payment_status.currency_symbol | escape }}{{ payment_status.total | escape }}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-center lg:justify-between">
+                        <div class="flex flex-col lg:mx-[10.5rem]">
+                            <div class="flex flex-row gap-2 mb-3 justify-center lg:justify-start">
+                                <p class="text-sm lg:text-lg">{{ "orders.personalized_name" | t }}</p>
+                                <span class="text-sm lg:text-lg">:</span>
+                                <p class="text-sm lg:text-lg font-semibold">{{ item.name | escape }}</p>
+                            </div>
+                            <div class="flex flex-row gap-2 mb-3 justify-center lg:justify-start">
+                                <p class="text-sm lg:text-lg">{{ "orders.price" | t }}</p>
+                                <span class="text-sm lg:text-lg">:</span>
+                                <p class="text-sm lg:text-lg font-semibold">{{ payment_status.currency_symbol | escape }}{{ item.rate | escape }}</p>
+                            </div>
+                            <div class="flex flex-row gap-2 mb-3 justify-center lg:justify-start">
+                                <p class="text-sm lg:text-lg">{{ "orders.quantity" | t }}</p>
+                                <span class="text-sm lg:text-lg">:</span>
+                                <p class="text-sm lg:text-lg font-semibold">{{ item.quantity | escape }}</p>
+                            </div>
+                            {% render 'order-item-custom-fields', orderItem: item %}
+                        </div>
+                        <div class="pr-5 hidden lg:flex">
+                            <p class="text-sm lg:text-lg">{{ payment_status.currency_symbol | escape }}{{ payment_status.total | escape }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center py-8">No items found in this order.</p>
+            {% endfor %}
+
+            <div class="border border-color mt-6">
+                <div class="flex flex-col-reverse lg:grid grid-cols-2">
+                    <div class="flex flex-col border-t lg:border-t-0 border-color">
+                        <div class="lg:border-r border-color">
+                            <p class="text-sm lg:text-lg font-semibold px-6 py-4 heading-text-color primary-font">{{ "orders.payment_info" | t }}</p>
+                        </div>
+                        <div class="flex flex-col border-y lg:border-r border-color">
+                            <div class="mx-8 mt-5 flex flex-row justify-between">
+                                <p class="text-sm lg:text-lg">{{ "orders.subtotal" | t }}</p>
+                                <p class="text-sm lg:text-lg">{{ payment_status.currency_symbol | escape }}{{ payment_status.sub_total | escape }}</p>
+                            </div>
+                            <div class="mx-8 mt-3 flex flex-row justify-between">
+                                <p class="text-sm lg:text-lg">{{ "orders.shipping" | t }}</p>
+                                <p class="text-sm lg:text-lg">{{ payment_status.currency_symbol | escape }}{{ payment_status.shipping_charge | escape }}</p>
+                            </div>
+                            <div class="mx-8 mt-3 flex flex-row justify-between">
+                                <p class="text-sm lg:text-lg">{{ "orders.tax" | t }}</p>
+                                <p class="text-sm lg:text-lg">{{ payment_status.currency_symbol | escape }}{{ payment_status.tax_total | escape }}</p>
+                            </div>
+                            <div class="mx-8 my-5 flex flex-row justify-between">
+                                <p class="text-sm lg:text-lg font-semibold">{{ "orders.total" | t }}</p>
+                                <p class="text-sm lg:text-lg font-semibold">{{ payment_status.currency_symbol | escape }}{{ payment_status.total | escape }}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-row justify-between px-4 py-6 lg:border-r border-color">
+                            <p class="text-sm lg:text-lg font-semibold heading-text-color primary-font">{{ "orders.payment_method" | t }}</p>
+                            <p class="text-sm lg:text-lg font-semibold">{{ payment_status.payment_mode_formatted | escape }}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col my-4 lg:my-0">
+                        <div class="">
+                            <p class="text-sm lg:text-lg font-semibold px-6 py-4 heading-text-color primary-font">{{ "orders.shipping_destination" | t }}</p>
+                        </div>
+                        <div class="flex flex-col border-t border-color">
+                            <div class="mx-8 mt-5">
+                                <p class="text-sm lg:text-lg">{{ payment_status.shipping_address.address | escape }}</p>
+                                <p class="text-sm lg:text-lg">{{ payment_status.shipping_address.city | escape }}, {{ payment_status.shipping_address.state | escape }} - {{ payment_status.shipping_address.zip | escape }},</p>
+                                <p class="text-sm lg:text-lg">{{ payment_status.shipping_address.country | escape }}.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="py-5 px-6 mb-4 border-dotted border border-color flex justify-center lg:justify-start">
+                    <p class="font-normal text-sm lg:text-lg">{{ "orders.cancellation_descp" | t }}</p>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% schema %}
+    {
+        "name":"t:sections.orders.name",
+        "tag": "section",
+        "class": "section",
+        "available_in": { "templates": ["orders"] },
+        "settings":[
+        {
+            "type": "header",
+            "content": "t:sections.orders.title"
+        },
+        {
+            "type": "range",
+            "id":"mobile_padding_size",
+            "min":2,
+            "max":5,
+            "unit": "rem",
+            "label":"t:sections.orders.settings.mobile_padding_size.label",
+            "default":2
+        },
+        {
+            "type": "range",
+            "id":"desktop_padding_size",
+            "min":1,
+            "max":6,
+            "unit": "rem",
+            "label":"t:sections.orders.settings.desktop_padding_size.label",
+            "default":2
+        }
+        ],
+        "blocks": [
+            { "type": "zc_theme__text", "limit": 1 }
+        ],
+        "presets": [{ "name": "t:sections.orders.presets.default.name" }]
+    }
+    {% endschema %}

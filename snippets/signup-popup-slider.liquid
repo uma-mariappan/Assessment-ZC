@@ -1,0 +1,219 @@
+<link rel="stylesheet" href="{{ "style-19486920188144.css" | asset_url }}" >
+<div class="theme-portal-form-container">
+    <h2 class="signuptitle theme-portal-heading">Sign Up</h2>
+    <form class="user-signup-form-container form" action="/accounts/register.ac" method="post" name="signupform"
+        onsubmit="portal_signup.convertDatetoMillis()" novalidate="novalidate" autocomplete="off">
+        <ul class="signupcontainer user-signup-form-fields-container" style="color: white;">
+
+            {% comment %} <div class="za-email-container" style="display:none">
+                <li class="user-signup-form-field-wrapper">
+                    <div class="form-field-and-message input-field">
+                        <input type="text" class="field-value-change" name="emailormobile" id="emailormobile"
+                            placeholder=" ">
+                        <label for="emailormobile" class="floating-label">Email or Mobile</label>
+                    </div>
+                </li>
+            </div> {% endcomment %}
+
+            <div class="za-email-container">
+                <li class="user-signup-form-field-wrapper">
+                    <div class="form-field-and-message">
+                        <input type="text" class="input-field field-value-change" name="email" placeholder=" " aria-describedby="email-error">
+                        <label for="emailormobile" class="user-signup-field-mandatory floating-label">Email</label>
+                    </div>
+                </li>
+            </div>
+
+            <div class="za-password-container">
+                <li class="user-signup-form-field-wrapper">
+                    <div class="form-field-and-message">
+                        <input type="password" class="input-field field-value-change" name="password" value="" placeholder=" " aria-describedby="password-error">
+                        <label for="password" class="user-signup-field-mandatory floating-label ">Password</label>
+                    </div>
+                </li>
+            </div>
+            {% if signupFields.confirm_password %}
+                <li class="user-signup-form-field-wrapper za-password-container">
+                    <div class="form-field-and-message">
+                        <input type="password" class="input-field field-value-change" name="repassword" value="" placeholder=" ">
+                        <label for="Confirm Password" class="user-signup-field-mandatory floating-label">Confirm Password</label>
+                    </div>
+                </li>
+            {% endif %}
+
+            {% if signupFields.name %}
+                <div class="flex gap-4 w-full mb-4">
+                    <li class="w-full user-signup-form-field-wrapper za-firstname-container">
+                        <div class="form-field-and-message">
+                            <input type="text" class="input-field field-value-change" id="firstname" name="firstname" placeholder=" ">
+                            <label for="firstname" class="user-signup-field-mandatory floating-label">First Name</label>
+                        </div>
+                    </li>
+
+                    <li class="w-full user-signup-form-field-wrapper za-lastname-container">
+                        <div class="form-field-and-message">
+                            <input type="text" class="input-field field-value-change" id="lastname" name="lastname" placeholder=" ">
+                            <label for="lastname" class="user-signup-field-mandatory floating-label">Last Name</label>
+                        </div>
+                    </li>
+                </div>
+            {% endif %}
+
+            {% if signupFields.date_of_birth %}
+                <li class="user-signup-form-field-wrapper za-date-container">
+                    <div class="form-field-datetime-formula form-field-and-message">
+                        <input type="date" class="input-field field-value-change" name="c_dateofbirth" placeholder=" ">
+                        <label class="user-signup-field-mandatory floating-label">Date of Birth</label>
+                    </div>
+                </li>
+            <input type="hidden" name="r_user.date_of_birth">
+            {% endif %}
+
+            {% if signupFields.gender %}
+                <li class="user-signup-form-field-wrapper za-gender-container user-signup-choice-field">
+                    <label class="user-signup-field-mandatory">Gender</label>
+                    <div class="form-field-choice-container">
+                        <input id="male" type="radio" name="r_user.gender" value="M" checked="true">
+                        <label for="male">Male</label>
+                    </div>
+                    <div class="form-field-choice-container">
+                        <input id="female" value="F" type="radio" name="r_user.gender">
+                        <label for="female">Female</label>
+                    </div>
+                </li>
+            {% endif %}
+
+            {% if signupFields.phone %}
+                <li class="user-signup-form-field-wrapper za-phone-container">
+                    <div class="form-field-and-message">
+                        <input class="input-field field-value-change" type="text" name="r_address/2.phone" placeholder=" ">
+                        <label class="user-signup-field-mandatory floating-label">Phone</label>
+                    </div>
+                </li>
+            {% endif %}
+
+            {% if signupFields.company_name %}
+                <li class="user-signup-form-field-wrapper za-companyname-container">
+                    <div class="form-field-and-message">
+                        <input type="text" class="input-field field-value-change" name="r_address/2.company_name" placeholder=" ">
+                        <label class="user-signup-field-mandatory floating-label">Company Name</label>
+                    </div>
+                    {% comment %} <span class="field-error-msg px-4">Enter company name</span> {% endcomment %}
+                </li>
+            {% endif %}
+
+            {% if signupFields.job_title %}
+                <li class="user-signup-form-field-wrapper za-jobTitle-container">
+                    <div class="form-field-and-message">
+                        <input type="text" class="input-field field-value-change" name="r_address/2.job_title" placeholder=" ">
+                        <label class="user-signup-field-mandatory floating-label">Job Title</label>
+                    </div>
+                    <span class="field-error-msg px-4">Enter job title</span>
+                </li>
+            {% endif %}
+
+            {% if signupFields.address %}
+                <li class="user-signup-form-field-wrapper za-streetAddr-container">
+                    <div class="form-field-and-message">
+                        <input type="text" class="input-field field-value-change" name="r_address/2.street_address" placeholder=" ">
+                        <label class="user-signup-field-mandatory floating-label">Address</label>
+                    </div>
+                    <span class="field-error-msg px-4">Enter address</span>
+                </li>
+            {% endif %}
+
+            {% if signupFields.city %}
+                <li class="user-signup-form-field-wrapper za-city-container">
+                    <div class="form-field-and-message">
+                        <input type="text" class="input-field field-value-change" name="r_address/2.city" placeholder=" ">
+                        <label class="user-signup-field-mandatory floating-label">City</label>
+                    </div>
+                    <span class="field-error-msg px-4">Enter city</span>
+                </li>
+            {% endif %}
+
+            {% if signupFields.state %}
+                <li class="user-signup-form-field-wrapper za-state-container">
+                    <div class="form-field-and-message">
+                        <input type="text" class="input-field field-value-change" name="r_address/2.state" placeholder=" ">
+                        <label class="user-signup-field-mandatory floating-label">State</label>
+                    </div>
+                    <span class="field-error-msg px-4">Enter state</span>
+                </li>
+            {% endif %}
+
+            {% if signupFields.country %}
+                <li class="user-signup-form-field-wrapper">
+                    <div class="form-field-and-message">
+                        <input type="text" class="input-field field-value-change" name="r_address/2.country" placeholder=" ">
+                        <label class="user-signup-field-mandatory floating-label">Country</label>
+                    </div>
+                    {% comment %} <span class="field-error-msg px-4">Enter country</span> {% endcomment %}
+                </li>
+            {% endif %}
+
+            {% if signupFields.postal_code %}
+                <li class="user-signup-form-field-wrapper za-postalCode-container">
+                    <div class="form-field-and-message">
+                        <input type="text" class="input-field field-value-change" name="r_address/2.postal_code" placeholder=" ">
+                        <label class="user-signup-field-mandatory floating-label">Postal Code</label>
+                    </div>
+                    {% comment %} <span class="field-error-msg px-4">Enter postal code</span> {% endcomment %}
+                </li>
+            {% endif %}
+
+            {% if signupFields.receive_promotional_emails %}
+                <li class="user-signup-form-field-wrapper newsletter-container">
+                    <div class="form-field-and-message">
+                        <input type="checkbox" name="newsletter" value="true" id="zs_newsletter" class="input-field cursor-pointer">
+                        <label for="zs_newsletter" class="newsletter-message">Subscribe to our newsletter for our latest
+                            news and updates.</label>
+                    </div>
+                </li>
+            {% endif %}
+
+            <li class="flex flex-row gap-4 za-captcha-container" id="captcha_elm" style="display:none;">
+                <div class="user-signup-form-field-wrapper w-[50%]">
+                    <div class="form-field-and-message">
+                        <input type="text" class="input-field field-value-change" name="captcha" value="" placeholder=" ">
+                        <label for="captcha" class="user-signup-field-mandatory floating-label">Captcha</label>
+                    </div>
+                </div>
+                <div class="w-[50%]">
+                    <img class="za-captcha" src="" class="w-full bg-cover">
+                </div>
+            </li>
+            
+            <span id="signup_error_msg_container"
+                style="color:#EB4C5C; display:none;margin-top:-10px;padding-bottom:15px;"></span>
+            <li class="user-signup-form-field-wrapper signup-form-submit">
+                <button type="submit" class="signup-button">Sign Up</button>
+            </li>
+        </ul>
+        <section class="signupotpcontainer" style="display: none">
+            <div class="verifytitle">{{ 'accounts.auth.verify_signup_title' | t }}</div>
+            <div class="verifyheader">{{ 'accounts.auth.otp_header' | t }}</div>
+            <div class="otpmobile">
+                <span id="mobileotp"></span>
+                <span class="change" onclick="gobacktosignup()">Change</span>
+            </div>
+            <div class="za-otp-container">
+                <div class="otpmobile">
+                    <input type="text" class="form-input" name="otp" id="otpfield"
+                        placeholder="{{ 'accounts.auth.otp_placeholder' | t }}" style="border: none !important; padding: 0px; background-color: transparent;">
+                </div>
+            </div>
+            <div class="flex flex-row justify-end gap-6 items-center">
+                <span onclick="resendOTP()" class="resendotp">{{ 'accounts.auth.resend_otp' | t }}</span>
+                <div class="za-submitbtn-otp">
+                    <input type="button" class="signupbtn" value="{{ 'accounts.auth.verify' | t }}" onclick="validateOTP()" name="otpfield"
+                    style="margin: 0px;">
+                    <div class="loadingImg"></div>
+                </div>
+            </div>
+        </section>
+    </form>
+</div>
+<div class="theme-already-signin-info">
+    {{ 'accounts.auth.already_have_account' | t }}<span class="pl-2"><a id="signinElm" href="/signin">{{ 'accounts.auth.sign_in' | t }}</a></span>
+</div>

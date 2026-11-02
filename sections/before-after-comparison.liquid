@@ -1,0 +1,310 @@
+<script src="{{ 'before-after-comparison-579541587714486.js' | asset_url }}" defer></script>
+
+{% liquid
+  assign section_settings = section.settings
+  assign bac_bg_value = section_settings.background_color.value | default: section_settings.background_color | default: 'primary'
+%}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+  #section-{{ section.id }} .comparison-image-after {
+    clip-path: inset(0 0 0 50%);
+  }
+  #section-{{ section.id }} .comparison-divider {
+    left: 50%;
+  }
+{% endstyle %}
+
+<div id="section-{{ section.id }}" class="w-full {% if bac_bg_value == 'secondary' %}bg-secondary-color{% else %}bg-primary-color{% endif %}">
+  <div class="w-[90%] page-max-width mx-auto">
+    {% liquid
+      assign heading_alignment = section_settings.content_alignment.value | default: section_settings.content_alignment
+    %}
+    <div class="mb-8 md:mb-12
+      {% if heading_alignment == 'center' %} text-center
+      {% elsif heading_alignment == 'right' %} text-right
+      {% else %} text-left
+      {% endif %}">
+      {% render_blocks %}
+    </div>
+
+    {% for per_block in section.blocks %}
+      {% if per_block.type == 'comparison-images' %}
+        {% liquid
+          assign block_settings = per_block.settings
+          assign clear_image_obj = block_settings.clear_skin_image
+          assign not_clear_image_obj = block_settings.not_clear_skin_image
+          assign clear_image_url = block_settings.clear_skin_image.url | default: block_settings.clear_skin_image
+          assign not_clear_image_url = block_settings.not_clear_skin_image.url | default: block_settings.not_clear_skin_image
+          if clear_image_url == blank or clear_image_url == '?'
+            assign clear_image_url = 'clear-skin-img-642710716628106.webp' | asset_url
+          endif
+          if not_clear_image_url == blank or not_clear_image_url == '?'
+            assign not_clear_image_url = 'before-treatment-skin-822361188348380.webp' | asset_url
+          endif
+        %}
+        <div {{ per_block.zcommerce_attributes }}>
+          <before-after-comparison class="block relative w-full overflow-hidden select-none aspect-[5/3] md:aspect-[1296/563]">
+            <picture class="comparison-image comparison-image-before absolute inset-0 w-full h-full pointer-events-none block">
+              {% render 'image-resolutions', firstImage: not_clear_image_obj %}
+              <img src="{{ not_clear_image_url }}"
+                   alt="{{ not_clear_image_obj.alt | default: 'Before treatment - skin condition' | escape }}"
+                   height="563" loading="lazy"
+                   class="h-full w-auto min-w-full object-cover object-center">
+            </picture>
+            <picture class="comparison-image comparison-image-after absolute inset-0 w-full h-full pointer-events-none block">
+              {% render 'image-resolutions', firstImage: clear_image_obj %}
+              <img src="{{ clear_image_url }}"
+                   alt="{{ clear_image_obj.alt | default: 'After treatment - clear skin result' | escape }}"
+                   height="563" loading="lazy"
+                   class="h-full w-auto min-w-full object-cover object-center">
+            </picture>
+            <div class="comparison-divider absolute top-0 w-0.5 h-full bg-white/80 -translate-x-1/2 cursor-ew-resize z-10" style="touch-action: none;">
+              <div class="comparison-handle absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 md:w-24 md:h-24 bg-white rounded-full flex items-center justify-center cursor-ew-resize shadow-lg z-[11]" style="touch-action: none;">
+                <span class="text-[6px] md:text-sm font-bold body-text-color uppercase tracking-[2px] md:tracking-[8px] md:pl-[8px] pl-[2px]">DRAG</span>
+              </div>
+            </div>
+          </before-after-comparison>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.before_after_comparison.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {
+    "templates": [
+      "index"
+    ]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.before_after_comparison.settings.background_color.label",
+      "options": [
+        {
+          "label": "t:sections.before_after_comparison.settings.background_color.options.primary",
+          "value": "primary"
+        },
+        {
+          "label": "t:sections.before_after_comparison.settings.background_color.options.secondary",
+          "value": "secondary"
+        }
+      ],
+      "default": {
+        "display_name": "Primary",
+        "value": "primary"
+      }
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:sections.before_after_comparison.settings.content_alignment.label",
+      "options": [
+        {
+          "label": "t:sections.before_after_comparison.settings.content_alignment.options.left",
+          "value": "left"
+        },
+        {
+          "label": "t:sections.before_after_comparison.settings.content_alignment.options.center",
+          "value": "center"
+        },
+        {
+          "label": "t:sections.before_after_comparison.settings.content_alignment.options.right",
+          "value": "right"
+        }
+      ],
+      "default": {
+        "display_name": "Center",
+        "value": "center"
+      }
+    },
+    {
+      "type": "header",
+      "content": "t:sections.before_after_comparison.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.before_after_comparison.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.before_after_comparison.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.before_after_comparison.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.before_after_comparison.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.before_after_comparison.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "zc_theme__text",
+      "name": "t:blocks.text.name"
+    },
+    {
+      "type": "zc_theme__button",
+      "name": "t:blocks.button.name"
+    },
+    {
+      "type": "zc_theme__image",
+      "name": "t:blocks.image.name"
+    },
+    {
+      "type": "zc_theme__carousel",
+      "name": "t:blocks.carousel.name"
+    },
+    {
+      "type": "zc_theme__accordion",
+      "name": "t:blocks.accordion.name"
+    },
+    {
+      "type": "comparison-images",
+      "name": "t:sections.before_after_comparison.blocks.comparison_images.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "clear_skin_image",
+          "label": "t:sections.before_after_comparison.blocks.comparison_images.settings.clear_skin_image.label",
+          "default": {
+            "url": "clear-skin-img-642710716628106.webp",
+            "enable_customisation": true
+          }
+        },
+        {
+          "type": "image_picker",
+          "id": "not_clear_skin_image",
+          "label": "t:sections.before_after_comparison.blocks.comparison_images.settings.not_clear_skin_image.label",
+          "default": {
+            "url": "before-treatment-skin-822361188348380.webp",
+            "enable_customisation": true
+          }
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.before_after_comparison.presets.default.name",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "content_alignment": {
+          "display_name": "Center",
+          "value": "center"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "heading": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "t:sections.before_after_comparison.blocks.heading.settings.heading_text.default",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "2XL",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "comparison-images": {
+          "type": "comparison-images",
+          "settings": {
+            "clear_skin_image": {
+              "url": "clear-skin-img-642710716628106.webp",
+              "enable_customisation": true
+            },
+            "not_clear_skin_image": {
+              "url": "before-treatment-skin-822361188348380.webp",
+              "enable_customisation": true
+            }
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "comparison-images"
+      ]
+    }
+  ]
+}
+{% endschema %}

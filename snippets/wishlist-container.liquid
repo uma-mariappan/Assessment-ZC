@@ -1,0 +1,12 @@
+{% if perProduct.variants.size == 1 %}
+  <div data-variant-id="{{ perProduct.initial_variant.id }}"
+    class="product-wishlist absolute top-2 right-2 md:top-3 md:right-3 z-10 pointer-events-auto">
+    <button type="button"
+      class="wishlist-removed bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"
+      style="color: var(--color-primary);"
+      aria-label="Toggle wishlist"
+      aria-pressed="false">
+      {% render 'icon-wishlist' %}
+    </button>
+  </div>
+{% endif %}

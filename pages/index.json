@@ -1,0 +1,1209 @@
+{
+  "layout": "theme",
+  "sections": {
+    "hero-banner": {
+      "type": "hero-banner",
+      "settings": {
+        "background_color": {
+          "display_name": "Secondary",
+          "value": "secondary"
+        },
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 0,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "hero-image-left": {
+          "type": "zc_theme__image",
+          "settings": {
+            "image": {
+              "url": "hero-banner-left-img-606428239186791.webp",
+              "enable_customisation": true
+            },
+            "link": {
+              "display_name": "All Products",
+              "handle": "collections/all-products"
+            },
+            "image_ratio": {
+              "display_name": "Portrait",
+              "value": "portrait"
+            },
+            "width": {
+              "display_name": "Fill",
+              "value": "fill"
+            },
+            "custom_width": 100,
+            "width_mobile": {
+              "display_name": "Fill",
+              "value": "fill"
+            },
+            "custom_width_mobile": 100,
+            "height": {
+              "display_name": "Fill",
+              "value": "fill"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "hero-carousel": {
+          "type": "zc_theme__carousel",
+          "settings": {
+            "autoplay_enabled": true,
+            "autoplay_speed": 5,
+            "background_color": "#FDDCEE"
+          },
+          "blocks": {
+            "slide-1": {
+              "type": "zc_theme__carousel_slide",
+              "settings": {
+                "show_background_image": false,
+                "background_image": {
+                  "url": "",
+                  "enable_customisation": true
+                },
+                "content_alignment": {
+                  "display_name": "Center",
+                  "value": "center"
+                }
+              },
+              "blocks": {
+                "heading": {
+                  "type": "zc_theme__text",
+                  "settings": {
+                    "text": "Treat your skin with the best treatment",
+                    "select_font_family": {
+                      "display_name": "Primary",
+                      "value": "primary"
+                    },
+                    "select_text_color": {
+                      "display_name": "Heading text color",
+                      "value": "heading-text-color"
+                    },
+                    "desktop_text_size": {
+                      "display_name": "5XL",
+                      "value": "text-5xl"
+                    },
+                    "mobile_text_size": {
+                      "display_name": "2XL",
+                      "value": "text-2xl"
+                    },
+                    "desktop_font_weight": {
+                      "display_name": "Bold",
+                      "value": "bold"
+                    },
+                    "mobile_font_weight": {
+                      "display_name": "Bold",
+                      "value": "bold"
+                    },
+                    "padding_block_start": 0,
+                    "padding_block_end": 0,
+                    "padding_inline_start": 0,
+                    "padding_inline_end": 0
+                  }
+                },
+                "button": {
+                  "type": "zc_theme__button",
+                  "settings": {
+                    "button_text": "Shop Now",
+                    "button_url": {
+                      "display_name": "All Products",
+                      "handle": "collections/all-products"
+                    },
+                    "select_button_style": {
+                      "display_name": "Secondary",
+                      "value": "secondary"
+                    }
+                  }
+                }
+              },
+              "block_order": ["heading", "button"]
+            },
+            "slide-2": {
+              "type": "zc_theme__carousel_slide",
+              "settings": {
+                "show_background_image": false,
+                "background_image": {
+                  "url": "",
+                  "enable_customisation": true
+                },
+                "content_alignment": {
+                  "display_name": "Center",
+                  "value": "center"
+                }
+              },
+              "blocks": {
+                "heading": {
+                  "type": "zc_theme__text",
+                  "settings": {
+                    "text": "Bring out your natural glow with the right treatment",
+                    "select_font_family": {
+                      "display_name": "Primary",
+                      "value": "primary"
+                    },
+                    "select_text_color": {
+                      "display_name": "Heading text color",
+                      "value": "heading-text-color"
+                    },
+                    "desktop_text_size": {
+                      "display_name": "5XL",
+                      "value": "text-5xl"
+                    },
+                    "mobile_text_size": {
+                      "display_name": "2XL",
+                      "value": "text-2xl"
+                    },
+                    "desktop_font_weight": {
+                      "display_name": "Bold",
+                      "value": "bold"
+                    },
+                    "mobile_font_weight": {
+                      "display_name": "Bold",
+                      "value": "bold"
+                    },
+                    "padding_block_start": 0,
+                    "padding_block_end": 0,
+                    "padding_inline_start": 0,
+                    "padding_inline_end": 0
+                  }
+                },
+                "button": {
+                  "type": "zc_theme__button",
+                  "settings": {
+                    "button_text": "Explore more",
+                    "button_url": {
+                      "display_name": "All Products",
+                      "handle": "collections/all-products"
+                    },
+                    "select_button_style": {
+                      "display_name": "Secondary",
+                      "value": "secondary"
+                    }
+                  }
+                }
+              },
+              "block_order": ["heading", "button"]
+            },
+            "slide-3": {
+              "type": "zc_theme__carousel_slide",
+              "settings": {
+                "show_background_image": false,
+                "background_image": {
+                  "url": "",
+                  "enable_customisation": true
+                },
+                "content_alignment": {
+                  "display_name": "Center",
+                  "value": "center"
+                }
+              },
+              "blocks": {
+                "heading": {
+                  "type": "zc_theme__text",
+                  "settings": {
+                    "text": "Refresh, renew, and revive your skin",
+                    "select_font_family": {
+                      "display_name": "Primary",
+                      "value": "primary"
+                    },
+                    "select_text_color": {
+                      "display_name": "Heading text color",
+                      "value": "heading-text-color"
+                    },
+                    "desktop_text_size": {
+                      "display_name": "5XL",
+                      "value": "text-5xl"
+                    },
+                    "mobile_text_size": {
+                      "display_name": "2XL",
+                      "value": "text-2xl"
+                    },
+                    "desktop_font_weight": {
+                      "display_name": "Bold",
+                      "value": "bold"
+                    },
+                    "mobile_font_weight": {
+                      "display_name": "Bold",
+                      "value": "bold"
+                    },
+                    "padding_block_start": 0,
+                    "padding_block_end": 0,
+                    "padding_inline_start": 0,
+                    "padding_inline_end": 0
+                  }
+                },
+                "button": {
+                  "type": "zc_theme__button",
+                  "settings": {
+                    "button_text": "Buy Now",
+                    "button_url": {
+                      "display_name": "All Products",
+                      "handle": "collections/all-products"
+                    },
+                    "select_button_style": {
+                      "display_name": "Secondary",
+                      "value": "secondary"
+                    }
+                  }
+                }
+              },
+              "block_order": ["heading", "button"]
+            }
+          },
+          "block_order": ["slide-1", "slide-2", "slide-3"]
+        },
+        "hero-image-right": {
+          "type": "zc_theme__image",
+          "settings": {
+            "image": {
+              "url": "hero-banner-right-img-679436383658139.webp",
+              "enable_customisation": true
+            },
+            "link": {
+              "display_name": "All Products",
+              "handle": "collections/all-products"
+            },
+            "image_ratio": {
+              "display_name": "Portrait",
+              "value": "portrait"
+            },
+            "width": {
+              "display_name": "Fill",
+              "value": "fill"
+            },
+            "custom_width": 100,
+            "width_mobile": {
+              "display_name": "Fill",
+              "value": "fill"
+            },
+            "custom_width_mobile": 100,
+            "height": {
+              "display_name": "Fill",
+              "value": "fill"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        }
+      },
+      "block_order": ["hero-image-left", "hero-carousel", "hero-image-right"]
+    },
+    "product-collection": {
+      "type": "product-collection",
+      "settings": {
+        "background_color": {
+          "display_name": "Secondary",
+          "value": "secondary"
+        },
+        "content_alignment": {
+          "display_name": "Center",
+          "value": "center"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "heading": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "OUR SUMMER FAVOURITES",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "2XL",
+              "value": "text-2xl"
+            },
+            "mobile_text_size": {
+              "display_name": "2XL",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "mobile_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "sub-heading": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "SUMMER SKIN CARE STARTS WITH A HEALTHY ROUTINE",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "XL",
+              "value": "text-xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 20,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "product-collection-block": {
+          "type": "collection",
+          "settings": {
+            "collection": {
+              "display_name": "All Products",
+              "handle": "all-products"
+            }
+          }
+        }
+      },
+      "block_order": ["heading", "sub-heading", "product-collection-block"]
+    },
+    "shop-now-banner": {
+      "type": "shop-now-banner",
+      "settings": {
+        "image_alignment": {
+          "display_name": "Center",
+          "value": "center"
+        },
+        "text_alignment": {
+          "display_name": "Center",
+          "value": "center"
+        },
+        "content_alignment": {
+          "display_name": "Bottom",
+          "value": "bottom"
+        },
+        "back_image": {
+          "url": "shop-now-banner-823453478089350.webp",
+          "enable_customisation": true
+        },
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "container_bg_color": "#FDDCEE",
+        "container_bg_height": 80,
+        "bottom_gradient_color": "#FDDCEE",
+        "bottom_gradient_height": 100,
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "shop-now-banner-text": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "SKINCARE MADE WITH THE WORLD FINEST",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "5XL",
+              "value": "text-5xl"
+            },
+            "mobile_text_size": {
+              "display_name": "2XL",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Bold",
+              "value": "bold"
+            },
+            "mobile_font_weight": {
+              "display_name": "Bold",
+              "value": "bold"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "shop-now-banner-button": {
+          "type": "zc_theme__button",
+          "settings": {
+            "button_text": "Shop Now",
+            "button_url": {
+              "display_name": "All Products",
+              "handle": "collections/all-products"
+            },
+            "select_button_style": {
+              "display_name": "Secondary",
+              "value": "secondary"
+            }
+          }
+        }
+      },
+      "block_order": ["shop-now-banner-text", "shop-now-banner-button"]
+    },
+    "category-collection": {
+      "type": "category-collection",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 60,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "heading": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "Shop by Categories",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "2XL",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "category-1": {
+          "type": "category",
+          "settings": {
+            "category_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "category_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "bottom_gradient_color": "#E799AA",
+            "bottom_gradient_height": 40
+          }
+        },
+        "category-2": {
+          "type": "category",
+          "settings": {
+            "category_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "category_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "bottom_gradient_color": "#E799AA",
+            "bottom_gradient_height": 40
+          }
+        },
+        "category-3": {
+          "type": "category",
+          "settings": {
+            "category_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "category_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "bottom_gradient_color": "#E799AA",
+            "bottom_gradient_height": 40
+          }
+        },
+        "category-4": {
+          "type": "category",
+          "settings": {
+            "category_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "category_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "bottom_gradient_color": "#E799AA",
+            "bottom_gradient_height": 40
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "category-1",
+        "category-2",
+        "category-3",
+        "category-4"
+      ]
+    },
+    "badges": {
+      "type": "badges",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "desktop_title_size": {
+          "display_name": "Medium",
+          "value": "text-lg"
+        },
+        "mobile_title_size": {
+          "display_name": "Medium",
+          "value": "text-base"
+        },
+        "desktop_description_size": {
+          "display_name": "Medium",
+          "value": "text-base"
+        },
+        "mobile_description_size": {
+          "display_name": "Medium",
+          "value": "text-sm"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "badge-1": {
+          "type": "badge",
+          "settings": {
+            "badge_text": "Free Cruelty",
+            "badge_description": "Responsibly made, ethically created, never tested on animals.",
+            "badge_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "show_background_color": false,
+            "background_color": "#FFD9E6"
+          }
+        },
+        "badge-2": {
+          "type": "badge",
+          "settings": {
+            "badge_text": "100% Natural",
+            "badge_description": "Made with pure, wholesome ingredients sourced directly from nature's best.",
+            "badge_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "show_background_color": false,
+            "background_color": "#FFD9E6"
+          }
+        },
+        "badge-3": {
+          "type": "badge",
+          "settings": {
+            "badge_text": "Global Delivery",
+            "badge_description": "We deliver your orders to doorsteps around the world.",
+            "badge_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "show_background_color": false,
+            "background_color": "#FFD9E6"
+          }
+        },
+        "badge-4": {
+          "type": "badge",
+          "settings": {
+            "badge_text": "Eco-friendly",
+            "badge_description": "Sustainable choices that protect and preserve our beautiful planet.",
+            "badge_image": {
+              "url": "",
+              "enable_customisation": true
+            },
+            "show_background_color": false,
+            "background_color": "#FFD9E6"
+          }
+        }
+      },
+      "block_order": ["badge-1", "badge-2", "badge-3", "badge-4"]
+    },
+    "before-after-comparison": {
+      "type": "before-after-comparison",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "content_alignment": {
+          "display_name": "Center",
+          "value": "center"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "heading": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "RADIANT RESULT GUARANTEED",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "2XL",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "comparison-images": {
+          "type": "comparison-images",
+          "settings": {
+            "clear_skin_image": {
+              "url": "clear-skin-img-642710716628106.webp",
+              "enable_customisation": true
+            },
+            "not_clear_skin_image": {
+              "url": "before-treatment-skin-822361188348380.webp",
+              "enable_customisation": true
+            }
+          }
+        }
+      },
+      "block_order": ["heading", "comparison-images"]
+    },
+    "best-seller": {
+      "type": "best-seller",
+      "settings": {
+        "background_color": {
+          "display_name": "Secondary",
+          "value": "secondary"
+        },
+        "mobile_padding_top": 60,
+        "mobile_padding_bottom": 60,
+        "desktop_padding_top": 80,
+        "desktop_padding_bottom": 80
+      },
+      "blocks": {
+        "best-seller-title": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "BEST SELLER",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "best-seller-collection-1": {
+          "type": "collection-tab",
+          "settings": {
+            "collection": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        }
+      },
+      "block_order": ["best-seller-title", "best-seller-collection-1"]
+    },
+    "video-stories": {
+      "type": "video-stories",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "video-stories-title": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "They have tried it. When you will!",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "2XL",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "video-1": {
+          "type": "video",
+          "settings": {
+            "video_media": {
+              "url": "video-1-140596725753705.mp4",
+              "is_video": true
+            },
+            "video_object_fit": {
+              "display_name": "Cover",
+              "value": "cover"
+            },
+            "card_bg_color": "#FDF2F8",
+            "product_image": {
+              "url": "video-card-product-img-879862157571571.webp"
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "video-2": {
+          "type": "video",
+          "settings": {
+            "video_media": {
+              "url": "video-2-126233350407754.mp4",
+              "is_video": true
+            },
+            "video_object_fit": {
+              "display_name": "Cover",
+              "value": "cover"
+            },
+            "card_bg_color": "#FDF2F8",
+            "product_image": {
+              "url": "video-card-product-img-879862157571571.webp"
+            },
+            "product_name": "Hydration Cream",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "video-3": {
+          "type": "video",
+          "settings": {
+            "video_media": {
+              "url": "video-3-122084631086184.mp4",
+              "is_video": true
+            },
+            "video_object_fit": {
+              "display_name": "Cover",
+              "value": "cover"
+            },
+            "card_bg_color": "#FDF2F8",
+            "product_image": {
+              "url": "video-card-product-img-879862157571571.webp"
+            },
+            "product_name": "Repair Night Serum",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "video-4": {
+          "type": "video",
+          "settings": {
+            "video_media": {
+              "url": "video-4-271964726298857.mp4",
+              "is_video": true
+            },
+            "video_object_fit": {
+              "display_name": "Cover",
+              "value": "cover"
+            },
+            "card_bg_color": "#FDF2F8",
+            "product_image": {
+              "url": "video-card-product-img-879862157571571.webp"
+            },
+            "product_name": "SkinQuench Sunscreen",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        }
+      },
+      "block_order": [
+        "video-stories-title",
+        "video-1",
+        "video-2",
+        "video-3",
+        "video-4"
+      ]
+    },
+    "testimonial-stories": {
+      "type": "testimonial-stories",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "content_alignment": {
+          "display_name": "Center",
+          "value": "center"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "testimonial-title": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "Customer Stories",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "2XL",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "testimonial-card-1": {
+          "type": "testimonial-card",
+          "settings": {
+            "testimonial": "A simplified ritual of powerful antioxidants and naturally restorative elements, for a modern and healthy approach to skin. Advanced, transformative organic formulations that revitalize and regenerate below the surface for immediate results.",
+            "customer_name": "Steffi",
+            "rating": 4,
+            "product_image": {
+              "url": "testimonial-product-img-876726699760411.webp"
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_price": "₹950.00",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "hover_color": "#FDF2F8"
+          }
+        },
+        "testimonial-card-2": {
+          "type": "testimonial-card",
+          "settings": {
+            "testimonial": "A simplified ritual of powerful antioxidants and naturally restorative elements, for a modern and healthy approach to skin. Advanced, transformative organic formulations that revitalize and regenerate below the surface for immediate results.",
+            "customer_name": "Steffi",
+            "rating": 4,
+            "product_image": {
+              "url": "testimonial-product-img-876726699760411.webp"
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_price": "₹950.00",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "hover_color": "#FDF2F8"
+          }
+        },
+        "testimonial-card-3": {
+          "type": "testimonial-card",
+          "settings": {
+            "testimonial": "A simplified ritual of powerful antioxidants and naturally restorative elements, for a modern and healthy approach to skin. Advanced, transformative organic formulations that revitalize and regenerate below the surface for immediate results.",
+            "customer_name": "Steffi",
+            "rating": 4,
+            "product_image": {
+              "url": "testimonial-product-img-876726699760411.webp"
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_price": "₹950.00",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "hover_color": "#FDF2F8"
+          }
+        },
+        "testimonial-card-4": {
+          "type": "testimonial-card",
+          "settings": {
+            "testimonial": "A simplified ritual of powerful antioxidants and naturally restorative elements, for a modern and healthy approach to skin. Advanced, transformative organic formulations that revitalize and regenerate below the surface for immediate results.",
+            "customer_name": "Steffi",
+            "rating": 4,
+            "product_image": {
+              "url": "testimonial-product-img-876726699760411.webp"
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_price": "₹950.00",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "hover_color": "#FDF2F8"
+          }
+        }
+      },
+      "block_order": [
+        "testimonial-title",
+        "testimonial-card-1",
+        "testimonial-card-2",
+        "testimonial-card-3",
+        "testimonial-card-4"
+      ]
+    },
+    "blog-posts": {
+      "type": "blog-posts",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "blog-posts-title": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "Makeup & Beauty Tips that will make your life easier",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "2XL",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "blog-posts-button": {
+          "type": "zc_theme__button",
+          "settings": {
+            "button_text": "Visit our Blogs",
+            "button_url": {
+              "display_name": "Blogs",
+              "handle": "blogs"
+            },
+            "select_button_style": {
+              "display_name": "Primary",
+              "value": "primary"
+            }
+          }
+        },
+        "blog-post-card-1": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "blog-post-card-2": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "blog-post-card-3": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "blog-post-card-4": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        },
+        "blog-post-card-5": {
+          "type": "blog-card",
+          "settings": {
+            "blog": {
+              "display_name": "",
+              "handle": ""
+            }
+          }
+        }
+      },
+      "block_order": [
+        "blog-posts-title",
+        "blog-posts-button",
+        "blog-post-card-1",
+        "blog-post-card-2",
+        "blog-post-card-3",
+        "blog-post-card-4",
+        "blog-post-card-5"
+      ]
+    }
+  },
+  "order": [
+    "hero-banner",
+    "product-collection",
+    "shop-now-banner",
+    "category-collection",
+    "best-seller",
+    "badges",
+    "video-stories",
+    "testimonial-stories",
+    "before-after-comparison",
+    "blog-posts"
+  ]
+}

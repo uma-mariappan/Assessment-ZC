@@ -1,0 +1,28 @@
+{
+  "layout": "theme",
+  "sections": {
+    "blog_post": {
+      "type": "blog",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "mobile_padding_top": 40,
+        "mobile_padding_bottom": 40,
+        "desktop_padding_top": 40,
+        "desktop_padding_bottom": 40
+      }
+    },
+    "blog_comments": {
+      "type": "blog-comments-replies",
+      "settings": {
+        "mobile_padding_top": 40,
+        "mobile_padding_bottom": 40,
+        "desktop_padding_top": 40,
+        "desktop_padding_bottom": 40
+      }
+    }
+  },
+  "order": ["blog_post", "blog_comments"]
+}

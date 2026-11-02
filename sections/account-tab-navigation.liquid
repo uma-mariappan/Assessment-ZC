@@ -1,0 +1,162 @@
+<script type="module" src="{{ "account-tab-navigation-409217755681856.js" | asset_url }}" defer></script>
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<tab-navigation id="section-{{ section.id }}" class="py-4 md:py-6 border-b border-[var(--color-border)]">
+  <div class="w-[90%] mx-auto page-max-width relative">
+    <!-- Mobile Menu -->
+    <div class="md:hidden flex items-center gap-4">
+      <button id="accountMenuToggle" class="flex items-center justify-center w-10 h-10 rounded-full border border-color">
+        <span id="accountMenuOpenIcon">
+          {% render "icon-hamburger" %}
+        </span>
+        <span id="accountMenuCloseIcon" class="hidden w-5 h-5">
+          {% render "icon-header-close" %}
+        </span>
+      </button>
+      <p>{{ 'accounts.common.menu' | t }}</p>
+    </div>
+
+    <div id="accountMenuDropdown" class="md:hidden hidden absolute right-0 top-full mt-3 w-full bg-white border border-color rounded-2xl shadow-md overflow-hidden z-50">
+      <div class="px-5 py-4 border-b border-color text-sm font-medium">
+        {{ 'accounts.common.hi' | t }}, <span data-account-user-name></span>
+        <a data-account-signout-url href="#" class="border-l border-color pl-2 no-underline text-blue-500">{{ 'header.sign_out' | t }}</a>
+      </div>
+      <a href="/account/profile" id="profileTabMobile" class="flex items-center gap-3 px-5 py-3 text-sm">
+        <span>{% render "icon-black-profile" %}</span>
+        <span>{{ 'accounts.common.my_profile' | t }}</span>
+      </a>
+      <a href="/account/orders" id="ordersTabMobile" class="flex items-center gap-3 px-5 py-3 text-sm">
+        <span>{% render "icon-black-trolley" %}</span>
+        <span>{{ 'accounts.common.my_orders' | t }}</span>
+      </a>
+      {% if store.customer_portal.enabled and store.preferences.is_quotes_enabled %}
+        <a href="/account/quotes" id="quotesTabMobile" class="flex items-center gap-3 px-5 py-3 text-sm">
+          <span>{% render "icon-black-quotes" %}</span>
+          <span>{{ 'accounts.common.my_quotes' | t }}</span>
+        </a>
+      {% endif %}
+      <a href="/account/addresses" id="addressTabMobile" class="flex items-center gap-3 px-5 py-3 text-sm">
+        <span>{% render "icon-black-location" %}</span>
+        <span>{{ 'accounts.common.my_address_list' | t }}</span>
+      </a>
+    </div>
+
+    <!-- Desktop Tabs -->
+    <div class="hidden md:flex">
+      <a href="/account/profile" id="profileTab"
+          class="flex items-center gap-3 px-8 py-5 rounded-full text-base">
+        <span class="white-profile-icon hidden">{% render "icon-white-profile" %}</span>
+        <span class="black-profile-icon">{% render "icon-black-profile" %}</span>
+        <span>
+          {{ 'accounts.common.my_profile' | t }}
+        </span>
+      </a>
+
+      <a href="/account/orders" id="ordersTab"
+          class="flex items-center gap-3 px-8 py-5 rounded-full text-base">
+        <span class="white-orders-icon hidden">{% render "icon-white-trolley" %}</span>
+        <span class="black-orders-icon">{% render "icon-black-trolley" %}</span>
+        <span>
+          {{ 'accounts.common.my_orders' | t }}
+        </span>
+      </a>
+
+      {% if store.customer_portal.enabled and store.preferences.is_quotes_enabled %}
+        <a href="/account/quotes" id="quotesTab"
+            class="flex items-center gap-3 px-8 py-5 rounded-full text-base">
+          <span class="white-address-icon hidden">{% render "icon-white-quotes" %}</span>
+          <span class="black-address-icon">{% render "icon-black-quotes" %}</span>
+          <span>
+            {{ 'accounts.common.my_quotes' | t }}
+          </span>
+        </a>
+      {% endif %}
+
+      <a href="/account/addresses" id="addressTab"
+          class="flex items-center gap-3 px-8 py-5 rounded-full text-base">
+        <span class="white-address-icon hidden">{% render "icon-white-location" %}</span>
+        <span class="black-address-icon">{% render "icon-black-location" %}</span>
+        <span>
+          {{ 'accounts.common.my_address_list' | t }}
+        </span>
+      </a>
+    </div>
+  </div>
+</tab-navigation>
+
+{% schema %}
+{
+  "name": "t:sections.account_tab_navigation.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.account_tab_navigation.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_tab_navigation.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_tab_navigation.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.account_tab_navigation.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_tab_navigation.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_tab_navigation.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.account_tab_navigation.presets.default.name" }]
+}
+{% endschema %}

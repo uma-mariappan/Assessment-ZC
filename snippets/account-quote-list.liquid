@@ -1,0 +1,38 @@
+{% case quoteDetail.status_formatted %}
+  {% when "Pending" %}
+    {% liquid
+        assign status_bg_color = "bg-[#F6810D]"
+    %}
+  {% when "Converted to Quote" %}
+    {% liquid
+        assign status_bg_color = "bg-[#2198FF]"
+    %}
+  {% when "Rejected" %}
+    {% liquid
+        assign status_bg_color = "bg-[#FF0000]"
+    %}
+{% endcase %}
+
+
+<div class="bg-white border border-color p-4 md:p-8 flex flex-wrap items-center justify-between gap-4">
+
+    <div class="flex flex-col gap-3">
+        <div class="flex gap-4 items-center flex-wrap">
+            <h2 class="font-medium text-sm md:text-base">{{ 'accounts.quotes.quote_request_no' | t }} : <span class="font-bold">{{ quoteDetail.quote_request_number }}</span></h2>
+            <span class="{{ status_bg_color }} text-sm md:text-base font-medium text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-white"></span>
+                {{ quoteDetail.status_formatted }}
+            </span>
+        </div>
+        <div class="text-sm md:text-base font-medium">{{ 'accounts.quotes.date' | t }} : <span class="font-semibold">{{ quoteDetail.created_time_formatted }}</span></div>
+    </div>
+
+    <div>
+        <a href="/account/quoterequests/{{ quoteDetail.encrypted_cart_id }}">
+            <button class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base font-medium">
+                {{ 'accounts.quotes.details' | t }}
+            </button>
+        </a>
+    </div>
+
+</div>

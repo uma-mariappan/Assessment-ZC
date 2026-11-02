@@ -1,0 +1,75 @@
+<div id="section-{{ section.id }}" class="flex flex-col items-center py-20 w-[90%] mx-auto page-max-width">
+  {% for per_block in section.blocks %}
+    {% assign block_settings = per_block.settings %}
+    {% case per_block.type %}
+      {% when 'error-img' %}
+        <div class="flex justify-center" {{ per_block.zcommerce_attributes }}>
+          {% if block_settings.error_img != blank %}
+            {% if block_settings.error_img.url != blank %}
+              <img
+                src="{{ block_settings.error_img.url }}"
+                class="h-61 w-auto min-w-full object-cover object-center"
+                alt="{{ 'error.image_alt' | t }}"
+                height="250"
+                loading="eager"
+              >
+            {% else %}
+              <img
+                src="{{ block_settings.error_img | asset_url }}"
+                class="h-61 w-auto min-w-full object-cover object-center"
+                alt="{{ 'error.image_alt' | t }}"
+                height="250"
+                loading="eager"
+              >
+            {% endif %}
+          {% else %}
+            <img
+              src="{{ 'error-404-457481534159166.webp' | asset_url }}"
+              class="h-61 w-auto min-w-full object-cover object-center"
+              alt="{{ 'error.image_alt' | t }}"
+              height="250"
+              loading="eager"
+            >
+          {% endif %}
+        </div>
+    {% endcase %}
+  {% endfor %}
+  <div class="flex flex-col items-center mx-5">
+    {% render_blocks type: "zc_theme__text" %}
+  </div>
+  <div class="py-5">
+    <a
+      href="{{ storefrontHomeUrl }}/"
+      class="text-sm border border-solid px-2 py-2 rounded-md cursor-pointer font-normal text-center btn-secondary btn-secondary-color btn-secondary-hover"
+    >
+      {{ 'common.continue_shopping_btn' | t }}
+    </a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.error.name",
+  "available_in": { "templates": ["404"] },
+  "blocks": [
+    {
+      "type": "error-img",
+      "name": "t:sections.error.blocks.error_img.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "t:sections.error.blocks.error_img.title"
+        },
+        {
+          "type": "image_picker",
+          "id": "error_img",
+          "label": "t:sections.error.blocks.error_img.settings.label",
+          "default": { "url": "error-404-457481534159166.webp" }
+        }
+      ]
+    },
+    { "type": "zc_theme__text", "limit": 3 }
+  ]
+}
+{% endschema %}

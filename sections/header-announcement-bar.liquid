@@ -1,0 +1,165 @@
+<script src="{{ 'announcement-carousel-268792940273846.js' | asset_url }}" defer></script>
+
+{% liquid
+  assign section_settings = section.settings
+  assign padding_top = section_settings.padding_top | default: 8
+  assign padding_bottom = section_settings.padding_bottom | default: 8
+  assign autoplay_speed = section_settings.autoplay_speed | default: 3
+  assign autoplay_speed_ms = autoplay_speed | times: 1000
+  assign has_blocks = false
+  if section.blocks.size > 0
+    assign has_blocks = true
+  endif
+%}
+
+{% if has_blocks %}
+{% style %}
+  #header-announcement-bar {
+    padding-top: {{ padding_top }}px;
+    padding-bottom: {{ padding_bottom }}px;
+    background-color: var(--color-primary);
+    transform: translateY(0);
+    transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
+    will-change: transform;
+    animation: announcement-slide-down 400ms ease-out;
+  }
+  #header-announcement-bar.is-closing {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  @keyframes announcement-slide-down {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  app-header {
+    transition: top 300ms ease-in-out;
+  }
+  #headerSpacer {
+    transition: height 300ms ease-in-out;
+  }
+  announcement-carousel {
+    display: block;
+    width: 100%;
+  }
+  #announcement-carousel {
+    position: relative;
+  }
+  .announcement-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .announcement-item:first-child {
+    position: relative;
+  }
+{% endstyle %}
+
+<div id="header-announcement-bar" class="announcement-bar fixed top-0 inset-x-0 z-[60] text-white">
+  <div class="relative flex w-full items-center justify-center px-4 pr-12 md:px-5 md:pr-14">
+    <div class="flex w-full min-w-0 justify-center text-center">
+      <announcement-carousel data-autoplay-speed="{{ autoplay_speed_ms }}">
+        <div id="announcement-carousel" class="relative w-full overflow-hidden">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'announcement' %}
+                {% assign index = forloop.index0 %}
+                {% render 'announcement-item', block: block, index: index %}
+            {% endcase %}
+          {% endfor %}
+        </div>
+      </announcement-carousel>
+    </div>
+    <button
+      id="announcementBarClose"
+      type="button"
+      class="absolute right-2 top-1/2 z-10 flex h-8 w-8 shrink-0 -translate-y-1/2 items-center justify-center text-white opacity-70 transition-opacity hover:opacity-100 md:right-3"
+      aria-label="{{ 'sections.header_announcement_bar.close_label' | t }}"
+    >
+      {% render 'icon-header-close' %}
+    </button>
+  </div>
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:sections.header_announcement_bar.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["header-group"]},
+  "limit": 1,
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "t:sections.header_announcement_bar.blocks.announcement.name",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "announcement_text",
+          "label": "t:sections.header_announcement_bar.blocks.announcement.settings.announcement_text.label",
+          "default": "t:sections.header_announcement_bar.blocks.announcement.settings.announcement_text.default"
+        },
+        {
+          "type": "richtext",
+          "id": "cta_text",
+          "label": "t:sections.header_announcement_bar.blocks.announcement.settings.cta_text.label",
+          "default": "t:sections.header_announcement_bar.blocks.announcement.settings.cta_text.default"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "t:sections.header_announcement_bar.blocks.announcement.settings.cta_url.label",
+          "default": { "display_name": "", "handle": "" }
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.header_announcement_bar.settings.padding_header.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.header_announcement_bar.settings.padding_top.label",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "t:sections.header_announcement_bar.settings.padding_bottom.label",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header_announcement_bar.settings.autoplay_header.label"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "t:sections.header_announcement_bar.settings.autoplay_speed.label",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 3
+    }
+  ],
+  "presets": [{ "name": "t:sections.header_announcement_bar.name" }]
+}
+{% endschema %}

@@ -1,0 +1,127 @@
+<script src="{{ 'pagination-270636070396016.js' | asset_url }}" defer></script>
+
+{% liquid
+  assign total_pages = paginationNode.total_pages
+  assign current_page = paginationNode.current_page
+  assign per_page = paginationNode.per_page
+  assign page_param = paginationNode.page_param
+%}
+
+<pagination-bar>
+  <div class="flex flex-col-reverse lg:relative gap-7 py-8 md:py-20">
+    <div class="flex flex-row justify-center items-center lg:flex-wrap">
+
+      <button id="previousPage" type="button"
+        class="px-2 lg:px-4 py-1 lg:py-2 mx-2 lg:mx-4
+          {% if current_page == 1 %}
+            cursor-not-allowed opacity-50 pointer-events-none
+          {% else %}
+            transition hover:opacity-70
+          {% endif %}"
+        style="color: var(--color-primary);"
+        data-current-page="{{ current_page }}"
+        data-total-pages="{{ total_pages }}"
+        {% if current_page == 1 %}disabled{% endif %}
+        onclick="window.location.href='?{{ page_param }}={{ current_page | minus: 1 }}&per_page={{ per_page }}'">
+        {% render "icon-left-arrow" %}
+      </button>
+
+      {% liquid
+        assign total = total_pages
+        assign current = current_page
+        assign page_window = 1
+      %}
+
+      <div class="pagination flex items-center justify-center flex-nowrap min-w-0 gap-1">
+
+        {% assign max_pages_before_dots = page_window | times: 2 | plus: 2 %}
+        {% if total <= max_pages_before_dots %}
+          {% for i in (1..total) %}
+            {% render "pagination-number", pageParam: page_param, perPage: per_page, index: i, currentPage: current %}
+          {% endfor %}
+        {% else %}
+          {% liquid
+            assign first_page = 1
+            assign last_page = total
+            assign last_visible_page = total | minus: 1
+          %}
+
+          {% render "pagination-number", pageParam: page_param, perPage: per_page, index: first_page, currentPage: current %}
+
+          {% if current == 1 %}
+            {% liquid
+              assign start_page = 2
+              assign end_page = 3
+            %}
+          {% elsif current == total %}
+            {% liquid
+              assign start_page = total | minus: 2
+              assign end_page = total | minus: 1
+            %}
+          {% else %}
+            {% liquid
+              assign start_page = current | minus: page_window
+              assign end_page = current | plus: page_window
+            %}
+          {% endif %}
+
+          {% if start_page < 2 %}
+            {% assign start_page = 2 %}
+          {% endif %}
+          {% if end_page > last_visible_page %}
+            {% assign end_page = last_visible_page %}
+          {% endif %}
+
+          {% if start_page > 2 %}
+            <div class="w-9 h-9 lg:w-11 lg:h-11 text-4xl flex items-center justify-center cursor-pointer mx-1 heading-text-color">
+              ...
+            </div>
+          {% endif %}
+
+          {% for i in (start_page..end_page) %}
+            {% render "pagination-number", pageParam: page_param, perPage: per_page, index: i, currentPage: current %}
+          {% endfor %}
+
+          {% if end_page < last_visible_page %}
+            <div class="w-9 h-9 lg:w-11 lg:h-11 text-4xl flex items-center justify-center cursor-pointer mx-1 heading-text-color">
+              ...
+            </div>
+          {% endif %}
+
+          {% render "pagination-number", pageParam: page_param, perPage: per_page, index: last_page, currentPage: current %}
+        {% endif %}
+      </div>
+
+      <button id="nextPage" type="button"
+        class="px-2 lg:px-4 py-1 lg:py-2 mx-2 lg:mx-4
+          {% if current_page == total_pages %}
+            cursor-not-allowed opacity-50 pointer-events-none
+          {% else %}
+            transition hover:opacity-70
+          {% endif %}"
+        style="color: var(--color-primary);"
+        data-current-page="{{ current_page }}"
+        data-total-pages="{{ total_pages }}"
+        {% if current_page == total_pages %}disabled{% endif %}
+        onclick="window.location.href='?{{ page_param }}={{ current_page | plus: 1 }}&per_page={{ per_page }}'">
+        {% render "icon-right-arrow" %}
+      </button>
+    </div>
+
+    <div class="relative lg:absolute lg:right-0 group w-28 md:w-32" id="perPageContainer">
+      <button class="flex items-center gap-1 text-xs md:text-sm py-2 md:py-3 border w-full justify-center" style="color: var(--color-heading); border-color: var(--color-primary);">
+        <span>{{ paginationNode.per_page }} {{ "pagination.per_page" | t }}</span>
+      </button>
+
+      <div id="pageList" class="absolute w-28 md:w-32 shadow-lg lg:shadow-none z-50
+        top-[-8.23rem] md:top-[-9.23rem] hidden group-hover:block">
+        <ul class="w-full text-center text-xs md:text-sm border-x border-t bg-white bg-opacity-90 backdrop-blur-2xl" style="border-color: var(--color-primary); color: var(--color-heading);">
+          <li class="pagination-page cursor-pointer py-2 px-3 border-b hover:bg-[#FDF2F8]" style="border-color: var(--color-primary);">10</li>
+          <li class="pagination-page cursor-pointer py-2 px-3 border-b hover:bg-[#FDF2F8]" style="border-color: var(--color-primary);">20</li>
+          <li class="pagination-page cursor-pointer py-2 px-3 border-b hover:bg-[#FDF2F8]" style="border-color: var(--color-primary);">50</li>
+          <li class="pagination-page cursor-pointer py-2 px-3 hover:bg-[#FDF2F8]">100</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</pagination-bar>

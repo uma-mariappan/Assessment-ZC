@@ -1,0 +1,59 @@
+{% liquid assign available_payment_methods = checkoutDetails.payment_methods
+    assign offline_payment = false
+
+    if available_payment_methods.size == 0
+        assign available_payment_methods = checkoutDetails.offline_payment_methods
+        assign offline_payment = true 
+    endif
+%}
+
+<div class="md:pb-7" id="paymentOptions">
+    <h4 class="heading-text-color mb-5 primary-font">{{ "checkout.blocks.payment-options.title" | t }}</h4>
+    <form id="paymentForm">
+        <div class="border-b border-solid pb-7 border-color">
+            {% for paymentMethods in available_payment_methods %}
+            <div class="flex flex-row py-2 pr-4">
+                <div class="mr-4 relative w-5 h-5 cursor-pointer payment-radio">
+                    <input type="radio" class="appearance-none" value="{{paymentMethods.mode}}" id="payment_{{paymentMethods.mode}}" name="payment_mode">
+                    <span class="w-full h-full border border-color rounded-full absolute 
+                    before:w-2 before:h-2 before:bg-sky-500 before:absolute before:transform 
+                    before:duration-200	before:ease-in before:top-1/2 before:left-1/2
+                    before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:scale-0" value="{{paymentMethods.mode}}"
+                    data-offline-payment="{% unless offline_payment or paymentMethods.is_offline_payment_method %}{{ paymentMethods.is_offline_payment_method }}{% else %}true{% endunless %}"
+                    {% if paymentMethods.is_offline_payment_method == false %} data-payment-url="{{checkoutDetails.payment_url}}" {% endif %}
+                    data-currency-symbol="{{checkoutDetails.currency_symbol}}" data-offline-charge="{{paymentMethods.additional_charges}}"></span>
+                </div>
+                <div>
+                    <label class="block leading-5">
+                        {% if offline_payment %}
+                            {{paymentMethods.label}}
+                        {% else %}
+                            {{paymentMethods.name_formatted}}
+                        {% endif %}
+                    </label>
+                </div>
+            </div>
+            {% endfor%}
+            <p id="isEmptyPaymentMethods" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+        </div>
+
+        <div class="px-8 lg:py-10 py-4 flex justify-center lg:justify-end {% if offline_payment %}hidden{% endif %}"
+        id="makePaymentBtn">
+            <button type="submit" class="px-3 py-2 rounded-sm flex flex-row items-center justify-center btn-primary btn-primary-color btn-primary-hover min-h-14 min-w-48">
+            {{ "checkout.blocks.payment-options.make_payment" | t }}
+            <span class="animate-spin h-6 w-8 hidden spinner">
+                {% render "icon-spinner" %}
+            </span>
+        </button>
+        </div>
+        <div class="px-8 lg:py-10 py-4 flex justify-center lg:justify-end {% unless offline_payment %}hidden{% endunless %}"
+        id="completeOrderBtn">
+            <button type="submit" class="px-3 py-2 rounded-sm flex flex-row items-center justify-center btn-primary btn-primary-color btn-primary-hover min-h-14 min-w-48"">
+                {{ "checkout.blocks.payment-options.complete_order" | t }}
+                <span class="animate-spin h-6 w-8 hidden spinner">
+                    {% render "icon-spinner" %}
+                </span>
+            </button>
+        </div>
+    </form>
+</div>

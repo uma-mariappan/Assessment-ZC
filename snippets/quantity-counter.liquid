@@ -1,0 +1,24 @@
+<quantity-counter class="inline-flex items-stretch border border-[#E5E5E5] h-12
+  popup-quantity"
+  value="{{ quantity | round }}" data-previous-quantity="{{ quantity | round }}" data-index="{{ index }}" data-quantity-variant-id="{{ variantId }}">
+  <button type="button" class="w-12 flex items-center justify-center text-lg heading-text-color transition-colors hover:bg-gray-50 border-r border-[#E5E5E5]" name="minus">
+      <div id="iconMinusBlack" class="hidden">
+        {% render "icon-minus-black" %}
+      </div>
+      <div id="iconMinusGrey" data-cart-page="{{ isCartPage }}" class="hidden">
+        {% if isCartPage %}
+          <div class="icon-delete" data-remove-variant-id="{{ variantId }}">
+            {% render "icon-delete" %}
+          </div>
+        {% else %}
+          {% render "icon-minus-grey" %}
+        {% endif %}
+      </div>
+  </button>
+  <input data-product-quantity name="quantity" value="{{ quantity | round }}" id="value" type="number" pattern="[0-9]*" inputmode="numeric" min="0"
+    class="quantity-counter-input w-12 text-base text-center heading-text-color font-medium border-none outline-none bg-transparent">
+
+  <button type="button" class="w-12 flex items-center justify-center text-lg heading-text-color transition-colors hover:bg-gray-50 border-l border-[#E5E5E5]" name="plus">
+    {% render "icon-plus-black" %}
+  </button>
+</quantity-counter>

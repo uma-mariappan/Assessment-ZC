@@ -1,0 +1,23 @@
+{% if orderItem.item_custom_fields and orderItem.item_custom_fields.size > 0 %}
+  <div class="flex flex-wrap gap-x-6 gap-y-1 mt-1">
+    {% for custom_field in orderItem.item_custom_fields %}
+      {% if custom_field.data_type == 'attachment' and custom_field.attachment_download_url != blank %}
+        <a
+          href="{{ custom_field.attachment_download_url }}"
+          download
+          aria-label="{{ 'cart.download_attachment' | t }}"
+          class="inline-flex items-center gap-1.5 rounded border px-2 py-1 text-xs md:text-sm transition-colors hover:opacity-80"
+          style="border-color: var(--color-border); color: var(--color-text-muted);"
+        >
+          <span class="max-w-[140px] truncate font-semibold body-text-color">{{ custom_field.value_formatted | escape }}</span>
+          <span aria-hidden="true">↓</span>
+        </a>
+      {% else %}
+        <p class="text-xs md:text-sm" style="color: var(--color-text-muted);">
+          {{ custom_field.label | escape }}
+          <span class="font-semibold body-text-color">: {{ custom_field.value_formatted | escape }}</span>
+        </p>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}

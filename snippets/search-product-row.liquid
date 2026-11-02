@@ -1,0 +1,53 @@
+{% liquid
+  assign row_product = searchProduct | default: perProduct
+  assign product_image_object = row_product.featuredImage | default: row_product.cover_media
+  assign product_image = row_product.featuredImage.url | default: row_product.cover_media.url
+  assign product_link = row_product.url
+  if pageinfo.origin != blank
+    assign url_probe = row_product.url | slice: 0, 4
+    if url_probe != 'http'
+      assign product_link = pageinfo.origin | append: row_product.url
+    endif
+  endif
+  assign product_price = row_product.price_min_formatted
+  if row_product.initial_variant
+    assign product_price = row_product.initial_variant.price_formatted
+  endif
+
+  if product_image == blank or product_image == '' or product_image == '?'
+    assign image_url = 'no-image-59606643991319.webp' | asset_url
+    assign product_image_object = ''
+  elsif product_image contains '?'
+    assign image_url = product_image | append: '&width=112&height=112'
+  else
+    assign image_url = product_image | append: '?width=112&height=112'
+  endif
+%}
+
+<li class="search-product-row group">
+  <a
+    href="{{ product_link }}"
+    class="search-result-row-link body-text-color flex min-w-0 items-center gap-4 rounded-lg px-2 py-2 no-underline transition-colors duration-200 hover:bg-[color:var(--color-background-alt,#f3f3f3)] focus-visible:bg-[color:var(--color-background-alt,#f3f3f3)] focus-visible:outline-none"
+  >
+    <span class="h-14 w-14 shrink-0 overflow-hidden rounded border border-[#CCCCCC]">
+      <picture class="block h-full w-full">
+        {% if product_image_object != blank %}
+          {% render 'image-resolutions', firstImage: product_image_object %}
+        {% endif %}
+        <img
+          src="{{ image_url }}"
+          alt="{{ row_product.title | escape }}"
+          class="h-full w-auto min-w-full object-cover object-center"
+          loading="lazy"
+          height="56"
+          decoding="async">
+      </picture>
+    </span>
+    <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+      <span class="body-text-color truncate text-sm font-semibold leading-[15px]">{{ row_product.title | escape }}</span>
+      {% if product_price != blank %}
+        <span class="body-text-color truncate text-xs font-normal leading-[15px]">{{ product_price }}</span>
+      {% endif %}
+    </span>
+  </a>
+</li>

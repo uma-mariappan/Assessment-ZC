@@ -1,0 +1,21 @@
+<script type="module" src={{ "blog-comments-407010470598503.js" | asset_url }} defer></script>
+
+{% assign comments_replies = comments.comments %}
+{% assign first_comment = comments_replies | first %}
+{% assign parent_id = first_comment.parent_id %}
+{% assign reply_pagination_data = comments.page_context %}
+{% assign reply_current_page = reply_pagination_data.current_page %}
+{% assign reply_total_pages = reply_pagination_data.total_pages %}
+
+<div class="flex flex-col gap-4">
+  {% for reply in comments_replies %}
+    <div class="bg-[#F8F8F8] p-6">
+      <div class="flex flex-col gap-6">
+        <p class="font-semibold text-base leading-5 tracking-[0.04px] body-text-color">{{ reply.user_name | escape }}</p>
+        <p class="text-base leading-7 tracking-[0.04px] body-text-color">{{ reply.content | escape }}</p>
+      </div>
+    </div>
+  {% endfor %}
+
+  {% render 'blog-replies-pagination', current_page: reply_current_page, total_pages: reply_total_pages, comment_id: parent_id %}
+</div>

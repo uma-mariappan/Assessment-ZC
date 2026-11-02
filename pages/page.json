@@ -1,0 +1,9 @@
+{
+  "layout": "theme",
+  "sections": {
+    "page": {
+      "type": "page"
+    }
+  },
+  "order": ["page"]
+}

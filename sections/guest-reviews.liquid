@@ -1,0 +1,129 @@
+<script src="{{ "status-message-349686849753744.js" | asset_url }}" defer></script>
+<script type="module" src="{{ "guest-reviews-724506563522825.js" | asset_url }}" defer></script>
+
+{% liquid
+  assign order = salesorder
+  assign item = order.line_items | first
+  assign item_image = item.image.url
+  if item_image == '?' or item_image == '' or item_image == null
+    assign item_image = "no-image-59606643991319.webp" | asset_url
+  endif
+%}
+
+{% if salesorder.error %}
+  <div class="flex flex-col items-center justify-center h-screen">
+    <div class="flex justify-center w-60 md:w-80 lg:w-100">
+      {% render 'icon-review-posted' %}
+    </div>
+    <p class="py-4 text-center">{{ salesorder.error }}</p>
+  </div>
+{% else %}
+<guest-reviews data-product-id="{{ item.product_id }}">
+  <div class="w-[90%] mx-auto page-max-width">
+    <div class="flex gap-6 items-center py-6 md:py-8">
+      <a href="/">
+        {% render 'icon-back-btn' %}
+      </a>
+      <h1 class="text-xl md:text-[40px] md:leading-[48px] font-medium heading-text-color primary-font">
+        {{ 'accounts.account_order_details.order_details' | t }}
+      </h1>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-4 mb-3">
+      <h2 class="font-semibold text-lg md:text-2xl">#{{ order.salesorder_number }}</h2>
+      <span class="text-xs md:text-sm font-medium text-white px-3 py-1 md:px-4 md:py-1.5 rounded-full inline-flex items-center gap-2" style="background-color: var(--color-success);">
+        <span class="w-2 h-2 rounded-full bg-white"></span>
+        {{ 'accounts.account_order.status_completed' | t }}
+      </span>
+    </div>
+
+    <div class="text-sm md:text-base text-gray-500 pb-6 md:pb-8">
+      {{ 'accounts.account_order.placed_on' | t }} : <span class="font-medium">{{ order.created_time_formatted }}</span>
+    </div>
+
+    <div id="reviewFormSection" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 pb-16 md:pb-20">
+      <div class="p-4 md:p-6 border border-color bg-white rounded-lg h-fit">
+        <h3 class="font-semibold text-lg md:text-xl mb-4 md:mb-6">{{ 'reviews_ratings.product_items' | t }}</h3>
+        <div class="flex items-start gap-4">
+          <div class="w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border border-slate-200 shrink-0">
+            <a href="{{ item.product_url }}" target="_blank" class="block w-full h-full">
+              {% assign guest_item_image_obj = item.image | default: item_image %}
+              <picture class="block w-full h-full">
+                {% render 'image-resolutions', firstImage: guest_item_image_obj %}
+                <img src="{{ item_image }}" alt="{{ item.name | escape }}" height="80" loading="lazy" class="h-full w-auto min-w-full object-cover object-center">
+              </picture>
+            </a>
+          </div>
+          <div class="flex flex-col gap-2 flex-1 min-w-0">
+            <a href="{{ item.product_url }}" target="_blank" class="font-medium text-sm md:text-base break-words">{{ item.name | escape }}</a>
+            <div class="font-semibold text-base md:text-lg">{{ item.rate_formatted | escape }}</div>
+            <span class="inline-flex w-fit text-xs md:text-sm px-3 py-1 rounded-full border" style="background-color: var(--color-background-alt); border-color: var(--color-border);">
+              {{ 'accounts.common.quantity' | t }} : {{ item.quantity | floor }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 md:p-6 border border-color bg-white rounded-lg">
+        <h3 class="font-semibold text-lg md:text-xl mb-4 md:mb-6">{{ 'reviews_ratings.how_was_product' | t }}</h3>
+
+        <div class="flex flex-col gap-2 mb-4 md:mb-6">
+          <div class="flex gap-1" id="ratingStars">
+            {% for star in (1..5) %}
+              {% render 'review-rating-star', star: star %}
+            {% endfor %}
+          </div>
+          <span id="ratingError" class="text-red-500 text-sm hidden">{{ "reviews_ratings.rating_error_msg" | t }}</span>
+        </div>
+
+        <hr class="border-t border-gray-200 mb-4 md:mb-6">
+
+        <div class="flex flex-col gap-2 mb-4 md:mb-6">
+          <label for="reviewTitle" class="text-sm md:text-base font-medium">{{ "reviews_ratings.title" | t }} <span class="text-red-500">*</span></label>
+          <input type="text" id="reviewTitle" placeholder="{{ 'reviews_ratings.review_title_placeholder' | t }}"
+            class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-gray-400 text-sm md:text-base">
+          <span id="reviewTitleError" class="text-red-500 text-sm hidden">{{ "reviews_ratings.name_error_msg" | t }}</span>
+        </div>
+
+        <div class="flex flex-col gap-2 mb-4 md:mb-6">
+          <label for="reviewContent" class="text-sm md:text-base font-medium">{{ "reviews_ratings.review" | t }} <span class="text-red-500">*</span></label>
+          <textarea id="reviewContent" rows="5" placeholder="{{ 'reviews_ratings.write_review_placeholder' | t }}"
+            class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-gray-400 resize-none text-sm md:text-base"></textarea>
+          <span id="reviewContentError" class="text-red-500 text-sm hidden">{{ "reviews_ratings.review_error_msg" | t }}</span>
+        </div>
+
+        <div class="flex flex-col gap-2 mb-4 md:mb-6">
+          <label for="verificationCode" class="text-sm md:text-base font-medium">{{ 'reviews_ratings.verification_code_label' | t }} <span class="text-red-500">*</span></label>
+          <input type="text" id="verificationCode" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:border-gray-400 text-sm md:text-base">
+          <span id="verificationError" class="text-red-500 text-sm hidden">{{ 'reviews_ratings.verification_code_error' | t }}</span>
+        </div>
+
+        <div class="flex justify-end gap-3">
+          <button id="cancelReview" type="button" class="px-6 py-2.5 md:px-8 md:py-3 text-sm md:text-base font-medium btn-secondary btn-secondary-color rounded-full">
+            {{ "reviews_ratings.cancel_btn" | t }}
+          </button>
+          <button id="submitReview" class="px-6 py-2.5 md:px-8 md:py-3 flex justify-center items-center text-sm md:text-base font-medium btn-primary btn-primary-color btn-primary-hover rounded-full">
+            {{ "reviews_ratings.submit_btn" | t }}
+            <span class="animate-spin h-6 w-8 spinner hidden">
+              {% render "icon-spinner" %}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {% render 'status-message' %}
+  </div>
+</guest-reviews>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Guest Reviews",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["guestreviews"]},
+  "limit": 1,
+  "settings": []
+}
+{% endschema %}

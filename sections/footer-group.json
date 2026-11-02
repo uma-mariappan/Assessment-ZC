@@ -1,0 +1,82 @@
+{
+  "name": "Footer",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "mobile_padding_top": 48,
+        "mobile_padding_bottom": 24,
+        "desktop_padding_top": 64,
+        "desktop_padding_bottom": 24
+      },
+      "blocks": {
+        "menu_1": {
+          "type": "footer-menu",
+          "settings": {
+            "footer_menu": { "display_name": "Default menu", "handle": "" },
+            "select_menu_color": {
+              "display_name": "Alternate color",
+              "value": "alt-text-color"
+            },
+            "select_menu_item_color": {
+              "display_name": "Alternate color",
+              "value": "alt-text-color"
+            }
+          }
+        },
+        "menu_2": {
+          "type": "footer-menu",
+          "settings": {
+            "footer_menu": { "display_name": "Default menu", "handle": "" },
+            "select_menu_color": {
+              "display_name": "Alternate color",
+              "value": "alt-text-color"
+            },
+            "select_menu_item_color": {
+              "display_name": "Alternate color",
+              "value": "alt-text-color"
+            }
+          }
+        },
+        "subscribe": {
+          "type": "subscribe",
+          "settings": {
+            "placeholder": "Enter Email Address",
+            "button_label": "Subscribe"
+          }
+        },
+        "menu_3": {
+          "type": "footer-menu",
+          "settings": {
+            "footer_menu": { "display_name": "Default menu", "handle": "" },
+            "select_menu_color": {
+              "display_name": "Alternate color",
+              "value": "alt-text-color"
+            },
+            "select_menu_item_color": {
+              "display_name": "Alternate color",
+              "value": "alt-text-color"
+            }
+          }
+        },
+        "menu_4": {
+          "type": "footer-menu",
+          "settings": {
+            "footer_menu": { "display_name": "Default menu", "handle": "" },
+            "select_menu_color": {
+              "display_name": "Alternate color",
+              "value": "alt-text-color"
+            },
+            "select_menu_item_color": {
+              "display_name": "Alternate color",
+              "value": "alt-text-color"
+            }
+          }
+        }
+      },
+      "block_order": ["menu_1", "menu_2", "subscribe", "menu_3", "menu_4"]
+    }
+  },
+  "order": ["footer"]
+}

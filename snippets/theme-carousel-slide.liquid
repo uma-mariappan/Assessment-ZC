@@ -1,0 +1,61 @@
+{% liquid
+  assign block_settings = block.settings
+  assign slide_index = slide_index | default: 0
+  assign show_background_image = block_settings.show_background_image
+  assign background_image = block_settings.background_image
+  assign content_alignment = block_settings.content_alignment.value | default: block_settings.content_alignment | default: 'center'
+
+  assign slide_classes = 'hero-carousel-slide flex-shrink-0 w-full h-full snap-start flex flex-col justify-center py-12 relative overflow-hidden'
+  assign content_classes = 'flex flex-col gap-8 max-w-[300px] md:max-w-none relative z-[1]'
+
+  if content_alignment == 'left'
+    assign slide_classes = slide_classes | append: ' items-start text-left'
+    assign content_classes = content_classes | append: ' items-start text-left px-6 md:px-12'
+  elsif content_alignment == 'right'
+    assign slide_classes = slide_classes | append: ' items-end text-right'
+    assign content_classes = content_classes | append: ' items-end text-right px-6 md:px-12'
+  else
+    assign slide_classes = slide_classes | append: ' items-center text-center'
+    assign content_classes = content_classes | append: ' items-center text-center mx-auto md:mx-0'
+  endif
+
+  if slide_index == 0
+    assign slide_classes = slide_classes | append: ' active-hero-slide'
+  endif
+
+  assign background_alt = background_image.alt
+  if background_alt == blank
+    assign background_alt = 'common.alt_image' | t
+  endif
+%}
+<div
+  hero-slide-index="{{ slide_index }}"
+  class="{{ slide_classes }}"
+  {{ block.zcommerce_attributes }}>
+  {% if show_background_image and background_image.url != blank %}
+    <picture class="absolute inset-0 w-full h-full pointer-events-none">
+      {% render 'image-resolutions', firstImage: background_image %}
+      <img
+        src="{{ background_image.url }}"
+        alt="{{ background_alt | escape }}"
+        width="{{ background_image.width | default: 592 }}"
+        height="{{ background_image.height | default: 770 }}"
+        loading="{% if slide_index == 0 %}eager{% else %}lazy{% endif %}"
+        class="w-full h-full object-cover object-center">
+    </picture>
+  {% endif %}
+  <div class="{{ content_classes }}">
+    {% for child_block in block.blocks %}
+      {% case child_block.type %}
+        {% when 'zc_theme__text' %}
+          <div class="hero-carousel-slide__text uppercase leading-tight">
+            {% render 'theme-text-block', block: child_block %}
+          </div>
+        {% when 'zc_theme__button' %}
+          {% render 'theme-button-block', block: child_block %}
+      {% endcase %}
+    {% else %}
+      <p class="body-text-color text-sm">{{ 'blocks.carousel_slide.empty' | t }}</p>
+    {% endfor %}
+  </div>
+</div>

@@ -1,0 +1,8 @@
+<button
+  type="button"
+  class="w-9 h-9 lg:w-11 lg:h-11 flex items-center justify-center rounded-full mx-1 text-[#4B4B4B] border
+    {% if index == currentPage %}border-[#8B002A] text-[#8B002A] bg-[#F4ECEF]{% else %}border-transparent hover:border-[#D4B6C1]{% endif %}"
+  data-page="{{ index }}"
+>
+  {{ index }}
+</button>

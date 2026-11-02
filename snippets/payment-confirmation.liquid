@@ -1,0 +1,41 @@
+<script defer>
+  window.payment_status = {{ paymentStatus | json }};
+</script>
+
+<div class="py-16 px-4">
+  <span class="pt-24 flex justify-center">
+    {% assign payment_success_img = "payment-success-675888900030507.webp" | asset_url %}
+    <div class="flex justify-center w-56">
+      <picture>
+        {% render 'image-resolutions', firstImage: payment_success_img %}
+        <img src="{{ payment_success_img }}" height="224" alt="{{ 'payment-status.blocks.payment-confirmation.success_image_alt' | t }}" loading="lazy" class="h-[224px] w-auto min-w-full object-cover object-center">
+      </picture>
+    </div>
+  </span>
+  <div>
+    <div class="px-4 flex flex-col justify-center primary-font">
+      <p class="text-[40px] leadding-[48px] font-semibold heading-text-color text-center">{{ "payment-status.blocks.payment-confirmation.success_congratulations_msg" | t }}</p>
+      <p class="text-[40px] leadding-[48px] font-semibold heading-text-color text-center">{{ "payment-status.blocks.payment-confirmation.success_msg" | t }}</p>
+    </div>
+    <div class="flex flex-col items-center">
+      <div class="grid grid-cols-2 py-8">
+        <div class="text-right px-3 text-base">
+          <p class="py-2">{{ "payment-status.blocks.payment-confirmation.order_id" | t }}</p>
+          <p class="py-2">{{ "payment-status.blocks.payment-confirmation.bill_amount" | t }}</p>
+          <p class="py-2">{{ "payment-status.blocks.payment-confirmation.payment_method" | t }}</p>
+        </div>
+        <div>
+          <p class="py-2">:<span class="font-semibold px-2 text-center"> {{ paymentStatus.salesorder_number | escape }}</span></p>
+          <p class="py-2">: <span class="font-semibold px-2 text-center">{{ paymentStatus.currency_code | escape }} {{ paymentStatus.total | escape }}</span></p>
+          <p class="py-2">: <span class="font-semibold px-2 text-center">{{ paymentStatus.payment_mode_formatted | escape }}</span></p>
+        </div>
+      </div>
+      <p class="pb-5">{{ "payment-status.blocks.payment-confirmation.thankyou_msg" | t }}</p>
+      <a href="{{ storefrontRootUrl }}/home">
+        <div class="px-8 py-4 rounded-[32px] btn-primary-color btn-primary-hover text-base font-medium">
+          {{ "payment-status.continue_btn" | t }}
+        </div>
+      </a>
+    </div>
+  </div>
+</div>

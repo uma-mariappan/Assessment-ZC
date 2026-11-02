@@ -1,0 +1,16 @@
+<div class="flex flex-col items-center justify-center h-screen">
+    {% assign empty_quote_img = "empty_cart-499839645359992.webp" | asset_url %}
+    <div class="flex justify-center w-60 md:w-80 lg:w-100">
+        <picture>
+            {% render 'image-resolutions', firstImage: empty_quote_img %}
+            <img src="{{ empty_quote_img }}" height="320" alt="cart-empty-image" loading="lazy" class="h-[320px] w-auto min-w-full object-cover object-center">
+        </picture>
+    </div>
+    <div class="flex flex-col gap-4 items-center justify-center">
+        <p class="py-4 text-center">Your Quote is empty</p>
+        <a href="{{storefrontHomeUrl}}/">
+            <span class="text-sm w-52 border border-solid px-2 py-4 btn-secondary btn-secondary-color btn-secondary-hover
+                cursor-pointer font-normal text-center">{{ "common.continue_shopping_btn" | t }}</span>
+        </a>
+    </div>
+</div>

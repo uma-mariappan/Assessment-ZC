@@ -1,0 +1,59 @@
+{% liquid
+  assign initial_collection = initialCollection
+  assign initial_heading = initialHeading
+%}
+
+<search-bar class="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden bg-white">
+  <div class="shrink-0 border-b px-4 py-3 lg:px-6 lg:py-5" style="border-color: var(--color-border);">
+    <form action="{{ routeUrl }}" method="get" class="m-0 min-w-0">
+      <div class="flex min-w-0 items-center gap-2 lg:gap-3">
+        <button
+          type="button"
+          data-search-back
+          class="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-md lg:hidden"
+          style="color: var(--color-primary);"
+          aria-label="{{ 'header.search_close' | t }}">
+          <span class="inline-flex h-6 w-6">
+            {% render 'icon-left-arrow' %}
+          </span>
+        </button>
+
+        <div
+          class="flex min-w-0 flex-1 items-center gap-3 rounded-lg border px-3 py-2.5 transition-[border-color,box-shadow] duration-150 focus-within:ring-2"
+          style="border-color: var(--color-border); --tw-ring-color: color-mix(in srgb, var(--color-primary) 25%, transparent);"
+        >
+          <span class="inline-flex shrink-0" style="color: var(--color-primary);" aria-hidden="true">
+            {% render 'icon-search' %}
+          </span>
+          <input type="hidden" name="organization_id" value="{{ organizationId }}">
+          <label for="headerSearchInput" class="sr-only">{{ 'header.search' | t }}</label>
+          <input
+            id="headerSearchInput"
+            data-search-input
+            name="q"
+            data-url="{{ searchUrl }}"
+            type="search"
+            autocomplete="off"
+            class="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm leading-snug focus:outline-none [appearance:textfield] [&::-webkit-search-cancel-button]:hidden"
+            style="color: var(--color-heading);"
+            placeholder="{{ 'header.search_placeholder' | t }}">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden px-6 pb-6 pt-4">
+    <div
+      id="icon-page-loader"
+      class="absolute inset-0 z-10 hidden items-center justify-center bg-white/90"
+      aria-hidden="true">
+      {% render 'icon-page-loader' %}
+    </div>
+
+    {% render 'search-initial-list',
+      initialCollection: initial_collection,
+      initialHeading: initial_heading %}
+
+    <div data-search-result class="search-popup-scroll hidden flex-col"></div>
+  </div>
+</search-bar>

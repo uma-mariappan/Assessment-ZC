@@ -1,0 +1,8 @@
+{% assign percent = percent | plus: 0 | round %}
+
+<span class="inline-block w-4 h-[15px] relative" aria-hidden="true" title="{{ percent }}% filled star">
+  {% render 'icon-star-empty' %}
+  <span class="absolute left-0 top-0 h-full overflow-hidden pointer-events-none" style="width: {{ percent }}%;">
+    {% render 'icon-star-filled' %}
+  </span>
+</span>

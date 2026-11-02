@@ -1,0 +1,47 @@
+{% render 'theme-button-block', block: block %}
+
+{% schema %}
+{
+  "name": "t:blocks.button.name",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "button_text",
+      "label": "t:blocks.button.settings.button_text.label",
+      "default": "t:blocks.button.settings.button_text.default"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "t:blocks.button.settings.button_url.label",
+      "default": { "display_name": "t:blocks.button.settings.button_url.default", "handle": "collections/all-products" }
+    },
+    {
+      "type": "radio",
+      "id": "select_button_style",
+      "label": "t:blocks.button.settings.select_button_style.label",
+      "default": { "display_name": "t:blocks.button.settings.select_button_style.options.primary.label", "value": "primary" },
+      "options": [
+        { "label": "t:blocks.button.settings.select_button_style.options.primary.label", "value": "primary" },
+        { "label": "t:blocks.button.settings.select_button_style.options.secondary.label", "value": "secondary" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.button.presets.default.name",
+      "settings": {
+        "button_text": "t:blocks.button.settings.button_text.default",
+        "button_url": {
+          "display_name": "t:blocks.button.settings.button_url.default",
+          "handle": "collections/all-products"
+        },
+        "select_button_style": {
+          "display_name": "t:blocks.button.settings.select_button_style.options.secondary.label",
+          "value": "secondary"
+        }
+      }
+    }
+  ]
+}
+{% endschema %}

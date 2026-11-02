@@ -1,0 +1,139 @@
+<div class="bg-transparent mb-40">
+  
+  <form id="formProfileEdit" class="bg-white border border-color p-4 md:p-0 md:bg-transparent md:border-0 flex flex-col lg:flex-row gap-6 md:gap-10">
+    <!-- Profile Card -->
+    <div class="p-0 md:p-8 w-full md:bg-white md:border md:border-color">
+  
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  
+        <!-- First Name -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">First Name <span class="text-red-500">*</span></label>
+          <input id="firstName" type="text" name="first_name" value="{{ profileUser.first_name }}" 
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+            <div id="firstNameError" class="pt-2 hidden">
+              <span data-error-msg class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+  
+        <!-- Last Name -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">Last Name <span class="text-red-500">*</span></label>
+          <input id="lastName" type="text" name="last_name" value="{{ profileUser.last_name }}" 
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+            <div id="lastNameError" class="pt-2 hidden">
+              <span data-error-msg class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+  
+        <!-- Date of Birth -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">Date of Birth</label>
+          <input type="date" name="dob" value="{{ profileUser.date_of_birth }}" 
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+        </div>
+  
+        <!-- Gender -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">Gender</label>
+          <div class="flex items-center gap-4">
+            <label class="flex items-center gap-1 text-sm md:text-base">
+              <input type="radio" name="gender" value="Male" {% if profileUser.gender == 1 %}checked{% endif %}>
+              Male
+            </label>
+            <label class="flex items-center gap-1 text-sm md:text-base">
+              <input type="radio" name="gender" value="Female" {% if profileUser.gender == 0 %}checked{% endif %}>
+              Female
+            </label>
+          </div>
+        </div>
+  
+        <!-- Email -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">Email</label>
+          <input type="email" name="email" value="{{ profileUser.email }}" readonly 
+            class="w-full opacity-50 border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+        </div>
+  
+        <!-- Phone Number -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">Phone Number <span class="text-red-500">*</span></label>
+          <input id="phoneNumber" type="text" name="phone" value="{{ profileAddress.phone }}"
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+          <div id="phoneNumberError" class="pt-2 hidden">
+            <span data-error-msg class="text-red-500 text-sm"></span>
+          </div>
+        </div>
+  
+        <!-- Company Name -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">Company Name</label>
+          <input type="text" name="company" value="{{ profileAddress.company_name }}" 
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+        </div>
+  
+        <!-- Job Title -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">Job Title</label>
+          <input type="text" name="job_title" value="{{ profileAddress.job_title }}" 
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+        </div>
+
+      </div>
+    </div>
+
+
+
+    <div class="p-0 md:p-8 w-full md:bg-white md:border md:border-color">
+  
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  
+        <!-- Address -->
+        <div class="col-span-1 lg:col-span-2">
+          <label class="block text-sm md:text-base mb-2 font-medium">Address</label>
+          <textarea name="address" value="{{ profileAddress.address }}" rows="3" class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base"></textarea>
+        </div>
+  
+        <!-- City -->
+        <div >
+          <label class="block text-sm md:text-base mb-2 font-medium">City</label>
+          <input type="text" name="city" value="{{ profileAddress.city }}" 
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+        </div>
+  
+        <!-- State -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">State</label>
+          <input type="text" name="state" value="{{ profileAddress.state }}" 
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+        </div>
+  
+        <!-- Country -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">Country</label>
+          <input type="text" name="country" value="{{ profileAddress.country }}" 
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+        </div>
+  
+        <!-- Zip Code -->
+        <div>
+          <label class="block text-sm md:text-base mb-2 font-medium">{{ 'accounts.account_profile.zip_code' | t }}</label>
+          <input type="text" name="postal_code" value="{{ profileAddress.postal_code }}" 
+            class="w-full border border-[black] rounded-md px-3 py-2 md:px-4 md:py-3 text-sm md:text-base">
+        </div>
+  
+        <!-- Newsletter -->
+        <div class="col-span-1 lg:col-span-2 flex items-center gap-2 pb-2">
+          <input type="checkbox" class="!h-5 !w-5" name="receive_promotional_emails" {% if profileUser.receive_promotional_emails == '1' %}checked{% endif %}>
+          <label class="text-sm md:text-base font-normal">{{ 'accounts.account_profile.newsletter_opt_in' | t }}</label>
+        </div>
+  
+        <!-- Buttons -->
+        <div class="flex gap-4 col-span-1 lg:col-span-2 justify-end">
+          <button id="cancelEditProfileBtn" type="reset" class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base">{{ 'accounts.common.cancel_btn' | t }}</button>
+          <button type="submit" class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base">{{ 'accounts.common.save' | t }}</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>  

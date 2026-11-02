@@ -1,0 +1,63 @@
+{% liquid
+  assign block_settings = testimonial_block.settings
+  assign rating = block_settings.rating | default: 4
+  assign hover_color = block_settings.hover_color | default: '#FDF2F8'
+  assign product_link = block_settings.product_url.handle | default: ''
+%}
+
+<div class="mb-3">
+  {% render 'icon-testimonial-quote' %}
+</div>
+
+{% if block_settings.testimonial != blank %}
+  <p class="text-sm md:text-base leading-relaxed body-text-color min-h-[140px] md:min-h-[170px]">
+    {{ block_settings.testimonial }}
+  </p>
+{% endif %}
+
+{% if block_settings.customer_name != blank %}
+  <p class="mt-4 text-base font-medium body-text-color">
+    {{ block_settings.customer_name }}
+  </p>
+{% endif %}
+
+<div class="mt-2 flex items-center gap-0.5" role="img" aria-label="{{ rating }} out of 5 stars">
+  {% for i in (1..5) %}
+    {% if i <= rating %}
+      {% render 'icon-star-filled' %}
+    {% else %}
+      {% render 'icon-star-empty' %}
+    {% endif %}
+  {% endfor %}
+</div>
+
+{% if product_link != blank %}
+  <a href="/{{ product_link }}" class="testimonial-product-bar mt-5 flex items-center gap-3 p-4 -mx-5 md:-mx-7 -mb-5 md:-mb-7 transition-colors duration-300" style="--hover-bg: {{ hover_color }};">
+{% else %}
+  <div class="testimonial-product-bar mt-5 flex items-center gap-3 p-4 -mx-5 md:-mx-7 -mb-5 md:-mb-7 transition-colors duration-300" style="--hover-bg: {{ hover_color }};">
+{% endif %}
+    {% assign testimonial_product_image = block_settings.product_image %}
+    {% if testimonial_product_image.url != blank %}
+      <div class="w-12 h-12 overflow-hidden flex-shrink-0">
+        <picture class="block w-full h-full">
+          {% render 'image-resolutions', firstImage: testimonial_product_image %}
+          <img src="{{ testimonial_product_image.url }}" alt="{{ block_settings.product_name | strip_html | escape }}" height="48" loading="lazy" class="h-full w-auto min-w-full object-cover object-center">
+        </picture>
+      </div>
+    {% endif %}
+    <div class="min-w-0 flex-grow">
+      {% if block_settings.product_name != blank %}
+        <p class="text-sm font-normal body-text-color leading-tight">{{ block_settings.product_name }}</p>
+      {% endif %}
+      {% if block_settings.product_price != blank %}
+        <p class="mt-0.5 text-sm font-normal body-text-color">{{ block_settings.product_price }}</p>
+      {% endif %}
+    </div>
+    <svg class="w-5 h-5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 heading-text-color" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+    </svg>
+{% if product_link != blank %}
+  </a>
+{% else %}
+  </div>
+{% endif %}

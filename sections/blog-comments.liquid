@@ -1,0 +1,105 @@
+<script type="module" src={{ "blog-comments-407010470598503.js" | asset_url }} defer></script>
+
+{% assign comment_list = comments.comments %}
+{% assign comments_pagination_data = comments.page_context %}
+{% assign comments_current_page = comments_pagination_data.current_page %}
+{% assign comments_total_pages = comments_pagination_data.total_pages %}
+{% assign comments_items_count = comments_pagination_data.items_count %}
+
+<div class="flex flex-col gap-5">
+  {% if comment_list.size > 0 %}
+    <h2 class="primary-font font-semibold text-[20px] md:text-[26px] body-text-color">
+      {{ 'blog.comments' | t | default: 'Comments' }} ({{ comments_items_count }})
+    </h2>
+  {% endif %}
+
+  <div class="flex flex-col gap-6">
+    {% for comment in comment_list %}
+      <div>
+        <div class="bg-[#F8F8F8] p-6" data-comment-id="{{ comment.id }}">
+          <div class="flex flex-col gap-6">
+            <div class="flex justify-between items-center">
+              <p class="font-semibold text-base leading-5 tracking-[0.04px] body-text-color">{{ comment.user_name | escape }}</p>
+              <button id="replyBtn-{{ comment.id }}" class="heading-text-color hover:underline text-sm leading-[22px] tracking-[0.035px]">{{ "blog_comments.reply_btn" | t | default: 'Reply' }}</button>
+            </div>
+            <p class="text-base leading-7 tracking-[0.04px] body-text-color">{{ comment.content | escape }}</p>
+          </div>
+
+          {% assign reply_count = comment.page_context.items_count | default: 0 | plus: 0 %}
+          <div class="mt-4">
+            <button id="viewRepliesBtn-{{ comment.id }}" class="flex items-center gap-1.5 heading-text-color hover:underline text-sm leading-[22px] tracking-[0.035px] {% if reply_count == 0 %}hidden{% endif %}">
+              <span class="transition-transform duration-500 ease-in-out">
+                {% render 'icon-arrowdown-black' %}
+              </span>
+              <span data-replies-count>{{ reply_count }}</span> {{ "blog_comments.replies_btn" | t | default: 'Replies' }}
+            </button>
+          </div>
+
+          <div id="replyBox-{{ comment.id }}" class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+            <div class="pt-6">
+              <p class="primary-font font-medium mb-2 text-base body-text-color">{{ "blog_comments.reply" | t | default: 'Reply' }}</p>
+              <textarea id="replyContent-{{ comment.id }}" rows="4" maxlength="5000" placeholder="{{ 'blog_comments.write_comment' | t }}"
+                class="w-full p-3 border border-[#DCDCDC] focus:outline-none focus:border-yellow-900 resize-none text-sm"></textarea>
+              <p class="text-red-500 text-sm hidden" data-error="reply-empty">{{ "blog_comments.reply_error_msg" | t | default: 'Reply cannot be empty' }}</p>
+
+              <div class="mt-3">
+                <input type="checkbox" id="replyGuestCheckbox-{{ comment.id }}">
+                <label for="replyGuestCheckbox-{{ comment.id }}" class="text-sm body-text-color">{{ "blog_comments.reply_guestbox" | t | default: 'Post as guest user' }}</label>
+                <p class="text-red-500 text-sm hidden" data-error="reply-login">{{ "blog_comments.reply_guestbox_error" | t | default: 'Log in to post as a user' }}</p>
+              </div>
+
+              <div class="mt-4 flex gap-3">
+                {% if comments.allow_registered_only and comments.is_logged_in == false %}
+                  <a href="/signin">
+                    <button class="px-5 py-2 btn-primary btn-primary-color btn-primary-hover text-sm">
+                      {{ "blog_comments.reply_login_btn" | t | default: 'Login to Reply' }}
+                    </button>
+                  </a>
+                {% else %}
+                  <button id="replySubmit-{{ comment.id }}" class="px-5 py-2 btn-primary btn-primary-color btn-primary-hover text-sm flex items-center gap-2">
+                    {{ "blog_comments.submit_btn" | t | default: 'Submit' }}
+                    <svg class="animate-spin h-4 w-4 hidden spinner" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="3"></circle>
+                      <path d="M4 12a8 8 0 0 1 8-8" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                    </svg>
+                  </button>
+                {% endif %}
+                <button id="replyCancel-{{ comment.id }}" class="px-5 py-2 btn-secondary btn-secondary-color btn-secondary-hover text-sm">
+                  {{ "blog_comments.cancel_btn" | t | default: 'Cancel' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="replies-{{ comment.id }}" class="ml-8 max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+          <div page-loader class="relative inset-0 flex items-center justify-center bg-white bg-opacity-60 z-10 h-[300px] hidden">
+            <div class="flex items-center">
+              <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+              {% render "icon-page-loader" %}
+            </div>
+          </div>
+
+          <div class="replies-content flex flex-col gap-4 pt-4">
+            {% for reply in comment.replies %}
+              <div class="bg-[#F8F8F8] p-6">
+                <div class="flex flex-col gap-6">
+                  <p class="font-semibold text-base leading-5 tracking-[0.04px] body-text-color">{{ reply.user_name | escape }}</p>
+                  <p class="text-base leading-7 tracking-[0.04px] body-text-color">{{ reply.content | escape }}</p>
+                </div>
+              </div>
+            {% endfor %}
+
+            {% assign reply_pagination_data = comment.page_context %}
+            {% assign reply_current_page = reply_pagination_data.current_page %}
+            {% assign reply_total_pages = reply_pagination_data.total_pages %}
+            {% assign current_comment_id = comment.id %}
+            {% render 'blog-replies-pagination', current_page: reply_current_page, total_pages: reply_total_pages, comment_id: current_comment_id %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% render 'blog-comments-pagination', current_page: comments_current_page, total_pages: comments_total_pages %}
+</div>

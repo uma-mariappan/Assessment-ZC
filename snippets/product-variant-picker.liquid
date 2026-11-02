@@ -1,0 +1,44 @@
+<variant-radios
+  class="flex flex-col gap-3 md:gap-8"
+  data-section="{{ section.id }}"
+  data-variantplacement="{{ variantplacement }}"
+  data-url="{{ product.url }}"
+>
+  {% assign target_position = block_settings.option_position | default: 0 %}
+  {% assign label_size = block_settings.label_size.value | default: 'text-base' %}
+
+  {% for option in product.options %}
+    {% if target_position == 0 or option.position == target_position %}
+      {% liquid
+        assign option_name = option.name | downcase
+        assign is_color_option = false
+        assign default_selected_value = option.selected_value
+        if option.type == 1 or option_name contains 'color'
+          assign is_color_option = true
+        endif
+        if default_selected_value == blank
+          assign first_option_value = option.values.first
+          assign first_option_name = first_option_value.name | default: first_option_value
+          assign first_option_color = first_option_value.data | default: ''
+          if is_color_option and first_option_color != blank
+            assign default_selected_value = first_option_name | append: first_option_color
+          else
+            assign default_selected_value = first_option_name
+          endif
+        endif
+      %}
+      <div data-variant-group class="flex flex-col gap-2" data-option-position="{{ option.position }}" data-option-name="{{ option.name }}">
+        <p class="{{ label_size }} font-medium text-[#1F1F1F]">{{ option.name | capitalize }}</p>
+        <input type="hidden" data-selected-option value="{{ default_selected_value }}">
+        <div class="flex items-center gap-3 flex-wrap">
+          {% for value in option.values %}
+            {% render 'product-variant-options', value: value, option: option, is_color_option: is_color_option, is_first: forloop.first %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <script id="productVariantsJson" type="application/json">{{ product.variants | json }}</script>
+  <script id="currencyJson" type="application/json">{{ currency | json }}</script>
+</variant-radios>

@@ -1,0 +1,50 @@
+{
+  "layout": "theme",
+  "sections": {
+    "main": {
+      "type": "orders",
+      "settings": {
+        "mobile_padding_size": 5,
+        "desktop_padding_size": 6
+      },
+      "blocks": {
+        "heading": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "Order Details",
+            "select_font_family": {
+              "display_name": "Primary",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "Heading text color",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "BASE",
+              "value": "text-base"
+            },
+            "mobile_text_size": {
+              "display_name": "BASE",
+              "value": "text-base"
+            },
+            "desktop_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "mobile_font_weight": {
+              "display_name": "Light",
+              "value": "light"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        }
+      },
+      "block_order": ["heading"]
+    }
+  },
+  "order": ["main"]
+}

@@ -1,0 +1,78 @@
+{
+  "name": "Header",
+  "type": "header",
+  "sections": {
+    "header_announcement_bar": {
+      "type": "header-announcement-bar",
+      "settings": {
+        "padding_top": 8,
+        "padding_bottom": 8,
+        "autoplay_speed": 3
+      },
+      "blocks": {
+        "announcement_1": {
+          "type": "announcement",
+          "settings": {
+            "announcement_text": "Glow up with our new arrivals!",
+            "cta_text": "Shop now.",
+            "cta_url": {
+              "display_name": "All Products",
+              "handle": "collections/all-products"
+            }
+          }
+        }
+      },
+      "block_order": ["announcement_1"]
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu_type": {
+          "display_name": "Drill Down",
+          "value": "1"
+        },
+        "menu_alignment": {
+          "display_name": "Center",
+          "value": "center"
+        },
+        "menu_gap": {
+          "display_name": "Medium",
+          "value": "medium"
+        },
+        "mobile_layout_details": {
+          "display_name": "Show Logo",
+          "value": "logo"
+        },
+        "mobile_store_name_size": 12,
+        "desktop_store_name_size": 22,
+        "desktop_tag_line_size": 8,
+        "mobile_tag_line_size": 2,
+        "mobile_store_logo_size": 20,
+        "desktop_store_logo_size": 24,
+        "is_show_search": true,
+        "initial_collection": {
+          "display_name": "All Products",
+          "handle": "all-products"
+        },
+        "initial_list_heading": "Trending Now",
+        "menu_desktop_horizontal_padding": 0,
+        "menu_desktop_vertical_padding": 0,
+        "menu_mobile_horizontal_padding": 3,
+        "menu_mobile_vertical_padding": 2,
+        "mega_menu_image": {
+          "url": "",
+          "enable_customisation": true
+        },
+        "mega_menu_url": {
+          "display_name": "Explore more",
+          "handle": "/"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 0,
+        "desktop_padding_bottom": 0
+      }
+    }
+  },
+  "order": ["header_announcement_bar", "header"]
+}

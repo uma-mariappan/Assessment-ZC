@@ -1,0 +1,18 @@
+{% liquid
+  assign block_settings = block.settings
+  assign button_style = block_settings.select_button_style.value | default: block_settings.select_button_style | default: 'primary'
+  assign button_classes = 'inline-flex items-center justify-center leading-none tracking-wide transition-colors duration-300'
+  if button_style == 'secondary'
+    assign button_classes = button_classes | append: ' btn-secondary btn-secondary-color btn-secondary-hover'
+  else
+    assign button_classes = button_classes | append: ' btn-primary btn-primary-color btn-primary-hover'
+  endif
+%}
+{% if block_settings.button_text != blank %}
+  <a
+    href="/{{ block_settings.button_url.handle }}"
+    class="{{ button_classes }}"
+    {{ block.zcommerce_attributes }}>
+    {{ block_settings.button_text }}
+  </a>
+{% endif %}

@@ -1,0 +1,309 @@
+<script type="module" src="{{ "order-status-678563368476994.js" | asset_url }}" defer></script>
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% liquid
+  assign list_of_orders = orders.salesorder 
+  assign return_cancel_available = false
+  assign status = ""
+%}
+
+{% if list_of_orders.order_status == "pending" %}
+  {% assign status = "Pending" %}
+{% elsif list_of_orders.order_status == "confirmed" %}
+  {% if list_of_orders.shipped_status == "pending" or list_of_orders.shipped_status == "partially_shipped" %}
+    {% assign status = "Confirmed" %}
+  {% elsif list_of_orders.shipped_status == "shipped" %}
+    {% assign status = "Shipped" %}
+  {% elsif list_of_orders.shipped_status == "fulfilled" %}
+    {% assign status = "Delivered" %}
+  {% endif %}
+{% elsif list_of_orders.order_status == "closed" or list_of_orders.order_status == "cancelled" or list_of_orders.order_status == "void" %}
+  {% if list_of_orders.shipped_status == "" %}
+    {% assign status = "Cancelled" %}
+  {% elsif list_of_orders.shipped_status == "fulfilled" %}
+    {% assign status = "Delivered" %}
+  {% endif %}
+{% endif %}
+
+<order-status id="section-{{ section.id }}" class="w-[90%] mx-auto page-max-width">
+    <div class="flex justify-between items-center py-6 md:py-8 flex-wrap">
+      <div class="flex gap-6 items-center">
+        <a href="/account/orders/{{ list_of_orders.salesorder_id }}">
+          {%  render 'icon-back-btn' %}
+        </a>
+        {% if status == "Pending" or status == "Confirmed" %}
+          <div class="text-xl md:text-[40px] md:leading-[48px] heading-text-color flex flex-wrap gap-3">
+            <h1 class="font-medium primary-font">{{ 'accounts.order_status.cancel_txt' | t }}</h1>
+            <p>( #{{ orders.salesorder.salesorder_number | escape }} )</p>
+          </div>
+        {% elsif status == "Delivered" %}
+          <div class="text-xl md:text-[40px] md:leading-[48px] heading-text-color flex flex-wrap gap-3">
+            <h1 class="font-medium primary-font">{{ 'accounts.order_status.return_txt' | t }}</h1>
+            <p>( #{{ orders.salesorder.salesorder_number | escape }} )</p>
+          </div>
+        {% else %}
+          <div class="text-xl md:text-[40px] md:leading-[48px] heading-text-color flex flex-wrap gap-3">
+            <h1 class="font-medium primary-font">{{ 'orders.order_status' | t }}</h1>
+            <p>( #{{ orders.salesorder.salesorder_number | escape }} )</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div id="orderStatusSection" class="flex flex-col gap-6">
+      <form id="orderCancelForm" class="flex flex-col gap-6">
+        {% for item in list_of_orders.line_items %}
+          <div class="flex flex-col gap-6 p-4 md:p-6 border border-color bg-white">
+            <div class="flex flex-wrap items-center justify-between gap-6">
+              <div class="flex items-center gap-6"> 
+                <div class="flex w-28 h-32 md:w-36 md:h-40 rounded-lg overflow-hidden border border-slate-200">
+                  {% assign item_image = item.image_url %}
+                  {% if item_image == '?' or item_image == '' or item_image == null %}
+                    {% assign item_image = "no-image-59606643991319.webp" | asset_url %}
+                  {% endif %}
+                  {% assign item_image_obj = item.image | default: item_image %}
+                  <a href="{{ item.product_url }}" target="_blank" class="block w-full h-full">
+                    <picture class="block w-full h-full">
+                      {% render 'image-resolutions', firstImage: item_image_obj %}
+                      <img src="{{ item_image }}" alt="{{ item.name | escape }}" height="80" loading="lazy" class="h-full w-auto min-w-full object-cover object-center">
+                    </picture>
+                  </a>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <a href="{{ item.product_url }}" target="_blank" class="font-semibold text-sm md:text-base">{{ item.name | escape }}</a>
+                  {% render 'order-item-custom-fields', orderItem: item %}
+                  <div class="py-1.5 px-3 md:py-2 md:px-4 rounded-[32px] border" style="background-color: var(--color-background-alt); border-color: var(--color-border); flex items-center justify-center w-fit">
+                      <p class="text-sm md:text-base font-medium">{{ 'accounts.common.quantity' | t }} : {{ item.quantity | floor }}</p>
+                  </div>
+                </div>
+              </div>
+
+            {% assign product_left = 0 %}
+            {% if status == "Shipped" or status == "Delivered" %}
+              {% assign product_left = item.quantity_to_return %}
+            {% else %}
+              {% assign product_left = item.quantity_to_cancel %}
+            {% endif %}
+
+            {% assign can_show_inputs = false %}
+            {% if status == "Pending" or status == "Confirmed" or status == "Delivered" %}
+              {% if item.line_item_type == "goods" %}
+                {% if product_left > 0 %}
+                  {% if status == "Delivered" %}
+                    {% if item.is_returnable %}
+                      {% if item.is_return_period_exceeded == false %}
+                        {% assign can_show_inputs = true %}
+                      {% endif %}
+                    {% endif %}
+                  {% else %}
+                    {% assign can_show_inputs = true %}
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+
+            {% if can_show_inputs %}
+              {% assign return_cancel_available = true %}
+              <div data-order-fields class="flex flex-row items-end gap-6 flex-wrap">
+                <input data-item-id type="hidden" value="{{ item.item_id }}">
+                <input data-salesorder-item-id type="hidden" value="{{ item.line_item_id }}">
+                <input data-salesorder-id type="hidden" value="{{ list_of_orders.salesorder_id }}">
+    
+                <!-- Quantity -->
+                <div>
+                  <label class="block text-sm md:text-base font-semibold mb-2">{{ 'accounts.common.quantity' | t }}</label>
+                  <input data-max-qty="{{ product_left | floor }}" type="number"
+                    class="w-20 border p-3 md:p-4 text-center rounded-lg text-sm md:text-base">
+                  <p class="quantity-error text-red-500 text-sm mt-1 hidden error-msg"></p>
+                </div>
+    
+                <!-- Reason select -->
+                <div class="min-w-[220px] md:min-w-[260px]">
+                  <label class="block text-sm md:text-base font-semibold mb-2">{{ 'accounts.order_status.reason_label' | t }}</label>
+                  <div class="relative inline-block">
+                    <select data-cancel-options
+                      class="w-full appearance-none border p-3 md:p-4 h-fit rounded-lg text-sm md:text-base">
+                      <option value="">{{ 'accounts.order_status.choose' | t }}</option>
+                      <option value="Ordered it by mistake">{{ 'accounts.order_status.mistake_order' | t }}</option>
+                      <option value="Order would not arrive on time">{{ 'accounts.order_status.order_delay' | t }}</option>
+                      <option value="Shipping charges too high">{{ 'accounts.order_status.high_shipping_charge' | t }}</option>
+                      <option value="Product price is too high">{{ 'accounts.order_status.high_product_price' | t }}</option>
+                      <option value="Found it cheaper elsewhere">{{ 'accounts.order_status.found_cheaper_elsewhere' | t }}</option>
+                      <option value="Need to change shipping address/shipping method">{{ 'accounts.order_status.change_address' | t }}</option>
+                      <option value="Other">{{ 'accounts.order_status.other' | t }}</option>
+                    </select>
+                    <svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M15.4395 7.77148L10.4395 12.7715L5.43945 7.77149" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+
+                  <p class="select-reason-error text-red-500 text-sm mt-1 hidden error-msg">{{ 'accounts.order_status.select_reason' | t }}.</p>
+                </div>
+    
+                <!-- Other reason -->
+                <div class="otherReason hidden w-full md:w-[40%]">
+                  <textarea class="w-full h-24 md:h-28 mt-4 md:mt-6 border border-color px-2 py-1 text-sm md:text-base"
+                    placeholder="{{ 'accounts.order_status.reason_entry' | t }}"></textarea>
+                  <p class="select-other-reason-error text-red-500 text-sm mt-1 hidden error-msg">{{ 'accounts.order_status.reason_entry' | t }} .</p>
+                </div>
+              </div>
+            {% endif %}
+            </div>
+
+            {% if list_of_orders.salesreturns.size > 0 %}
+              {% for salesItems in list_of_orders.salesreturns %}
+                {% for returnedItem in salesItems.line_items %}
+                  {% if item.item_id == returnedItem.item_id  %}
+                    {% assign return_status_label = "" %}
+                    {% assign return_status_bg = "" %}
+                    {% if salesItems.salesreturn_status == "pending" %}
+                      {% assign return_status_label = "accounts.order_status.return_pending" | t %}
+                      {% assign return_status_bg = "bg-[var(--color-warning)]" %}
+                    {% elsif salesItems.salesreturn_status == "approved" %}
+                      {% assign return_status_label = "accounts.order_status.return_approved" | t %}
+                      {% assign return_status_bg = "bg-[var(--color-success)]" %}
+                    {% elsif salesItems.salesreturn_status == "accepted" %}
+                      {% assign return_status_label = "accounts.order_status.return_accepted" | t %}
+                      {% assign return_status_bg = "bg-[var(--color-success)]" %}
+                    {% elsif salesItems.salesreturn_status == "declined" %}
+                      {% assign return_status_label = "accounts.order_status.return_declined" | t %}
+                      {% assign return_status_bg = "bg-[var(--color-error)]" %}
+                    {% elsif salesItems.salesreturn_status == "closed" %}
+                      {% if salesItems.refund_status == "pending" %}
+                        {% assign return_status_label = "accounts.order_status.return_closed" | t %}
+                        {% assign return_status_bg = "bg-[var(--color-info)]" %}
+                      {% elsif salesItems.refund_status == "refunded" %}
+                        {% assign return_status_label = "accounts.order_status.return_refunded" | t %}
+                        {% assign return_status_bg = "bg-[var(--color-info)]" %}
+                      {% endif %}
+                    {% endif %}
+
+                    <div class="flex flex-wrap items-start gap-6 py-5 border-t border-[var(--color-border)]">
+                      <div class="self-start w-[140px]">
+                        {% if return_status_label == "" %}
+                        {% else %}
+                          <span class="{{ return_status_bg }} text-sm font-medium text-white px-3 py-2 md:py-3 rounded-full flex items-center justify-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-white"></span>
+                            {{ return_status_label }}
+                          </span>
+                        {% endif %}
+                      </div>
+                      <div class="self-start flex-1 min-w-[240px] text-sm md:text-base">
+                        <p>{{ salesItems.total_formatted | escape }} {{ 'accounts.order_status.refund_request' | t }} {{ salesItems.date_formatted | escape }} <br> {{ 'accounts.order_status.cancellation_id' | t }} {{ salesItems.salesreturn_number | escape }}.</p>
+                      </div>
+                      <div class="self-start w-[260px] md:w-[340px] text-sm md:text-base">
+                        <p>{{ 'accounts.common.quantity' | t }} : <span class="font-semibold">{{ salesItems.line_items[0].quantity | floor }}</span></p>
+                        <p>{{ 'accounts.order_status.reason' | t }} : <span class="font-semibold">{{ salesItems.reason | escape }}</span></p>
+                      </div>
+                    </div>
+                  {% endif %}
+                  {% endfor %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        {% endfor %}
+      
+    
+        {% if status == "Pending" or status == "Confirmed" or status == "Delivered" %}
+          {% if return_cancel_available %}
+          <div class="flex justify-end gap-4 my-6">
+            <a href="/account/orders/{{ list_of_orders.salesorder_id }}">
+              <button type="button" class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base font-medium">
+                {{ 'accounts.common.cancel_btn' | t }}
+              </button>
+            </a>
+            <button type="submit" class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] border btn-primary-color btn-primary-hover text-sm md:text-base font-medium">{{ 'accounts.order_status.submit_btn' | t }}</button>
+          </div>
+          {% endif %}
+        {% endif %}
+      </form>      
+    </div>
+
+    <div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 z-50">
+      <div class="flex items-center">
+        <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+        {% render "icon-page-loader" %}
+      </div>
+    </div>
+
+    <div id="messageNotification" class="opacity-0 transition-all duration-500">
+      {% render "account-message-notification" %}
+    </div>
+</order-status>
+
+{% schema %}
+{
+  "name": "t:sections.account_order_status.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.account_order_status.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_order_status.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_order_status.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.account_order_status.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_order_status.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_order_status.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.account_order_status.presets.default.name" }]
+}
+{% endschema %}

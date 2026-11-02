@@ -1,0 +1,401 @@
+<script src="{{ 'quantity-message-588403974700878.js' | asset_url }}" defer></script>
+<script type="module" src="{{ 'add-to-cart-514496733357978.js' | asset_url }}" defer></script>
+<script src="{{ 'quantity-counter-176141763398130.js' | asset_url }}" defer></script>
+<script src="{{ 'variant-radios-80014417361969.js' | asset_url }}" defer></script>
+<script src="{{ 'product-images-906612442069572.js' | asset_url }}" defer></script>
+{% liquid
+  assign portal_enabled = store.customer_portal.enabled
+  assign wishlist_enabled = false
+  if portal_enabled and store.preferences.is_wishlist_enabled
+    assign wishlist_enabled = true
+  endif
+  assign quotes_enabled = false
+  if portal_enabled and store.preferences.is_quotes_enabled
+    assign quotes_enabled = true
+  endif
+%}
+{% if wishlist_enabled %}
+<script type="module" src="{{ 'product-wishlist-943862380239332.js' | asset_url }}" defer></script>
+{% endif %}
+{% if quotes_enabled %}
+<script type="module" src="{{ 'request-quote-571332105730115.js' | asset_url }}" defer></script>
+{% endif %}
+<script type="module" src="{{ 'product-coupons-63671563047438.js' | asset_url }}" defer></script>
+
+<script defer>
+  window.product_data = {{ product | json }}
+</script>
+
+{% liquid
+  assign section_settings = section.settings
+  assign variant_id = product.initial_variant.id
+  assign first_image_obj = product.cover_media
+  assign first_image = first_image_obj.url
+
+  if first_image == null or first_image == '?' or first_image == ''
+    assign first_image = 'no-image-59606643991319.webp' | asset_url
+  endif
+%}
+
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+{% liquid
+  assign bg_color = section_settings.background_color.value | default: 'primary'
+%}
+<div id="section-{{ section.id }}" data-product-detail-page class="w-full {% if bg_color == 'primary' %}primary-bg-color{% else %}secondary-bg-color{% endif %}">
+  {% render 'quantity-message' %}
+
+  <div class="w-[90%] mx-auto page-max-width">
+
+    {%- comment -%} Breadcrumb {%- endcomment -%}
+    <div class="flex items-center flex-wrap gap-1 text-sm mb-6">
+      <a href="/home" class="hover:underline" style="color: var(--color-text-muted);">{{ "product_details.breadcrumb_home" | t }}</a>
+      <span style="color: var(--color-text-muted);" class="px-1">&rsaquo;</span>
+      <span class="font-semibold body-text-color">{{ product.title | escape }}</span>
+    </div>
+
+    {%- comment -%} Main product grid {%- endcomment -%}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+
+      {%- comment -%} LEFT: Image gallery {%- endcomment -%}
+      <div class="w-full min-w-0">
+        <product-images class="block min-w-0">
+          <div class="flex gap-3 min-w-0">
+
+            {%- comment -%} Thumbnail strip — vertical on desktop, horizontal scroll on mobile {%- endcomment -%}
+            {% if product.media.size > 1 %}
+              <div data-thumbnails-container class="hidden lg:flex flex-col gap-3 flex-shrink-0">
+                {% for image in product.media limit: 4 %}
+                  {% liquid
+                    assign thumb_url = image.url
+                    if thumb_url == null or thumb_url == '?' or thumb_url == ''
+                      assign thumb_url = 'no-image-59606643991319.webp' | asset_url
+                    endif
+                  %}
+                  <button
+                    type="button"
+                    class="w-[88px] h-[88px] border flex items-center justify-center flex-shrink-0 transition-colors"
+                    style="border-color: {% if forloop.first %}var(--color-primary){% else %}var(--color-accent){% endif %}; background-color: var(--color-surface);"
+                    data-product-image
+                    data-image-url="{{ thumb_url }}"
+                  >
+                    <picture class="w-full h-full block">
+                      {% render 'image-resolutions', firstImage: image %}
+                      <img src="{{ thumb_url }}" alt="{{ product.title | escape }} - thumbnail {{ forloop.index }}" height="88" loading="lazy" class="w-full h-full object-cover object-center">
+                    </picture>
+                  </button>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {%- comment -%} Main image {%- endcomment -%}
+            <div class="relative flex-1 min-w-0">
+              <div class="w-full aspect-square flex items-center justify-center overflow-hidden" style="background-color: var(--color-surface);">
+                <picture class="w-full h-full block overflow-hidden">
+                  {% if first_image_obj != blank %}
+                    {% render 'image-resolutions', firstImage: first_image_obj %}
+                  {% endif %}
+                  <img
+                    data-active-image
+                    src="{{ first_image }}"
+                    alt="{{ product.title | escape }}"
+                    height="600" loading="eager"
+                    class="w-full h-full object-cover object-center"
+                  >
+                </picture>
+              </div>
+              {%- comment -%} Floating wishlist on image {%- endcomment -%}
+              {% if wishlist_enabled %}
+                <product-wishlist>
+                  <div data-variant-id="{{ variant_id }}" class="product-wishlist absolute top-3 right-3 z-10">
+                    <button
+                      type="button"
+                      aria-label="Toggle wishlist"
+                      aria-pressed="false"
+                      class="wishlist-removed w-10 h-10 rounded-full bg-white shadow flex items-center justify-center transition"
+                      style="color: var(--color-primary);"
+                    >
+                      {% render 'icon-wishlist' %}
+                    </button>
+                  </div>
+                </product-wishlist>
+              {% endif %}
+            </div>
+
+          </div>
+
+          {%- comment -%} Mobile thumbnail row {%- endcomment -%}
+          {% if product.media.size > 1 %}
+            <div class="flex lg:hidden gap-3 mt-3 overflow-x-auto pb-1">
+              {% for image in product.media limit: 4 %}
+                {% liquid
+                  assign thumb_url = image | image_url
+                  if thumb_url == null or thumb_url == '?' or thumb_url == ''
+                    assign thumb_url = 'no-image-59606643991319.webp' | asset_url
+                  endif
+                %}
+                <button
+                  type="button"
+                  class="pd-thumb-btn flex-shrink-0 w-20 h-20 border p-1.5 flex items-center justify-center"
+                  style="border-color: {% if forloop.first %}var(--color-primary){% else %}var(--color-accent){% endif %}; background-color: var(--color-surface);"
+                  data-product-image
+                  data-image-url="{{ thumb_url }}"
+                >
+                  <picture class="w-full h-full block">
+                    {% render 'image-resolutions', firstImage: image %}
+                    <img src="{{ thumb_url }}" alt="{{ product.title | escape }} - thumbnail {{ forloop.index }}" height="80" loading="lazy" class="w-full h-full object-cover object-center">
+                  </picture>
+                </button>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+        </product-images>
+      </div>
+
+      {%- comment -%} RIGHT: Product info {%- endcomment -%}
+      <div class="flex flex-col">
+
+        {% for perBlock in section.blocks %}
+          {% case perBlock.type %}
+            {% when 'product-title' %}
+              <h1 class="{{ perBlock.settings.mobile_size.value }} md:{{ perBlock.settings.desktop_size.value }} font-medium leading-snug body-text-color" {{ perBlock.zcommerce_attributes }}>
+                {{ product.title | escape }}
+              </h1>
+
+            {% when 'product-price' %}
+              <div class="flex items-center flex-wrap gap-x-4 gap-y-1 mt-4" {{ perBlock.zcommerce_attributes }}>
+                <span class="currentPrice {{ perBlock.settings.mobile_size.value }} md:{{ perBlock.settings.desktop_size.value }} font-medium" style="color: var(--color-heading);">
+                  {{ product.initial_variant.price_formatted | escape }}
+                </span>
+                {% if product.initial_variant.label_price > 0 %}
+                  <s id="actualPrice" class="text-lg" style="color: var(--color-text-muted);">
+                    {{ product.initial_variant.label_price_formatted | escape }}
+                  </s>
+                {% else %}
+                  <s id="actualPrice" class="hidden"></s>
+                {% endif %}
+              </div>
+              {% if product.short_description != blank %}
+                <p class="text-base leading-relaxed mt-5" style="color: var(--color-text-muted);">{{ product.short_description | strip_html }}</p>
+              {% endif %}
+
+            {% when 'product-variant-picker' %}
+              {% if product.options.size > 0 %}
+                <div class="mt-8" {{ perBlock.zcommerce_attributes }}>
+                  {% render 'product-variant-picker', product: product, variantplacement: true %}
+                </div>
+              {% endif %}
+
+            {% when 'product-coupons' %}
+              <div class="mt-8 hidden" data-pdp-coupons-slot {{ perBlock.zcommerce_attributes }}>
+                <product-coupons class="block" zcs-product-id="{{ product.id }}" data-product-id="{{ product.id }}">
+                  {% render 'product-coupons', productId: product.id %}
+                </product-coupons>
+              </div>
+
+            {% when 'quantity-counter' %}
+              <div class="mt-8" data-quantity {{ perBlock.zcommerce_attributes }}>
+                <div data-quantity-block>
+                  <p class="text-base font-medium mb-2">{{ "product_details.quantity" | t }}</p>
+                  <div data-product-detail-counter class="inline-flex">
+                    {% render 'quantity-counter', isProductDetails: true, quantity: 1, variantId: variant_id %}
+                    <p class="qty-error-msg hidden text-xs text-red-600 mt-1">{{ "product_details.qty_error" | t }}</p>
+                  </div>
+                </div>
+                <div class="mt-8">
+                  {% render 'add-to-cart', variantId: variant_id, perProduct: product, isCartPopup: true %}
+                </div>
+
+                {% if quotes_enabled %}
+                  <div class="mt-3">
+                    <request-quote class="block">
+                      <form id="product-quote-form" method="post" action="/addtoquote">
+                        <input class="hidden" name="variant_id" type="text" value="{{ variant_id }}">
+                        <button type="submit" data-request-quote
+                          class="w-full py-3 text-base font-normal text-center border disabled:opacity-60 disabled:cursor-not-allowed"
+                          style="border-color: var(--color-primary); color: var(--color-primary); background-color: transparent;">
+                          <span class="quote-btn-text">{{ 'add_to_cart.request_quote' | t | default: 'Request Quote' }}</span>
+                          <span class="hidden quote-spinner">{{ 'common.loader' | t | default: 'Loading…' }}</span>
+                        </button>
+                      </form>
+                      <div data-quote-popup class="hidden"></div>
+                    </request-quote>
+                  </div>
+                {% endif %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.product_details.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {"templates": ["product"]},
+  "settings": [
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.product_details.settings.background_color.label",
+      "options": [
+        { "label": "t:sections.product_details.settings.background_color.option__1.label", "value": "primary" },
+        { "label": "t:sections.product_details.settings.background_color.option__2.label", "value": "secondary" }
+      ],
+      "default": { "display_name": "t:sections.product_details.settings.background_color.default", "value": "primary" }
+    },
+    {
+      "type": "header",
+      "content": "t:sections.product_details.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 32,
+      "label": "t:sections.product_details.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.product_details.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.product_details.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 32,
+      "label": "t:sections.product_details.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.product_details.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product-title",
+      "name": "Product Title",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "desktop_size",
+          "label": "Desktop size",
+          "options": [
+            { "label": "XL", "value": "text-4xl" },
+            { "label": "Large", "value": "text-3xl" },
+            { "label": "Medium", "value": "text-[26px]" },
+            { "label": "Small", "value": "text-2xl" }
+          ],
+          "default": { "display_name": "Medium", "value": "text-[26px]" }
+        },
+        {
+          "type": "select",
+          "id": "mobile_size",
+          "label": "Mobile size",
+          "options": [
+            { "label": "Large", "value": "text-3xl" },
+            { "label": "Medium", "value": "text-[26px]" },
+            { "label": "Small", "value": "text-2xl" },
+            { "label": "Smaller", "value": "text-xl" }
+          ],
+          "default": { "display_name": "Medium", "value": "text-[26px]" }
+        }
+      ]
+    },
+    {
+      "type": "product-price",
+      "name": "Product Price",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "desktop_size",
+          "label": "Desktop size",
+          "options": [
+            { "label": "XL", "value": "text-5xl" },
+            { "label": "Large", "value": "text-4xl" },
+            { "label": "Medium", "value": "text-[32px]" },
+            { "label": "Small", "value": "text-3xl" }
+          ],
+          "default": { "display_name": "Medium", "value": "text-[32px]" }
+        },
+        {
+          "type": "select",
+          "id": "mobile_size",
+          "label": "Mobile size",
+          "options": [
+            { "label": "Large", "value": "text-4xl" },
+            { "label": "Medium", "value": "text-[32px]" },
+            { "label": "Small", "value": "text-3xl" },
+            { "label": "Smaller", "value": "text-2xl" }
+          ],
+          "default": { "display_name": "Medium", "value": "text-[32px]" }
+        }
+      ]
+    },
+    {
+      "type": "product-variant-picker",
+      "name": "t:sections.product_details.blocks.variant_picker.name",
+      "limit": 1
+    },
+    {
+      "type": "product-coupons",
+      "name": "t:sections.product_details.blocks.product_coupons.name",
+      "limit": 1
+    },
+    {
+      "type": "quantity-counter",
+      "name": "t:sections.product_details.blocks.quantity_counter.name",
+      "limit": 1
+    }
+  ],
+  "presets": [{ "name": "t:sections.product_details.presets.default.name" }]
+}
+{% endschema %}

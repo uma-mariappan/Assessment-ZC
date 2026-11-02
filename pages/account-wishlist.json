@@ -1,0 +1,9 @@
+{
+  "layout": "theme",
+  "sections": {
+    "wishlist": {
+      "type": "wishlist-page"
+    }
+  },
+  "order": ["wishlist"]
+}

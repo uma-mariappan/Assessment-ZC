@@ -1,0 +1,17 @@
+<script src="{{ 'expand-options-150049468737719.js' | asset_url }}" defer></script>
+{% style %}
+  #theme-accordion-{{ block.id }} .faq-card.faq-active .faq-header {
+    background-color: #FDF2F8;
+  }
+{% endstyle %}
+<expand-options id="theme-accordion-{{ block.id }}" class="accordion-block flex flex-col gap-4" {{ block.zcommerce_attributes }}>
+  {% if block.blocks.size > 0 %}
+    {% for row_block in block.blocks %}
+      {% if row_block.type == 'zc_theme__accordion_row' %}
+        {% render 'theme-accordion-row', block: row_block %}
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <p class="text-sm body-text-color">{{ 'blocks.accordion.empty' | t }}</p>
+  {% endif %}
+</expand-options>

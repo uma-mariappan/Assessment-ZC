@@ -1,0 +1,38 @@
+{% liquid
+    assign last_index = cart.items.size | minus: 1
+    assign line_item = cart.items[last_index]
+    assign cart_img = line_item.product.cover_media
+    assign img_url = cart_img.url
+%}
+
+{% if img_url == '?' or img_url == '' or img_url == null %}
+    {% assign img_url = "no-image-59606643991319.webp" | asset_url %}
+{% endif %}
+
+<div class="relative p-4">
+    <button type="button" id="popupClose" aria-label="Close" class="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-black/80 hover:bg-black z-10">
+        <span class="block w-3 h-3 text-white">{% render "icon-header-close" %}</span>
+    </button>
+
+    <div class="flex flex-col">
+        <div class="overflow-hidden rounded">
+            <picture>
+                {% render "image-resolutions", firstImage: cart_img %}
+                <img src="{{ img_url }}" alt="{{ line_item.selected_variant.title | escape }}" class="h-48 w-auto min-w-full object-cover object-center" height="192" loading="lazy">
+            </picture>
+        </div>
+
+        <p class="text-ellipsis whitespace-nowrap overflow-hidden mt-3 text-sm font-medium" style="color: var(--color-heading);">
+            {{ line_item.selected_variant.title | escape }}
+        </p>
+
+        <a href="/cart" class="flex gap-2 items-center justify-center btn-primary btn-primary-color btn-primary-hover py-2.5 mt-3 text-sm font-medium">
+            {{ "add_to_cart.view_cart" | t | default: "View Cart" }}
+        </a>
+
+        <div class="flex gap-2 items-center justify-center pt-3">
+            <span class="text-green-700">{% render "icon-check-square" %}</span>
+            <p id="cartMessage" class="text-xs text-green-700"></p>
+        </div>
+    </div>
+</div>

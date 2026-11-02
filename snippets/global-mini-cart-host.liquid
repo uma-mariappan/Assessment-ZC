@@ -1,0 +1,25 @@
+<div
+  id="globalCartPopup"
+  data-cart-popup
+  data-global-cart-popup
+  class="hidden fixed right-4 top-28 md:top-32 w-[90%] max-w-[320px] bg-white shadow-2xl rounded-md z-[100] border"
+  style="border-color: var(--color-border, #E5E5E5);"
+  role="dialog"
+  aria-label="{{ 'add_to_cart.view_cart' | t | default: 'Cart added' }}"
+  aria-hidden="true"
+></div>
+<script>
+  (function () {
+    function mountGlobalCartPopup() {
+      var popup = document.getElementById('globalCartPopup') || document.querySelector('[data-global-cart-popup]');
+      if (popup && popup.parentElement !== document.body) {
+        document.body.appendChild(popup);
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', mountGlobalCartPopup);
+    } else {
+      mountGlobalCartPopup();
+    }
+  })();
+</script>

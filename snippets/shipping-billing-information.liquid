@@ -1,0 +1,68 @@
+{% liquid assign shippingDetails =  checkoutDetails.shipping_address
+  assign billingDetails =  checkoutDetails.billing_address
+  assign can_change_address = true
+  if allowAddressChange == false
+    assign can_change_address = false
+  endif
+  if checkoutDetails.address_completed == true
+    assign can_change_address = false
+  endif
+%}
+
+{% if billingDetails.same_billing_address %}
+  <div class="border-b pt-7 border-color">
+    <h4 class="heading-text-color primary-font">{{ "checkout.blocks.shipping-and-billing-information.shipping_billing_title" | t }}</h4>
+    <div class="lg:flex lg:flex-row py-4 pr-4 items-center">
+      <div>
+        <p class="text-base font-bold pb-3">{{ shippingDetails.attention}}</p>
+        <p class="text-sm pb-3">{{shippingDetails.address}} {{shippingDetails.city}} 
+          {{shippingDetails.state_name}} {{shippingDetails.country_name}}
+        </p>
+        <p class="text-sm">{{shippingDetails.zip}}</p>
+      </div>
+      {% if can_change_address %}
+        <div class="grow lg:text-end mt-5">
+          <button type="button" id="editShippingBilling" class="btn-secondary btn-secondary-color btn-secondary-hover p-2 text-xs lg:text-sm">{{ "checkout.blocks.common.change_btn" | t }}</button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <div class="border-b pt-7 border-color">
+    <h4 class="heading-text-color primary-font">{{ "checkout.blocks.shipping-and-billing-information.shipping_title" | t }}</h4>
+    <div class="lg:flex lg:flex-row py-4 pr-4 items-center">
+      <div>
+        <p class="text-base font-bold pb-3">{{ shippingDetails.attention}}</p>
+        <p class="text-sm pb-3">{{shippingDetails.address}} {{shippingDetails.city}} 
+          {{shippingDetails.state_name}} {{shippingDetails.country_name}}
+        </p>
+        <p class="text-sm">{{shippingDetails.zip}}</p>
+      </div>
+      {% if can_change_address %}
+        <div class="grow lg:text-end mt-5">
+          <button type="button" id="editShipping" data-selected-address-id="{{ shippingDetails.address_id }}" 
+            class="btn-secondary btn-secondary-color btn-secondary-hover p-2 text-xs lg:text-sm">{{ "checkout.blocks.common.change_btn" | t }}</button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="border-b pt-7 border-color">
+    <h4 class="heading-text-color primary-font">{{ "checkout.blocks.shipping-and-billing-information.billing_title" | t }}</h4>
+    <div class="lg:flex lg:flex-row py-4 pr-4 items-center">
+      <div>
+        <p class="text-base font-bold pb-3">{{ billingDetails.attention}}</p>
+        <p class="text-sm pb-3">{{billingDetails.address}} {{billingDetails.city}} 
+          {{billingDetails.state_name}} {{billingDetails.country_name}}
+        </p>
+        <p class="text-sm">{{billingDetails.zip}}</p>
+      </div>
+      {% if can_change_address %}
+        <div class="grow lg:text-end mt-5">
+          <button type="button" id="editBilling" data-selected-billing-address-id="{{ billingDetails.address_id }}"
+            class="btn-secondary btn-secondary-color btn-secondary-hover p-2 text-xs lg:text-sm">{{ "checkout.blocks.common.change_btn" | t }}</button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}

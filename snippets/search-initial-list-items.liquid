@@ -1,0 +1,11 @@
+{% liquid
+  assign list_collection = listCollection
+%}
+
+{% if list_collection and list_collection.products and list_collection.products.size > 0 %}
+  <ul class="search-initial-list m-0 flex list-none flex-col p-0">
+    {% for per_product in list_collection.products %}
+      {% render 'search-product-row', perProduct: per_product %}
+    {% endfor %}
+  </ul>
+{% endif %}

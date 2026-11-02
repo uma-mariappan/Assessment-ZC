@@ -1,0 +1,82 @@
+{% liquid assign billing_details =  checkoutDetails.billing_address
+    assign attention = billing_details.attention | default: ""
+    assign name = attention | split: " "
+    assign first_name = name[0]
+    assign last_name = name[1]
+%}
+
+<div id="billingInformation" class="{% if checkoutDetails.billing_address.same_billing_address != true %} hidden {% endif %}">
+    <h4 class="heading-text-color">{{ "checkout.blocks.shipping-and-billing-information.billing_title" | t }}</h4>
+    
+    <div>
+        <div class="md:flex md:flex-row gap-6 mt-5">
+            <div class="billingFirstName flex flex-col w-full">
+                <label for="billingFirstName" class="py-2 after:content-['*'] after:text-red-500 after:ml-1 font-normal text-xs leading-3">{{ "checkout.blocks.shipping-and-billing-information.first_name" | t }}</label>
+                <input type="text" name="billingFirstName" class="border border-color py-2 pl-4 outline-none" value="{{first_name}}">
+                <p id="billingFirstName" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+            </div>
+            <div class="billingLastName flex flex-col w-full">
+                <label for="billingLastName" class="py-2 after:content-['*'] after:text-red-500 after:ml-1 font-normal text-xs leading-3">{{ "checkout.blocks.shipping-and-billing-information.last_name" | t }}</label>
+                <input type="text" name="billingLastName" class="border border-color py-2 pl-4 outline-none" value="{{last_name}}">
+                <p id="billingLastName" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+            </div>
+        </div>
+        
+        <div class="flex flex-row mt-5">
+            <div class="billingAddress flex flex-col w-full">
+                <label for="billingAddress" class="py-2 after:content-['*'] after:text-red-500 after:ml-1 font-normal text-xs leading-3">{{ "checkout.blocks.shipping-and-billing-information.address" | t }}</label>
+                <textarea name="billingAddress" rows="4" class="border border-color py-2 pl-4 outline-none">{{billing_details.address}}</textarea>
+                <p id="billingAddress" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+            </div>
+        </div>
+        
+        <div class="md:flex md:flex-row gap-6 mt-5">
+            <div class="billingCity flex flex-col w-full">
+                <label for="billingCity" class="py-2 after:content-['*'] after:text-red-500 after:ml-1 font-normal text-xs leading-3">{{ "checkout.blocks.shipping-and-billing-information.city" | t }}</label>
+                <input type="text" name="billingCity" class="border border-color py-2 pl-4 outline-none" value="{{billing_details.city}}">
+                <p id="billingCity" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+            </div>
+            <div class="billingCountry flex flex-col w-full">
+                <label for="billingCountry" class="py-2 after:content-['*'] after:text-red-500 after:ml-1 font-normal text-xs leading-3">{{ "checkout.blocks.shipping-and-billing-information.country" | t }}</label>
+                <select name="billingCountry" class="border border-color py-2 px-3 outline-none w-full">
+                    <option value="">{{ "checkout.blocks.shipping-and-billing-information.select_country" | t }}</option>
+                    {% for country in checkoutDetails.shipping_supported_countries %}
+                        <option value="{{ country.country_code }}" {% if country.country_code == billing_details.country_code %}selected{% endif %}
+                            data-states="{{ country.states | json | escape }}">{{ country.country_name }}</option>
+                    {% endfor %}
+                </select>
+                <p id="billingCountry" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+            </div>
+        </div>
+        
+        <div class="md:flex md:flex-row gap-6 mt-5">
+            <div class="billingState flex flex-col w-full {% if billing_details.state_code == empty %}hidden{% endif %}">
+                <label for="billingStateSelect" class="py-2 after:content-['*'] after:text-red-500 after:ml-1 font-normal text-xs leading-3">{{ "checkout.blocks.shipping-and-billing-information.state_or_province" | t }}</label>
+                <select name="billingStateSelect" class="border border-color py-2 px-3 outline-none w-full">
+                    {% assign selected_country = checkoutDetails.shipping_supported_countries | where: "country_code", billing_details.country_code | first %}
+                    {% if selected_country %}
+                      <option value="">{{ "checkout.blocks.shipping-and-billing-information.state" | t }}</option>
+                      {% for state in selected_country.states %}
+                        <option value="{{ state.state_code }}" {% if state.state_code == billing_details.state_code %}selected{% endif %}>
+                          {{ state.state_name }}</option>
+                      {% endfor %}
+                    {% endif %}
+                </select>
+                <p id="billingStateSelect" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+            </div>
+            <div class="billingZipCode flex flex-col w-full">
+                <label for="billingZipCode" class="py-2 after:content-['*'] after:text-red-500 after:ml-1 font-normal text-xs leading-3">{{ "checkout.blocks.shipping-and-billing-information.zip_code" | t }}</label>
+                <input type="text" name="billingZipCode" class="border border-color py-2 pl-4 outline-none" value="{{billing_details.zip}}">
+                <p id="billingZipCode" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+            </div>
+        </div>
+        
+        <div class="flex flex-row mt-5">
+            <div class="billingTelephone flex flex-col w-full">
+                <label for="billingTelephone" class="py-2 after:content-['*'] after:text-red-500 after:ml-1 font-normal text-xs leading-3">{{ "checkout.blocks.shipping-and-billing-information.telephone" | t }}</label>
+                <input type="number" name="billingTelephone" class="border border-color py-2 pl-4 outline-none" value="{{billing_details.phone}}">
+                <p id="billingTelephone" class="hidden py-2 text-xs text-red-500">{{ "checkout.blocks.common.empty_label" | t }}</p>
+            </div>
+        </div>
+    </div>
+</div>

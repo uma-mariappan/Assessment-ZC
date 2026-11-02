@@ -1,0 +1,47 @@
+{% liquid
+  assign question_block = nil
+  assign answer_block = nil
+  assign faq_panel_id = 'faq-answer-' | append: block.id
+
+  for nested_block in block.blocks
+    if nested_block.type == 'zc_theme__text'
+      if question_block == nil
+        assign question_block = nested_block
+      else
+        assign answer_block = nested_block
+        break
+      endif
+    endif
+  endfor
+%}
+
+<div class="rounded-[20px] overflow-hidden transition-all duration-300 faq-card bg-white" style="border: 1.5px solid #FDF2F8;" {{ block.zcommerce_attributes }}>
+  <div class="flex flex-col expand-options">
+    <button type="button"
+            class="flex items-center justify-between w-full text-left px-8 md:px-10 py-5 md:py-6 rounded-t-[20px] transition-colors duration-300 faq-header"
+            data-trigger
+            aria-expanded="false"
+            aria-controls="{{ faq_panel_id }}">
+      <span class="flex font-semibold leading-[22px] items-center [&_p]:font-semibold [&_p]:leading-[22px]" style="letter-spacing: 0.3px;">
+        {% if question_block %}
+          {% render 'theme-text-block', block: question_block %}
+        {% endif %}
+      </span>
+      <span class="flex-shrink-0 ml-4">
+        <span data-expand-option class="w-8 h-8 md:w-9 md:h-9 rounded-full border flex items-center justify-center heading-text-color" style="border-color: var(--heading-text-color);" aria-hidden="true">
+          {% render 'icon-plus-black' %}
+        </span>
+        <span data-collapse-option class="hidden w-8 h-8 md:w-9 md:h-9 rounded-full border flex items-center justify-center heading-text-color" style="border-color: var(--heading-text-color);" aria-hidden="true">
+          {% render 'icon-minus-black' %}
+        </span>
+      </span>
+    </button>
+    <div id="{{ faq_panel_id }}" data-descp class="max-h-0 opacity-0 overflow-hidden transition-all duration-300" role="region">
+      <div class="px-8 md:px-10 py-8 md:py-10 [&_p]:leading-[26px]">
+        {% if answer_block %}
+          {% render 'theme-text-block', block: answer_block %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

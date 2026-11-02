@@ -1,0 +1,417 @@
+<script src="{{ 'testimonial-slider-400775016324488.js' | asset_url }}" defer></script>
+
+{% liquid
+  assign section_settings = section.settings
+  assign alignment = section_settings.content_alignment.value | default: section_settings.content_alignment | default: 'center'
+  assign ts_bg_value = section_settings.background_color.value | default: section_settings.background_color | default: 'primary'
+%}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+  #section-{{ section.id }} [data-testimonial-track] {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  #section-{{ section.id }} [data-testimonial-track]::-webkit-scrollbar {
+    display: none;
+  }
+  #section-{{ section.id }} .ts-scrollbar-track {
+    background-color: rgba(var(--border-color), 0.2);
+  }
+  #section-{{ section.id }} .ts-scrollbar-thumb {
+    background-color: var(--heading-text-color);
+  }
+  #section-{{ section.id }} .testimonial-card-hover {
+    border: 1px solid transparent;
+    transition: border-color 0.3s ease;
+  }
+  #section-{{ section.id }} .testimonial-card-hover:hover,
+  #section-{{ section.id }} .testimonial-card-hover:focus-within {
+    border-color: var(--heading-text-color);
+  }
+  #section-{{ section.id }} .testimonial-card-hover:hover .testimonial-product-bar,
+  #section-{{ section.id }} .testimonial-card-hover:focus-within .testimonial-product-bar {
+    background-color: var(--hover-bg);
+  }
+{% endstyle %}
+
+<testimonial-slider id="section-{{ section.id }}" class="block w-full {% if ts_bg_value == 'secondary' %}bg-secondary-color{% else %}bg-primary-color{% endif %}">
+  <div class="w-[90%] page-max-width mx-auto">
+    {% assign has_testimonial_card = false %}
+
+    <div class="w-full flex flex-col gap-4 md:gap-6 {% if alignment == 'left' %}items-start text-left{% elsif alignment == 'right' %}items-end text-right{% else %}items-center text-center{% endif %} mb-10 md:mb-12">
+      {% render_blocks %}
+    </div>
+
+    <div data-testimonial-instance>
+      <div
+        data-testimonial-track
+        tabindex="-1"
+        class="flex gap-4 md:gap-6 overflow-x-auto overflow-y-hidden pb-2 scroll-smooth snap-x snap-mandatory"
+      >
+        {% for perBlock in section.blocks %}
+          {% if perBlock.type == 'testimonial-card' %}
+            {% assign has_testimonial_card = true %}
+            <article class="relative flex-shrink-0 snap-start w-[84vw] sm:w-[380px] lg:w-[400px] content-container content-container-color card p-5 md:p-7 group overflow-hidden testimonial-card-hover" {{ perBlock.zcommerce_attributes }}>
+              {% render 'testimonial-card', testimonial_block: perBlock %}
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if has_testimonial_card %}
+        <div class="ts-scrollbar-track mt-6 h-[2px] relative hidden" data-testimonial-scrollbar>
+          <div class="ts-scrollbar-thumb absolute top-0 left-0 h-[2px]" style="width: 40%; left: 0;" data-testimonial-scroll-thumb></div>
+        </div>
+      {% else %}
+        <p class="text-center heading-text-color opacity-70 py-10">
+          Add at least one Testimonial card block.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</testimonial-slider>
+
+{% schema %}
+{
+  "name": "t:sections.testimonial_stories.name",
+  "tag": "section",
+  "class": "section",
+  "available_in": {
+    "templates": [
+      "index"
+    ]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "background_color",
+      "label": "t:sections.testimonial_stories.settings.background_color.label",
+      "options": [
+        {
+          "label": "t:sections.testimonial_stories.settings.background_color.options.primary",
+          "value": "primary"
+        },
+        {
+          "label": "t:sections.testimonial_stories.settings.background_color.options.secondary",
+          "value": "secondary"
+        }
+      ],
+      "default": {
+        "display_name": "Primary",
+        "value": "primary"
+      }
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:sections.testimonial_stories.settings.content_alignment.label",
+      "info": "Applies to title only",
+      "options": [
+        {
+          "label": "t:sections.testimonial_stories.settings.content_alignment.options.left",
+          "value": "left"
+        },
+        {
+          "label": "t:sections.testimonial_stories.settings.content_alignment.options.center",
+          "value": "center"
+        },
+        {
+          "label": "t:sections.testimonial_stories.settings.content_alignment.options.right",
+          "value": "right"
+        }
+      ],
+      "default": {
+        "display_name": "Center",
+        "value": "center"
+      }
+    },
+    {
+      "type": "header",
+      "content": "t:sections.testimonial_stories.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.testimonial_stories.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.testimonial_stories.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.testimonial_stories.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.testimonial_stories.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.testimonial_stories.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "zc_theme__text",
+      "name": "t:blocks.text.name"
+    },
+    {
+      "type": "zc_theme__button",
+      "name": "t:blocks.button.name"
+    },
+    {
+      "type": "zc_theme__image",
+      "name": "t:blocks.image.name"
+    },
+    {
+      "type": "zc_theme__carousel",
+      "name": "t:blocks.carousel.name"
+    },
+    {
+      "type": "zc_theme__accordion",
+      "name": "t:blocks.accordion.name"
+    },
+    {
+      "type": "testimonial-card",
+      "name": "t:sections.testimonial_stories.blocks.testimonial_card.name",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "testimonial",
+          "label": "t:sections.testimonial_stories.blocks.testimonial_card.settings.testimonial.label",
+          "default": "t:sections.testimonial_stories.blocks.testimonial_card.settings.testimonial.default"
+        },
+        {
+          "type": "richtext",
+          "id": "customer_name",
+          "label": "t:sections.testimonial_stories.blocks.testimonial_card.settings.customer_name.label",
+          "default": "t:sections.testimonial_stories.blocks.testimonial_card.settings.customer_name.default"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "t:sections.testimonial_stories.blocks.testimonial_card.settings.rating.label",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 4
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "t:sections.testimonial_stories.blocks.testimonial_card.settings.product_image.label",
+          "default": {
+            "url": "",
+            "enable_customisation": true
+          }
+        },
+        {
+          "type": "richtext",
+          "id": "product_name",
+          "label": "t:sections.testimonial_stories.blocks.testimonial_card.settings.product_name.label",
+          "default": "t:sections.testimonial_stories.blocks.testimonial_card.settings.product_name.default"
+        },
+        {
+          "type": "richtext",
+          "id": "product_price",
+          "label": "t:sections.testimonial_stories.blocks.testimonial_card.settings.product_price.label",
+          "default": "t:sections.testimonial_stories.blocks.testimonial_card.settings.product_price.default"
+        },
+        {
+          "type": "url",
+          "id": "product_url",
+          "label": "t:sections.testimonial_stories.blocks.testimonial_card.settings.product_url.label",
+          "default": {
+            "display_name": "",
+            "handle": ""
+          }
+        },
+        {
+          "type": "color",
+          "id": "hover_color",
+          "label": "t:sections.testimonial_stories.blocks.testimonial_card.settings.hover_color.label",
+          "default": "#FDF2F8"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.testimonial_stories.presets.default.name",
+      "settings": {
+        "background_color": {
+          "display_name": "Primary",
+          "value": "primary"
+        },
+        "content_alignment": {
+          "display_name": "Center",
+          "value": "center"
+        },
+        "mobile_padding_top": 30,
+        "mobile_padding_bottom": 30,
+        "desktop_padding_top": 50,
+        "desktop_padding_bottom": 50
+      },
+      "blocks": {
+        "testimonial-title": {
+          "type": "zc_theme__text",
+          "settings": {
+            "text": "Customer Stories",
+            "select_font_family": {
+              "display_name": "t:blocks.text.settings.select_font_family.options.primary.label",
+              "value": "primary"
+            },
+            "select_text_color": {
+              "display_name": "t:blocks.text.settings.select_text_color.options.heading_text_color.label",
+              "value": "heading-text-color"
+            },
+            "desktop_text_size": {
+              "display_name": "3XL",
+              "value": "text-3xl"
+            },
+            "mobile_text_size": {
+              "display_name": "t:blocks.text.settings.mobile_text_size.options.text_2xl.label",
+              "value": "text-2xl"
+            },
+            "desktop_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "mobile_font_weight": {
+              "display_name": "Medium",
+              "value": "medium"
+            },
+            "padding_block_start": 0,
+            "padding_block_end": 0,
+            "padding_inline_start": 0,
+            "padding_inline_end": 0
+          }
+        },
+        "testimonial-card-1": {
+          "type": "testimonial-card",
+          "settings": {
+            "testimonial": "A simplified ritual of powerful antioxidants and naturally restorative elements, for a modern and healthy approach to skin. Advanced, transformative organic formulations that revitalize and regenerate below the surface for immediate results.",
+            "customer_name": "Steffi",
+            "rating": 4,
+            "product_image": {
+              "url": "testimonial-product-img-876726699760411.webp",
+              "enable_customisation": true
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_price": "₹950.00",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "hover_color": "#FDF2F8"
+          }
+        },
+        "testimonial-card-2": {
+          "type": "testimonial-card",
+          "settings": {
+            "testimonial": "A simplified ritual of powerful antioxidants and naturally restorative elements, for a modern and healthy approach to skin. Advanced, transformative organic formulations that revitalize and regenerate below the surface for immediate results.",
+            "customer_name": "Steffi",
+            "rating": 4,
+            "product_image": {
+              "url": "testimonial-product-img-876726699760411.webp",
+              "enable_customisation": true
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_price": "₹950.00",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "hover_color": "#FDF2F8"
+          }
+        },
+        "testimonial-card-3": {
+          "type": "testimonial-card",
+          "settings": {
+            "testimonial": "A simplified ritual of powerful antioxidants and naturally restorative elements, for a modern and healthy approach to skin. Advanced, transformative organic formulations that revitalize and regenerate below the surface for immediate results.",
+            "customer_name": "Steffi",
+            "rating": 4,
+            "product_image": {
+              "url": "testimonial-product-img-876726699760411.webp",
+              "enable_customisation": true
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_price": "₹950.00",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "hover_color": "#FDF2F8"
+          }
+        },
+        "testimonial-card-4": {
+          "type": "testimonial-card",
+          "settings": {
+            "testimonial": "A simplified ritual of powerful antioxidants and naturally restorative elements, for a modern and healthy approach to skin. Advanced, transformative organic formulations that revitalize and regenerate below the surface for immediate results.",
+            "customer_name": "Steffi",
+            "rating": 4,
+            "product_image": {
+              "url": "testimonial-product-img-876726699760411.webp",
+              "enable_customisation": true
+            },
+            "product_name": "Makeup foundation Bottle",
+            "product_price": "₹950.00",
+            "product_url": {
+              "display_name": "",
+              "handle": ""
+            },
+            "hover_color": "#FDF2F8"
+          }
+        }
+      },
+      "block_order": [
+        "testimonial-title",
+        "testimonial-card-1",
+        "testimonial-card-2",
+        "testimonial-card-3",
+        "testimonial-card-4"
+      ]
+    }
+  ]
+}
+{% endschema %}

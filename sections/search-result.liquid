@@ -1,0 +1,46 @@
+{% liquid
+  assign search_products = search.products
+  assign products_size = search_products | size
+  assign search_query = search.q | default: search.query | default: search.terms | default: search.keyword | default: ''
+%}
+
+{% if products_size > 0 %}
+  <div class="search-results-panel flex w-full min-w-0 flex-col gap-4" role="region" aria-label="{{ 'header.search_results_region' | t }}">
+    <p class="search-results-context m-0 shrink-0 text-sm leading-[15px]" style="color: var(--color-heading);">
+      <span style="color: var(--color-text-muted, #6b7280);">{{ 'header.search_results_for_prefix' | t }}</span>
+      <span aria-hidden="true"> “</span>
+      <span class="font-semibold" data-search-query-text>{{ search_query | escape }}</span>
+      <span aria-hidden="true">”</span>
+    </p>
+
+    <ul class="search-items-list m-0 flex list-none flex-col gap-2 p-0">
+      {% for search_product in search_products %}
+        {% render 'search-product-row', searchProduct: search_product %}
+      {% endfor %}
+    </ul>
+  </div>
+{% else %}
+  <div
+    class="search-empty-state flex min-h-full w-full min-w-0 flex-col"
+    role="region"
+    aria-label="{{ 'header.search_results_region' | t }}"
+  >
+    <p class="search-results-context m-0 shrink-0 text-left text-sm leading-snug" style="color: var(--color-heading);">
+      <span style="color: var(--color-text-muted, #6b7280);">{{ 'header.search_results_for_prefix' | t }}</span>
+      <span aria-hidden="true"> “</span>
+      <span class="font-semibold" data-search-query-text>{{ search_query | escape }}</span>
+      <span aria-hidden="true">”</span>
+    </p>
+    <div class="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 py-8 text-center">
+      <div
+        class="inline-flex h-16 w-16 items-center justify-center"
+        style="color: var(--color-text-muted, #d1d5db);"
+        aria-hidden="true">
+        {% render 'icon-search-empty' %}
+      </div>
+      <p class="m-0 text-center text-base font-medium" style="color: var(--color-text-muted, #9ca3af);">
+        {{ 'header.search_no_results' | t }}
+      </p>
+    </div>
+  </div>
+{% endif %}

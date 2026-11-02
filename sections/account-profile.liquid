@@ -1,0 +1,219 @@
+<script type="module" src="{{ "account-profile-246090011320769.js" | asset_url }}" defer></script>
+
+{% liquid assign profile_address = profile.address_info
+  assign profile_user = profile.user_info
+%}
+
+{% style %}
+  #section-{{ section.id }} {
+    padding-top: {{ section.settings.mobile_padding_top }}px;
+    padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+  }
+  @media (min-width: 768px) {
+    #section-{{ section.id }} {
+      padding-top: {{ section.settings.desktop_padding_top }}px;
+      padding-bottom: {{ section.settings.desktop_padding_bottom }}px;
+    }
+  }
+{% endstyle %}
+
+<account-profile id="section-{{ section.id }}">
+  <div class="w-[90%] mx-auto page-max-width">
+    <div class="min-h-screen">
+      <div class="flex justify-between py-6 md:py-8">
+        <div class="flex gap-6 items-center">
+          {%  render 'icon-back-btn' %}
+          <h1 class="text-xl md:text-[40px] md:leading-[48px] font-medium heading-text-color primary-font">{{ 'accounts.common.my_profile' | t }}</h1>
+        </div>
+      </div>
+      <div id="createdProfile" class="flex flex-col lg:flex-row gap-10">
+        <!-- Left: Profile Info -->
+        <div id="profileInfo" class="shadow-md px-4 pt-6 pb-2 md:px-8 md:pt-8 w-full border border-color bg-white lg:mb-40">
+          <div class="flex justify-between items-center pb-4">
+            <h2 class="text-xl md:text-2xl font-medium">{{ 'accounts.common.my_profile' | t }}</h2>
+            <button id="editBtn" class="flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm border" style="background-color: var(--color-background-alt); border-color: var(--color-border); gap-1">
+              {% render "icon-edit" %}
+              Edit
+            </button>
+          </div>
+    
+          <dl class="text-sm">
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.common.first_name' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_user.first_name | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.common.last_name' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_user.last_name | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.account_profile.date_of_birth' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_user.date_of_birth | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.account_profile.gender' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">
+                {% if profile_user.gender == 1 %} Male {% elsif profile_user.gender == 0 %} Female {% endif %}
+              </dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.account_profile.email' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_user.email | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.account_profile.phone_number' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_address.phone | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.account_profile.company_name' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_address.company_name | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.account_profile.job_title' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_address.job_title | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.common.address' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_address.address | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.common.city' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_address.city | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.common.state' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_address.state | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.common.country' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_address.country | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6 border-b border-[var(--color-border)]">
+              <dt class="text-sm md:text-base">{{ 'accounts.account_profile.zip_code' | t }}</dt>
+              <dd class="md:col-span-2 font-medium text-sm md:text-base truncate">{{ profile_address.postal_code | escape }}</dd>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 py-4 md:py-6">
+              <dt class="text-sm md:text-base">{{ 'accounts.account_profile.receive_promotional_emails' | t }}</dt>
+              {% assign receive_promotional_emails = 'Opted-in' %}
+              {% if profile_user.receive_promotional_emails == '0' %}
+                {% assign receive_promotional_emails = 'Opted-out' %}
+              {% endif %}
+              <dd class="md:col-span-2 font-medium text-sm md:text-base">{{ receive_promotional_emails }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Right: Change Password -->
+        <div class="shadow-md p-4 md:p-8 w-full lg:w-[48%] h-fit border border-color bg-white max-md:mb-10">
+          <h2 class="text-xl md:text-2xl font-medium pb-6 md:pb-8">{{ 'accounts.account_profile.change_password' | t }}</h2>
+          <form id="formChangePassword">
+            <div class="pb-6">
+              <label class="block text-sm md:text-base font-normal mb-2">{{ 'accounts.account_profile.old_password' | t }} <span class="text-red-500">*</span></label>
+              <input type="password" placeholder="Enter Old Password" name="old_password" class="w-full border border-[var(--color-border)] rounded py-2 px-3 md:py-3 md:px-4 text-sm md:text-base" />
+              <div id="oldPasswordFieldError" class="pt-2 hidden">
+                <span data-error-msg class="text-red-500 text-sm"></span>
+              </div>
+            </div>
+            <div class="pb-6">
+              <label class="block text-sm md:text-base font-normal mb-2">{{ 'accounts.account_profile.new_password' | t }} <span class="text-red-500">*</span></label>
+              <input type="password" placeholder="Enter New Password" name="new_password" class="w-full border border-[var(--color-border)] rounded py-2 px-3 md:py-3 md:px-4 text-sm md:text-base" />
+              <div id="newPasswordFieldError" class="pt-2 hidden">
+                <span data-error-msg class="text-red-500 text-sm"></span>
+              </div>
+            </div>
+            <div class="pb-6">
+              <label class="block text-sm md:text-base font-normal mb-2">{{ 'accounts.account_profile.confirm_password' | t }} <span class="text-red-500">*</span></label>
+              <input type="password" placeholder="Enter Confirm New Password" name="confirm_password" class="w-full border border-[var(--color-border)] rounded py-2 px-3 md:py-3 md:px-4 text-sm md:text-base" />
+              <div id="confirmPasswordFieldError" class="pt-2 hidden">
+                <span data-error-msg class="text-red-500 text-sm"></span>
+              </div>
+            </div>
+            <div class="flex mt-4 gap-4 justify-end">
+              <button type="reset" class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base font-medium">{{ 'accounts.account_profile.reset_btn' | t }}</button>
+              <button type="submit" class="px-4 py-2 md:px-8 md:py-4 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base font-medium">{{ 'accounts.account_profile.submit_btn' | t }}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="messageNotification" class="opacity-0 transition-all duration-500">
+        {% render "account-message-notification" %}
+      </div>
+
+      <div id="editProfile" class="hidden h-full">
+        {% render "account-edit-profile", profileAddress: profile_address, profileUser: profile_user %}
+      </div>
+    </div>
+    <div page-loader class="hidden fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 z-10">
+      <div class="flex items-center">
+          <span class="text-3xl mr-4">{{ "common.loader" | t }}</span>
+          {% render "icon-page-loader" %}
+      </div>
+    </div>
+  </div>
+</account-profile>
+
+{% schema %}
+{
+  "name": "t:sections.account_profile.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.account_profile.settings.section_padding.mobile",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_profile.settings.section_padding.top.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_profile.settings.section_padding.bottom.label",
+      "meta": "mobile"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.account_profile.settings.section_padding.desktop",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_profile.settings.section_padding.top.label",
+      "meta": "desktop"
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "label": "t:sections.account_profile.settings.section_padding.bottom.label",
+      "meta": "desktop"
+    }
+  ],
+  "presets": [{ "name": "t:sections.account_profile.presets.default.name" }]
+}
+{% endschema %}

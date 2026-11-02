@@ -1,0 +1,59 @@
+{% assign category_block_settings = categoryBlock.settings.category_url %}
+{% assign bottom_gradient_color = categoryBlock.settings.bottom_gradient_color %}
+{% assign bottom_gradient_height = categoryBlock.settings.bottom_gradient_height %}
+{% assign fallback_image_obj = categoryBlock.settings.category_image %}
+{% assign fallback_image_url = fallback_image_obj.url | default: '' %}
+
+{% assign has_category = false %}
+{% if category_block_settings.handle != blank and category_block_settings.handle != "" %}
+  {% assign has_category = true %}
+{% endif %}
+
+{% if has_category %}
+  {% assign cat_image_obj = category_block_settings.image %}
+  {% assign img = cat_image_obj.url %}
+  {% if img == "?" or img == "" or img == null %}
+    {% if fallback_image_url != blank and fallback_image_url != "?" %}
+      {% assign cat_image_obj = fallback_image_obj %}
+      {% assign img = fallback_image_url %}
+    {% else %}
+      {% assign img = "no-image-59606643991319.webp" | asset_url %}
+      {% assign cat_image_obj = '' %}
+    {% endif %}
+  {% endif %}
+  {% assign cat_name = category_block_settings.name %}
+  {% assign cat_link = "/categories/" | append: category_block_settings.handle | downcase %}
+{% else %}
+  {% if fallback_image_url != blank and fallback_image_url != "?" %}
+    {% assign cat_image_obj = fallback_image_obj %}
+    {% assign img = fallback_image_url %}
+  {% else %}
+    {% assign cat_image_obj = '' %}
+    {% assign img = "no-image-59606643991319.webp" | asset_url %}
+  {% endif %}
+  {% assign cat_name = "Category Name" %}
+  {% assign cat_link = "#" %}
+{% endif %}
+
+<a href="{{ cat_link }}" class="block relative overflow-hidden group category-card card" {{ categoryBlock.zcommerce_attributes }}>
+  <div class="aspect-square overflow-hidden">
+    <picture class="block w-full h-full">
+      {% if cat_image_obj != blank %}
+        {% render 'image-resolutions', firstImage: cat_image_obj %}
+      {% endif %}
+      <img
+        src="{{ img }}"
+        alt="{{ cat_name | escape }}"
+        height="400" loading="lazy"
+        class="h-full w-auto min-w-full object-cover object-center transition-transform duration-500 group-hover:scale-105">
+    </picture>
+  </div>
+
+  <div
+    class="absolute inset-x-0 bottom-0 flex items-end justify-center pb-5"
+    style="height: {{ bottom_gradient_height }}%; background: linear-gradient(to top, {{ bottom_gradient_color }}, transparent);">
+    <p class="alt-text-color secondary-font font-bold uppercase text-sm md:text-lg tracking-[0.15em]">
+      {{ cat_name | escape }}
+    </p>
+  </div>
+</a>

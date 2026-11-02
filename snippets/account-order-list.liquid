@@ -1,0 +1,112 @@
+{% liquid
+    assign status_bg_color = ""
+    assign makeReturnVisible = false
+%}
+
+{% for line_item in orderDetail.line_items %}
+  {% if line_item.quantity_to_return != 0 %}
+    {% assign makeReturnVisible = true %}
+  {% endif %}
+{% endfor %}
+
+{% case orderStatus %}
+  {% when "Pending" %}
+    {% liquid
+        assign status_bg_color = "bg-[#F6810D]"
+    %}
+  {% when "Confirmed", "Shipped" %}
+    {% liquid
+        assign status_bg_color = "bg-[#2198FF]"
+    %}
+  {% when "Delivered" %}
+    {% liquid
+        assign status_bg_color = "bg-[#4BBD4B]"
+    %}
+  {% when "Cancelled" %}
+    {% liquid
+        assign status_bg_color = "bg-[#FF0000]"
+    %}
+{% endcase %}
+
+<div class="border border-color p-4 md:p-8 flex flex-col gap-4 bg-white">
+    <!-- Order Header -->
+    <div class="flex flex-wrap justify-between items-center gap-4 pb-6 border-b border-[#CCB8A3]">
+      <div class="flex items-center gap-3">
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-row flex-wrap gap-3 items-center">
+                <h2 class="font-semibold text-xl md:text-2xl">#{{ orderDetail.salesorder_number }}</h2>
+                    <span class="{{ status_bg_color }} text-sm md:text-base font-medium text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-white"></span>
+                    {% if orderStatus == "Shipped" and orderDetail.pickup_location_id != "" %}
+                      {{ 'accounts.account_order.status_reached' | t }}
+                    {% else %}
+                      {{ orderStatus }}
+                    {% endif %}
+                </span>
+            </div>
+            <div class="text-sm md:text-base">{{ 'accounts.account_order.placed_on' | t }} : <span class="font-semibold">{{ orderDetail.created_time_formatted }}</span></div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <span class="block text-sm md:text-base">{{ 'accounts.account_order.total' | t }}</span>
+        <span class="font-semibold text-xl md:text-2xl">{{ orderDetail.total_formatted }}</span>
+      </div>
+    </div>
+  
+    <!-- Product Info -->
+    {% for items in orderDetail.line_items limit:1 %}
+        <div class="flex gap-4 items-center justify-between flex-wrap pt-6">
+            <div class="flex flex-row items-center gap-6">
+                <div class="flex w-28 h-32 md:w-36 md:h-40 rounded-lg overflow-hidden border border-slate-200">
+                    {% assign item_image = items.image_url %}
+                    {% if item_image == '?' or item_image == '' or item_image == null %}
+                        {% assign item_image = "no-image-59606643991319.webp" | asset_url %}
+                    {% endif %}
+                    {% assign list_item_image_obj = items.image | default: item_image %}
+                    <a href="{{ items.product_url }}" target="_blank" class="block w-full h-full">
+                        <picture class="block w-full h-full">
+                            {% render 'image-resolutions', firstImage: list_item_image_obj %}
+                            <img src="{{ item_image }}" alt="{{ items.name | escape }}" height="80" loading="lazy" class="h-full w-auto min-w-full object-cover object-center">
+                        </picture>
+                    </a>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <a href="{{ items.product_url }}" target="_blank" class="font-semibold text-sm md:text-base">{{ items.name }}</a>
+                    <div class="py-1.5 px-3 md:py-2 md:px-4 rounded-[32px] bg-[#EDEDED] border border-[#D9D9D9] flex items-center justify-center w-fit">
+                        <p class="text-sm md:text-base font-medium">{{ 'accounts.common.quantity' | t }} : {{ items.quantity | floor }}</p>
+                    </div>
+                    {% if orderDetail.line_items.size > 1 %}
+                        <a href="orders/{{ orderDetail.salesorder_id }}" class="text-sm md:text-base underline underline-offset-4 font-semibold heading-text-color">+{{ orderDetail.line_items.size | minus: 1 }} {{ 'accounts.account_order.more_items' | t }}</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="flex gap-4 items-center flex-wrap">
+                {% if store.preferences.buy_again_enabled and orderStatus != "Pending" %}
+                    <button type="button" class="px-4 py-3 md:px-8 md:py-5 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base" data-buy-again data-order-line-items="{{ orderDetail.line_items | json | escape }}">
+                        {{ 'accounts.account_order.buy_again' | t }}
+                    </button>
+                {% endif %}
+                {% if orderStatus == "Pending" or orderStatus == "Confirmed" %}
+                  {% comment %} {% if orderDetail.is_dropshipped == false %} {% endcomment %}
+                    <a href="orders/{{ orderDetail.salesorder_id }}/status">
+                      <button class="px-4 py-3 md:px-8 md:py-5 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base">{{ 'accounts.account_order.cancel' | t }}</button>
+                    </a>
+                  {% comment %} {% endif %} {% endcomment %}
+                {% endif %}
+                {% if orderStatus == "Delivered" and makeReturnVisible %}
+                  {% comment %} {% if orderDetail.is_dropshipped == false %} {% endcomment %}
+                    <a href="orders/{{ orderDetail.salesorder_id }}/status">
+                      <button class="px-4 py-3 md:px-6 md:py-5 rounded-[32px] border btn-secondary-color btn-secondary-hover text-sm md:text-base">{{ 'accounts.account_order.return' | t }}</button>
+                    </a>
+                  {% comment %} {% endif %} {% endcomment %}
+                {% endif %}
+                <a href="orders/{{ orderDetail.salesorder_id }}">
+                    <button class="px-4 py-3 md:px-8 md:py-5 rounded-[32px] btn-primary-color btn-primary-hover text-sm md:text-base">
+                        {{ 'accounts.account_order.order_details' | t }}
+                    </button>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+  </div>
+  

@@ -1,0 +1,15 @@
+{
+  "layout": "theme",
+  "sections": {
+    "main": {
+      "type": "collection-list",
+      "settings": {
+        "mobile_padding_top": 0,
+        "mobile_padding_bottom": 0,
+        "desktop_padding_top": 0,
+        "desktop_padding_bottom": 0
+      }
+    }
+  },
+  "order": ["main"]
+}

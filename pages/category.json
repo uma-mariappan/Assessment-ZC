@@ -1,0 +1,16 @@
+{
+  "layout": "theme",
+  "sections": {
+    "main": {
+      "type": "product-list",
+      "settings": {
+        "page_type": "category",
+        "mobile_padding_top": 16,
+        "mobile_padding_bottom": 60,
+        "desktop_padding_top": 16,
+        "desktop_padding_bottom": 64
+      }
+    }
+  },
+  "order": ["main"]
+}

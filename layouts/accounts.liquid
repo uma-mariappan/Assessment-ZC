@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+  <html lang="en-us">
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="utf-8">
+      {% if seo.description != blank %}
+        <meta name="description" content="{{ seo.description | escape }}">
+      {% endif %}
+      {% if seo.keywords != blank %}
+        <meta name="keywords" content="{{ seo.keywords | escape }}">
+      {% endif %}
+      {% if store.favicon.url != blank and store.favicon.url != '?' %}
+        {% assign fav_small = store.favicon.url %}
+        {% assign fav_large = store.favicon.url %}
+        {% for res in store.favicon.resolutions %}
+          {% if res.format == "png" and res.width == 320 %}{% assign fav_small = res.url %}{% endif %}
+          {% if res.format == "png" and res.width == 640 %}{% assign fav_large = res.url %}{% endif %}
+        {% endfor %}
+        <link rel="icon" type="image/png" sizes="any" href="{{ fav_small }}">
+        <link rel="apple-touch-icon" href="{{ fav_small }}">
+        {% capture fav_manifest_json %}{"name":"Pink Beauty","short_name":"Pink Beauty","theme_color":"#EC4899","background_color":"#FFFFFF","display":"standalone","icons":[{"src":"{{ fav_small }}","type":"image/png","sizes":"192x192"},{"src":"{{ fav_large }}","type":"image/png","sizes":"512x512"}]}{% endcapture %}
+        <link rel="manifest" href="data:application/manifest+json,{{ fav_manifest_json | strip | url_encode }}">
+      {% endif %}
+      <meta name="theme-color" content="#EC4899">
+      <link rel="stylesheet" href="{{ "style-19486920188144.css" | asset_url }}">
+      <link rel="stylesheet" href="{{ "signin-424024153007789.css" | asset_url }}">
+      <link rel="stylesheet" href="{{ "theme-settings-898456141777185.css" | asset_url }}">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Roboto+Slab:wght@400;500;600;700&display=swap">
+       <script src={{ "portal-signup-503543321320256.js" | asset_url }} defer></script>
+       <script type="module" src="{{ "accounts-header-510283216187183.js" | asset_url }}" defer></script>
+       <script src="{{ store.customer_portal.signup_url }}" defer></script>
+       <script type="application/javascript">
+           window.zs_view = "signup"
+       </script>
+     <title>
+      {{ page_title }}
+      {% unless page_title contains store.name %}{% if page_title != blank %} &ndash; {% endif %}{{ store.name }}{%
+      endunless %}
+    </title>
+    {{ content_for_header }}
+    </head>
+    <body>
+      {{ content_for_body }}
+      {% render "accounts-header", organization: store %}
+      {{ content_for_layout }}
+
+      {% render "theme-settings" %}
+    </body>
+  </html>

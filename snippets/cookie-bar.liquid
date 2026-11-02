@@ -1,0 +1,15 @@
+<cookie-bar
+  className="bg-white flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 w-full z-[9999] shadow-[0px_-4px_12px_0px_rgba(0,0,0,0.08)]"
+  acceptButtonClass="px-4 py-2 rounded-md text-white text-sm font-medium"
+  declineButtonClass="px-4 py-2 rounded-md text-sm font-medium border"
+  buttonsWrapperClass="flex gap-3 justify-end items-center text-sm"
+  messageClass="text-sm"
+  acceptText="{{ 'cookie_bar.accept' | t }}"
+  declineText="{{ 'cookie_bar.decline' | t }}"
+>
+</cookie-bar>
+<style>
+  #cookie-bar { color: var(--color-text); }
+  #cookie-bar-accept { background-color: var(--color-primary); }
+  #cookie-bar-close { border-color: var(--color-border); color: var(--color-text); }
+</style>
