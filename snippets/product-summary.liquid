@@ -1,0 +1,21 @@
+
+{% if product %}
+  <div class="product-summary">
+
+    {% if product.cover_media.url != blank %}
+      <img
+        src="{{ product.cover_media.url }}"
+        alt="{{ product.title | escape }}"
+        width="200"
+        loading="lazy"
+      >
+    {% endif %}
+
+    <h2>{{ product.title | escape }}</h2>
+
+    {% if show_price %}
+      <p>{{ product.initial_variant.price_formatted | escape }}</p>
+    {% endif %}
+
+  </div>
+{% endif %}

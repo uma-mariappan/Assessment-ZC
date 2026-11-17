@@ -1,0 +1,216 @@
+{% liquid
+  assign layout = section.settings.layout.value | default: section.settings.layout | default: 'image_left'
+  assign overlay_opacity = section.settings.overlay_opacity | divided_by: 100.0
+  assign banner_image = section.settings.image
+%}
+
+<style>
+  #custom-banner-{{ section.id }} .custom-banner {
+    display: flex;
+    min-height: {{ section.settings.height }}px;
+    position: relative;
+    overflow: hidden;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  #custom-banner-{{ section.id }} .custom-banner__media {
+    flex: 1 1 50%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #custom-banner-{{ section.id }} .custom-banner__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #custom-banner-{{ section.id }} .custom-banner__content {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(24px, 5vw, 72px);
+    position: relative;
+    z-index: 1;
+  }
+
+  #custom-banner-{{ section.id }} .custom-banner__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  #custom-banner-{{ section.id }} .custom-banner--image_right .custom-banner__media {
+    order: 2;
+  }
+
+  #custom-banner-{{ section.id }} .custom-banner--background .custom-banner__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #custom-banner-{{ section.id }} .custom-banner--background .custom-banner__content {
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+  }
+
+  @media (max-width: 767px) {
+    #custom-banner-{{ section.id }} .custom-banner:not(.custom-banner--background) {
+      flex-direction: column;
+    }
+
+    #custom-banner-{{ section.id }} .custom-banner--image_right .custom-banner__media {
+      order: 0;
+    }
+
+    #custom-banner-{{ section.id }} .custom-banner:not(.custom-banner--background) .custom-banner__media {
+      flex: 0 0 260px;
+    }
+
+    #custom-banner-{{ section.id }} .custom-banner:not(.custom-banner--background) .custom-banner__content {
+      min-height: 260px;
+    }
+  }
+</style>
+
+<section id="custom-banner-{{ section.id }}">
+  <div class="custom-banner custom-banner--{{ layout }}">
+    <div class="custom-banner__media">
+      {% if banner_image.url != blank %}
+        <img
+          src="{{ banner_image.url }}"
+          alt="{{ banner_image.alt | default: section.settings.heading | escape }}"
+          loading="lazy"
+        >
+      {% endif %}
+      {% if section.settings.show_overlay %}
+        <div
+          class="custom-banner__overlay"
+          aria-hidden="true"
+          style="background-color: {{ section.settings.overlay_color }}; opacity: {{ overlay_opacity }};">
+        </div>
+      {% endif %}
+    </div>
+    <div class="custom-banner__content {% if layout == 'background' and section.settings.show_overlay %}text-white{% endif %}">
+      {% if section.settings.eyebrow != blank %}
+        <p>{{ section.settings.eyebrow | escape }}</p>
+      {% endif %}
+      {% if section.settings.heading != blank %}
+        <h2>{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <div>{{ section.settings.description }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Banner",
+  "available_in": {
+    "templates": ["index"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "New arrivals"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Discover your next favorite"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Explore the latest additions to our collection.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Banner image",
+      "default": {
+        "url": "",
+        "enable_customisation": true
+      }
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#DCEFE2"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "default": {
+        "display_name": "Image left",
+        "value": "image_left"
+      },
+      "options": [
+        {
+          "label": "Image left",
+          "value": "image_left"
+        },
+        {
+          "label": "Image right",
+          "value": "image_right"
+        },
+        {
+          "label": "Image background",
+          "value": "background"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "min": 320,
+      "max": 760,
+      "step": 20,
+      "unit": "px",
+      "label": "Banner height",
+      "default": 480
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Enable image overlay",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 30,
+      "visible_if": "{{ section.settings.show_overlay }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Banner"
+    }
+  ]
+}
+{% endschema %}

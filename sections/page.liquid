@@ -9,12 +9,32 @@
       </div>
     </div>
   </div>
+  {% assign summary_product = section.settings.summary_product %}
+  {% if summary_product.handle != blank %}
+    <div class="lg:w-3/4 w-full mx-auto my-6">
+      {% render 'product-summary', product: summary_product, show_price: section.settings.show_price %}
+    </div>
+  {% endif %}
 </div>
 
 {% schema %}
 {
   "name": "t:sections.page.name",
   "available_in": { "templates": ["page"] },
+  "settings": [
+    {
+      "type": "product",
+      "id": "summary_product",
+      "label": "Product summary product",
+      "default": { "handle": "" }
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show product price",
+      "default": true
+    }
+  ],
   "presets": [{ "name": "Page" }]
 }
 {% endschema %}

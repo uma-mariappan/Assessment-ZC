@@ -26,6 +26,7 @@
   window.product_data = {{ product | json }}
 </script>
 
+
 {% liquid
   assign section_settings = section.settings
   assign variant_id = product.initial_variant.id
@@ -35,7 +36,23 @@
   if first_image == null or first_image == '?' or first_image == ''
     assign first_image = 'no-image-59606643991319.webp' | asset_url
   endif
+
+  assign promo_text = ''
+
+  for custom_field in product.initial_variant.custom_fields
+    if custom_field.label == 'Promo Text'
+      assign promo_text = custom_field.value | strip
+      break
+    endif
+  endfor
 %}
+
+{% if promo_text != blank %}
+  <div class="promo-label">
+    {{ promo_text | escape }}
+  </div>
+{% endif %}
+
 
 
 {% style %}
@@ -166,6 +183,15 @@
       </div>
 
       {%- comment -%} RIGHT: Product info {%- endcomment -%}
+      {% if promo_text != blank %}
+        <p class="mb-4 inline-block rounded bg-[#FCE7EF] px-3 py-1 text-sm font-medium text-[#9F1239]">
+          {{ promo_text | escape }}
+        </p>
+      {% endif %}
+      {% render 'product-summary',
+  product: product,
+  show_price: true
+%}
       <div class="flex flex-col">
 
         {% for perBlock in section.blocks %}

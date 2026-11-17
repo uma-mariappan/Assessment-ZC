@@ -2,6 +2,9 @@
   class VariantRadios extends HTMLElement {
     connectedCallback() {
       this.optionGroups = [...this.querySelectorAll('[data-variant-group]')];
+      this.variantTitle = this.querySelector('[data-variant-title]');
+      this.variantAvailability = this.querySelector('[data-variant-availability]');
+      this.variantSku = this.querySelector('[data-variant-sku]');
       this.inputVariantId = document.querySelector('[name="variant_id"]');
       this.addToCartBtn = document.querySelector('[data-add-to-cart]');
       this.outOfStockBtn = document.querySelector('[data-out-of-stock]');
@@ -21,6 +24,7 @@
       if (currentVariant) {
         if (this.inputVariantId) this.inputVariantId.value = currentVariant.id;
         this.updatePriceInUi(currentVariant);
+        this.updateVariantDetails(currentVariant);
         this.checkVariantsAvailability();
       }
     }
@@ -89,6 +93,7 @@
 
       if (this.inputVariantId) this.inputVariantId.value = currentVariant.id;
       this.updatePriceInUi(currentVariant);
+      this.updateVariantDetails(currentVariant);
       this.updateVariantImages(currentVariant);
 
       document.dispatchEvent(
@@ -135,6 +140,26 @@
           option.classList.toggle('is-disabled', !exists);
         });
       });
+    };
+
+    updateVariantDetails = (currentVariant) => {
+      if (this.variantTitle) {
+        this.variantTitle.textContent = currentVariant.title || '';
+        this.variantTitle.classList.toggle('hidden', !currentVariant.title);
+      }
+
+      if (this.variantAvailability) {
+        const available = !!currentVariant.available;
+        this.variantAvailability.textContent = available ? 'In stock' : 'Out of stock';
+        this.variantAvailability.classList.toggle('text-green-700', available);
+        this.variantAvailability.classList.toggle('text-red-600', !available);
+      }
+
+      if (this.variantSku) {
+        const sku = String(currentVariant.sku || '').trim();
+        this.variantSku.textContent = sku ? `SKU: ${sku}` : '';
+        this.variantSku.classList.toggle('hidden', !sku);
+      }
     };
 
     updatePriceInUi = (currentVariant) => {

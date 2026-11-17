@@ -39,6 +39,19 @@
     {% endif %}
   {% endfor %}
 
+  {% assign selected_variant = product.initial_variant | default: product.variants.first %}
+  <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm" data-variant-details aria-live="polite">
+    <span data-variant-title {% if selected_variant.title == blank %}class="hidden"{% endif %}>
+      {{ selected_variant.title | escape }}
+    </span>
+    <span data-variant-availability class="{% if selected_variant.available %}text-green-700{% else %}text-red-600{% endif %}">
+      {% if selected_variant.available %}In stock{% else %}Out of stock{% endif %}
+    </span>
+    <span data-variant-sku {% if selected_variant.sku == blank %}class="hidden"{% endif %}>
+      {% if selected_variant.sku != blank %}SKU: {{ selected_variant.sku | escape }}{% endif %}
+    </span>
+  </div>
+
   <script id="productVariantsJson" type="application/json">{{ product.variants | json }}</script>
   <script id="currencyJson" type="application/json">{{ currency | json }}</script>
 </variant-radios>

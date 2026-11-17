@@ -1,10 +1,17 @@
+
 {% liquid
   assign selected_variant = product.initial_variant
   assign has_custom_fields = false
 
   for variant in product.variants
-    if variant.custom_fields.size > 0
-      assign has_custom_fields = true
+    for custom_field in variant.custom_fields
+      if custom_field.value != blank
+        assign has_custom_fields = true
+        break
+      endif
+    endfor
+
+    if has_custom_fields
       break
     endif
   endfor

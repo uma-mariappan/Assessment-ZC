@@ -1233,11 +1233,33 @@
         }
       },
       "block_order": ["faq"]
+    },
+    "custom-banner": {
+      "type": "custom-banner",
+      "settings": {
+        "eyebrow": "New arrivals",
+        "heading": "Discover your next favorite",
+        "description": "<p>Explore the latest additions to our collection.</p>",
+        "image": {
+          "url": "hero-banner-left-img-606428239186791.webp",
+          "enable_customisation": true
+        },
+        "background_color": "#DCEFE2",
+        "layout": {
+          "display_name": "Image left",
+          "value": "image_left"
+        },
+        "height": 480,
+        "show_overlay": false,
+        "overlay_color": "#000000",
+        "overlay_opacity": 30
+      }
     }
   },
   "order": [
     "announcement-banner",
     "hero-banner",
+    "custom-banner",
     "product-collection",
     "shop-now-banner",
     "category-collection",
