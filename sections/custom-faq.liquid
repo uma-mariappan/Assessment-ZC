@@ -1,0 +1,50 @@
+
+<div class="custom-faq">
+  {% render_blocks type: "zc_theme__custom_faq" %}
+</div>
+
+{% schema %}
+{
+  "name": "Custom FAQ",
+  "available_in": {
+    "templates": ["index"]
+  },
+  "blocks": [
+    {
+      "type": "zc_theme__custom_faq",
+      "name": "FAQ"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom FAQ",
+      "blocks": {
+        "faq": {
+          "type": "zc_theme__custom_faq",
+          "settings": {
+            "heading": "Frequently Asked Questions"
+          },
+          "blocks": {
+            "faq-1": {
+              "type": "zc_theme__custom_faq_item",
+              "settings": {
+                "question": "What products do you offer?",
+                "answer": "We offer a variety of skincare products."
+              }
+            },
+            "faq-2": {
+              "type": "zc_theme__custom_faq_item",
+              "settings": {
+                "question": "Do you offer delivery?",
+                "answer": "Yes, we offer delivery to supported locations."
+              }
+            }
+          },
+          "block_order": ["faq-1", "faq-2"]
+        }
+      },
+      "block_order": ["faq"]
+    }
+  ]
+}
+{% endschema %}

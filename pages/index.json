@@ -1204,6 +1204,35 @@
         "blog-post-card-4",
         "blog-post-card-5"
       ]
+    },
+    "custom-faq": {
+      "type": "custom-faq",
+      "blocks": {
+        "faq": {
+          "type": "zc_theme__custom_faq",
+          "settings": {
+            "heading": "Frequently Asked Questions"
+          },
+          "blocks": {
+            "faq-item-1": {
+              "type": "zc_theme__custom_faq_item",
+              "settings": {
+                "question": "What products do you offer?",
+                "answer": "We offer a variety of skincare products."
+              }
+            },
+            "faq-item-2": {
+              "type": "zc_theme__custom_faq_item",
+              "settings": {
+                "question": "Do you offer delivery?",
+                "answer": "Yes, we offer delivery to supported locations."
+              }
+            }
+          },
+          "block_order": ["faq-item-1", "faq-item-2"]
+        }
+      },
+      "block_order": ["faq"]
     }
   },
   "order": [
@@ -1217,6 +1246,7 @@
     "video-stories",
     "testimonial-stories",
     "before-after-comparison",
-    "blog-posts"
+    "blog-posts",
+    "custom-faq"
   ]
 }

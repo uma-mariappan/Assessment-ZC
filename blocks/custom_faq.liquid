@@ -1,0 +1,47 @@
+
+<div class="custom-faq-parent" {{ block.shopify_attributes }}>
+  <h2>{{ block.settings.heading }}</h2>
+  {% render_blocks type: "zc_theme__custom_faq_item" %}
+</div>
+
+{% schema %}
+{
+  "name": "FAQ Parent",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "zc_theme__custom_faq_item",
+      "name": "FAQ Item"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Parent",
+      "blocks": {
+        "item-1": {
+          "type": "zc_theme__custom_faq_item",
+          "settings": {
+            "question": "What products do you offer?",
+            "answer": "We offer a variety of skincare products."
+          }
+        },
+        "item-2": {
+          "type": "zc_theme__custom_faq_item",
+          "settings": {
+            "question": "Do you offer delivery?",
+            "answer": "Yes, we offer delivery to supported locations."
+          }
+        }
+      },
+      "block_order": ["item-1", "item-2"]
+    }
+  ]
+}
+{% endschema %}
