@@ -19,3 +19,11 @@
 
   {% render 'blog-replies-pagination', current_page: reply_current_page, total_pages: reply_total_pages, comment_id: parent_id %}
 </div>
+
+{% schema %}
+{
+  "name": "Blog Replies",
+  "available_in": { "templates": ["blog"] },
+  "presets": [{ "name": "Blog Replies" }]
+}
+{% endschema %}

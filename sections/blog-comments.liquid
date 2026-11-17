@@ -103,3 +103,11 @@
 
   {% render 'blog-comments-pagination', current_page: comments_current_page, total_pages: comments_total_pages %}
 </div>
+
+  {% schema %}
+  {
+    "name": "Blog Comments",
+    "available_in": { "templates": ["blog"] },
+    "presets": [{ "name": "Blog Comments" }]
+  }
+  {% endschema %}

@@ -1,0 +1,92 @@
+
+<div
+  class="announcement-banner"
+  style="
+    background-color: {{ section.settings.background_color }};
+    text-align: {{ section.settings.alignment }};
+  "
+>
+  <div class="announcement-banner__content">
+    <h2>{{ section.settings.heading }}</h2>
+    <p>{{ section.settings.message }}</p>
+  </div>
+</div>
+
+<style>
+  .announcement-banner {
+    width: 100%;
+    padding: 18px 20px;
+    box-sizing: border-box;
+  }
+
+  .announcement-banner__content h2 {
+    margin: 0 0 5px;
+    font-size: 22px;
+  }
+
+  .announcement-banner__content p {
+    margin: 0;
+    font-size: 15px;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Announcement Banner",
+  "available_in": {
+    "templates": ["index"],
+    "header-group": true
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Welcome to Bloom & Branch"
+    },
+    {
+      "type": "text",
+      "id": "message",
+      "label": "Announcement Message",
+      "default": "Enjoy 20% OFF on your first order!"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Colour",
+      "default": "#DCEFE2"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Text Alignment",
+      "default": { "display_name": "Center", "value": "center" },
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement Banner",
+      "settings": {
+        "heading": "Welcome to Bloom & Branch",
+        "message": "Enjoy 20% OFF on your first order!",
+        "background_color": "#DCEFE2",
+        "alignment": "center"
+      }
+    }
+  ]
+}
+{% endschema %}

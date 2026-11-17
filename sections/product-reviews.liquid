@@ -1,3 +1,11 @@
 <script type="module" src="{{ 'reviews-ratings-423229591876198.js' | asset_url }}" defer></script>
 
 {% render "review-list", reviews: reviews, product: product %}
+
+{% schema %}
+{
+  "name": "Product Reviews",
+  "available_in": { "templates": ["product"] },
+  "presets": [{ "name": "Product Reviews" }]
+}
+{% endschema %}
