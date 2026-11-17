@@ -1,7 +1,6 @@
 
 {% if product %}
   <div class="product-summary">
-
     {% if product.cover_media.url != blank %}
       <img
         src="{{ product.cover_media.url }}"
@@ -14,8 +13,20 @@
     <h2>{{ product.title | escape }}</h2>
 
     {% if show_price %}
-      <p>{{ product.initial_variant.price_formatted | escape }}</p>
+      <p>{{ product.price_min_formatted }}</p>
     {% endif %}
-
   </div>
 {% endif %}
+
+<style>
+  .product-summary {
+    padding: 20px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+
+  .product-summary img {
+    max-width: 200px;
+    height: auto;
+  }
+</style>

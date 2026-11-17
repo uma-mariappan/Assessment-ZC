@@ -1,0 +1,95 @@
+
+{% if product.has_variants %}
+
+<div class="custom-variant-product">
+
+  <h2>{{ product.name }}</h2>
+
+  <h3>Select Variant</h3>
+
+  <div class="variant-list">
+
+    {% for variant in product.variants %}
+
+      <button
+        type="button"
+        class="variant-option"
+        data-variant-id="{{ variant.variant_id }}"
+        data-price="{{ variant.selling_price_formatted }}"
+        data-stock="{{ variant.stock_available }}"
+        data-out-of-stock="{{ variant.is_out_of_stock }}"
+        data-available="{{ variant.is_available_for_purchase }}"
+        {% if variant.is_out_of_stock or variant.is_available_for_purchase == false %}
+          disabled
+        {% endif %}
+      >
+
+        {% for option in variant.options %}
+          {{ option.value }}
+        {% endfor %}
+
+      </button>
+
+    {% endfor %}
+
+  </div>
+
+  <div class="variant-details">
+    <p>Price: <span id="selected-price">Select a variant</span></p>
+    <p>Stock: <span id="selected-stock">Select a variant</span></p>
+  </div>
+
+</div>
+
+{% else %}
+
+  <p>This product has no variants.</p>
+
+{% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const section = document.querySelector(".custom-variant-product");
+
+  if (!section) return;
+
+  const buttons = section.querySelectorAll(".variant-option");
+  const price = section.querySelector("#selected-price");
+  const stock = section.querySelector("#selected-stock");
+
+  buttons.forEach(function (button) {
+
+    button.addEventListener("click", function () {
+
+      buttons.forEach(function (btn) {
+        btn.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      price.textContent = button.dataset.price;
+
+      stock.textContent =
+        button.dataset.stock + " available";
+
+    });
+
+  });
+
+});
+</script>
+
+{% schema %}
+{
+  "name": "Custom Variant Product",
+  "available_in": {
+    "templates": ["product"]
+  },
+  "presets": [
+    {
+      "name": "Custom Variant Product"
+    }
+  ]
+}
+{% endschema %}

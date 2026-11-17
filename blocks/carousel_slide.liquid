@@ -5,6 +5,18 @@
   "name": "t:blocks.carousel_slide.name",
   "settings": [
     {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:blocks.carousel_slide.settings.eyebrow.label",
+      "default": ""
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "t:blocks.carousel_slide.settings.description.label",
+      "default": ""
+    },
+    {
       "type": "checkbox",
       "id": "show_background_image",
       "label": "t:blocks.carousel_slide.settings.show_background_image.label",
@@ -18,6 +30,48 @@
         "url": "",
         "enable_customisation": true
       }
+    },
+    {
+      "type": "checkbox",
+      "id": "overlay_enabled",
+      "label": "t:blocks.carousel_slide.settings.overlay_enabled.label",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "t:blocks.carousel_slide.settings.overlay_color.label",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "t:blocks.carousel_slide.settings.overlay_opacity.label",
+      "default": 30,
+      "visible_if": "{{ block.settings.overlay_enabled }}"
+    },
+    {
+      "type": "select",
+      "id": "content_layout",
+      "label": "t:blocks.carousel_slide.settings.content_layout.label",
+      "default": {
+        "display_name": "t:blocks.carousel_slide.settings.content_layout.options.standard.label",
+        "value": "standard"
+      },
+      "options": [
+        {
+          "label": "t:blocks.carousel_slide.settings.content_layout.options.standard.label",
+          "value": "standard"
+        },
+        {
+          "label": "t:blocks.carousel_slide.settings.content_layout.options.compact.label",
+          "value": "compact"
+        }
+      ]
     },
     {
       "type": "select",

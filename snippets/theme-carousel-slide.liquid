@@ -4,9 +4,16 @@
   assign show_background_image = block_settings.show_background_image
   assign background_image = block_settings.background_image
   assign content_alignment = block_settings.content_alignment.value | default: block_settings.content_alignment | default: 'center'
+  assign content_layout = block_settings.content_layout.value | default: block_settings.content_layout | default: 'standard'
+  assign overlay_color = block_settings.overlay_color | default: '#000000'
+  assign overlay_opacity = block_settings.overlay_opacity | default: 30 | divided_by: 100.0
 
   assign slide_classes = 'hero-carousel-slide flex-shrink-0 w-full h-full snap-start flex flex-col justify-center py-12 relative overflow-hidden'
-  assign content_classes = 'flex flex-col gap-8 max-w-[300px] md:max-w-none relative z-[1]'
+  assign content_width_class = 'max-w-[300px] md:max-w-none'
+  if content_layout == 'compact'
+    assign content_width_class = 'max-w-[300px] md:max-w-[420px]'
+  endif
+  assign content_classes = 'flex flex-col gap-8 ' | append: content_width_class | append: ' relative z-[1]'
 
   if content_alignment == 'left'
     assign slide_classes = slide_classes | append: ' items-start text-left'
@@ -44,7 +51,20 @@
         class="w-full h-full object-cover object-center">
     </picture>
   {% endif %}
+  {% if block_settings.overlay_enabled %}
+    <div
+      class="absolute inset-0 z-0"
+      aria-hidden="true"
+      style="background-color: {{ overlay_color }}; opacity: {{ overlay_opacity }};">
+    </div>
+  {% endif %}
   <div class="{{ content_classes }}">
+    {% if block_settings.eyebrow != blank %}
+      <p class="hero-carousel-slide__eyebrow">{{ block_settings.eyebrow | escape }}</p>
+    {% endif %}
+    {% if block_settings.description != blank %}
+      <div class="hero-carousel-slide__description">{{ block_settings.description }}</div>
+    {% endif %}
     {% for child_block in block.blocks %}
       {% case child_block.type %}
         {% when 'zc_theme__text' %}
@@ -55,7 +75,9 @@
           {% render 'theme-button-block', block: child_block %}
       {% endcase %}
     {% else %}
-      <p class="body-text-color text-sm">{{ 'blocks.carousel_slide.empty' | t }}</p>
+        {% if block_settings.eyebrow == blank and block_settings.description == blank %}
+          <p class="body-text-color text-sm">{{ 'blocks.carousel_slide.empty' | t }}</p>
+        {% endif %}
     {% endfor %}
   </div>
 </div>

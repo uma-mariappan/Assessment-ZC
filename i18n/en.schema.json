@@ -2254,11 +2254,38 @@
     "carousel_slide": {
       "name": "Carousel slide",
       "settings": {
+        "eyebrow": {
+          "label": "Eyebrow text"
+        },
+        "description": {
+          "label": "Description"
+        },
         "show_background_image": {
           "label": "Show background image"
         },
         "background_image": {
           "label": "Background image"
+        },
+        "overlay_enabled": {
+          "label": "Enable image overlay"
+        },
+        "overlay_color": {
+          "label": "Overlay color"
+        },
+        "overlay_opacity": {
+          "label": "Overlay opacity"
+        },
+        "content_layout": {
+          "label": "Content layout",
+          "default": "Standard",
+          "options": {
+            "standard": {
+              "label": "Standard"
+            },
+            "compact": {
+              "label": "Compact"
+            }
+          }
         },
         "content_alignment": {
           "label": "Content alignment",

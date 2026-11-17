@@ -15728,3 +15728,36 @@ input[type='number'] {
 .\[\&_tr\]\:border-b tr {
   border-bottom-width: 1px;
 }
+
+.custom-variant-product {
+  padding: 25px;
+}
+
+.variant-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.variant-option {
+  padding: 12px 20px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.variant-option.active {
+  border: 2px solid black;
+  background: #eee;
+}
+
+.variant-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.variant-details {
+  margin-top: 20px;
+  font-size: 18px;
+}
+

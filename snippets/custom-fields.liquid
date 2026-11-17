@@ -1,4 +1,3 @@
-
 {% liquid
   assign selected_variant = product.initial_variant
   assign has_custom_fields = false
@@ -10,7 +9,6 @@
         break
       endif
     endfor
-
     if has_custom_fields
       break
     endif
@@ -38,3 +36,4 @@
     <div data-custom-field-main-container></div>
   </custom-fields>
 {% endif %}
+<script src="{{ 'custom-fields-empty-display.js' | asset_url }}" defer></script>
