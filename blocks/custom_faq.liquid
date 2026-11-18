@@ -1,8 +1,52 @@
 
-<div class="custom-faq-parent" {{ block.shopify_attributes }}>
-  <h2>{{ block.settings.heading }}</h2>
-  {% render_blocks type: "zc_theme__custom_faq_item" %}
+{% liquid
+  assign left_spacing = block.settings.left_spacing | default: 2
+  assign right_spacing = block.settings.right_spacing | default: 2
+%}
+
+<div
+  class="custom-faq-parent"
+  style="--faq-left-spacing: {{ left_spacing }}%; --faq-right-spacing: {{ right_spacing }}%;"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.heading != blank %}
+    <h2 class="custom-faq-heading">{{ block.settings.heading | escape }}</h2>
+  {% endif %}
+
+  <div class="custom-faq-list">
+    {% render_blocks type: "zc_theme__custom_faq_item" %}
+  </div>
 </div>
+
+<style>
+  .custom-faq-parent {
+    width: calc(100% - var(--faq-left-spacing) - var(--faq-right-spacing));
+    margin-left: var(--faq-left-spacing);
+    margin-right: var(--faq-right-spacing);
+  }
+
+  .custom-faq-heading {
+    margin: 0;
+    padding: 14px 0 12px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 400;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .custom-faq-list {
+    border-bottom: 1px solid #eadfe3;
+  }
+
+  @media (min-width: 768px) {
+    .custom-faq-heading {
+      padding: 16px 0 14px;
+      font-size: 24px;
+    }
+  }
+</style>
 
 {% schema %}
 {
@@ -13,6 +57,26 @@
       "id": "heading",
       "label": "Heading",
       "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "range",
+      "id": "left_spacing",
+      "label": "Left spacing",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "%",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "right_spacing",
+      "label": "Right spacing",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "%",
+      "default": 2
     }
   ],
   "blocks": [
@@ -28,19 +92,26 @@
         "item-1": {
           "type": "zc_theme__custom_faq_item",
           "settings": {
-            "question": "What products do you offer?",
-            "answer": "We offer a variety of skincare products."
+            "question": "Are pink beauty products cruelty-free and vegan?",
+            "answer": "Yes, our pink beauty products are cruelty-free and vegan."
           }
         },
         "item-2": {
           "type": "zc_theme__custom_faq_item",
           "settings": {
-            "question": "Do you offer delivery?",
-            "answer": "Yes, we offer delivery to supported locations."
+            "question": "How long does shipping take and do you offer free delivery?",
+            "answer": "Orders are usually delivered within 3-7 business days, with free delivery available on eligible orders."
+          }
+        },
+        "item-3": {
+          "type": "zc_theme__custom_faq_item",
+          "settings": {
+            "question": "What is your return and exchange policy?",
+            "answer": "You can request a return or exchange within 7 days of delivery if the product is unused and in its original condition."
           }
         }
       },
-      "block_order": ["item-1", "item-2"]
+      "block_order": ["item-1", "item-2", "item-3"]
     }
   ]
 }

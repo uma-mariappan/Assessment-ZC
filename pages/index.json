@@ -1199,25 +1199,34 @@
         "faq": {
           "type": "zc_theme__custom_faq",
           "settings": {
-            "heading": "Frequently Asked Questions"
+            "heading": "Frequently Asked Questions",
+            "left_spacing": 2,
+            "right_spacing": 2
           },
           "blocks": {
             "faq-item-1": {
               "type": "zc_theme__custom_faq_item",
               "settings": {
-                "question": "What products do you offer?",
-                "answer": "We offer a variety of skincare products."
+                "question": "Are Pink Beauty Products cruelty-free and vegan?",
+                "answer": "Yes, our pink beauty products are cruelty-free and vegan."
               }
             },
             "faq-item-2": {
               "type": "zc_theme__custom_faq_item",
               "settings": {
-                "question": "Do you offer delivery?",
-                "answer": "Yes, we offer delivery to supported locations."
+                "question": "How long does shipping take and do you offer free delivery?",
+                "answer": "Orders are usually delivered within 3-7 business days, with free delivery available on eligible orders."
+              }
+            },
+            "faq-item-3": {
+              "type": "zc_theme__custom_faq_item",
+              "settings": {
+                "question": "What is your return and exchange policy?",
+                "answer": "You can request a return or exchange within 7 days of delivery if the product is unused and in its original condition."
               }
             }
           },
-          "block_order": ["faq-item-1", "faq-item-2"]
+          "block_order": ["faq-item-1", "faq-item-2", "faq-item-3"]
         }
       },
       "block_order": ["faq"]
