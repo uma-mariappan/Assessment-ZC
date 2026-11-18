@@ -1,34 +1,132 @@
 
+{% liquid
+  assign announcement_alignment = section.settings.alignment.value | default: section.settings.alignment | default: 'center'
+  if announcement_alignment == 'left'
+    assign align_items = 'flex-start'
+    assign text_align = 'left'
+  elsif announcement_alignment == 'right'
+    assign align_items = 'flex-end'
+    assign text_align = 'right'
+  else
+    assign align_items = 'center'
+    assign text_align = 'center'
+  endif
+%}
+
 <div
   class="announcement-banner"
   style="
     background-color: {{ section.settings.background_color }};
-    text-align: {{ section.settings.alignment }};
+    color: {{ section.settings.text_color }};
   "
 >
-  <div class="announcement-banner__content">
-    <h2>{{ section.settings.heading }}</h2>
-    <p>{{ section.settings.message }}</p>
+  <div class="announcement-banner__content" style="align-items: {{ align_items }}; text-align: {{ text_align }};">
+    {% if section.settings.heading != blank %}
+      <h2>{{ section.settings.heading | escape }}</h2>
+    {% endif %}
+
+    {% if section.settings.message != blank %}
+      <p>{{ section.settings.message | escape }}</p>
+    {% endif %}
   </div>
 </div>
 
 <style>
   .announcement-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
     width: 100%;
-    padding: 18px 20px;
+    height: 56px;
+    padding: 8px 20px;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .announcement-banner__content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;
   }
 
   .announcement-banner__content h2 {
-    margin: 0 0 5px;
-    font-size: 22px;
+    margin: 0;
+    max-width: 100%;
+    font-size: 15px;
+    line-height: 18px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .announcement-banner__content p {
     margin: 0;
-    font-size: 15px;
+    max-width: 100%;
+    min-width: 0;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 767px) {
+    .announcement-banner {
+      height: 56px;
+      padding: 0 12px;
+    }
+
+    .announcement-banner__content {
+      gap: 3px;
+    }
+
+    .announcement-banner__content h2 {
+      font-size: 15px;
+      line-height: 18px;
+    }
+
+    .announcement-banner__content p {
+      font-size: 11px;
+      line-height: 15px;
+    }
   }
 </style>
+
+<script>
+  (() => {
+    const banner = document.querySelector('.announcement-banner');
+    if (!banner) return;
+    const height = banner.offsetHeight;
+
+    document.documentElement.style.setProperty('--announcement-bar-height', `${height}px`);
+
+    const header = document.querySelector('app-header');
+    if (header) {
+      header.style.top = `${height}px`;
+      header.updateSpacerHeight?.();
+    }
+
+    window.addEventListener('resize', () => {
+      const currentHeight = banner.offsetHeight;
+      document.documentElement.style.setProperty('--announcement-bar-height', `${currentHeight}px`);
+
+      if (header) {
+        header.style.top = `${currentHeight}px`;
+        header.updateSpacerHeight?.();
+      }
+    });
+  })();
+</script>
 
 {% schema %}
 {
@@ -42,25 +140,34 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Welcome to Bloom & Branch"
+      "default": "Special Offers & Exclusive Discounts"
     },
     {
       "type": "text",
       "id": "message",
       "label": "Announcement Message",
-      "default": "Enjoy 20% OFF on your first order!"
+      "default": "Get 5% Extra Discount on Prepaid Orders | COD Available (T&C Apply)"
     },
     {
       "type": "color",
       "id": "background_color",
       "label": "Background Colour",
-      "default": "#DCEFE2"
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Colour",
+      "default": "#FFFFFF"
     },
     {
       "type": "select",
       "id": "alignment",
       "label": "Text Alignment",
-      "default": { "display_name": "Center", "value": "center" },
+      "default": {
+        "display_name": "Center",
+        "value": "center"
+      },
       "options": [
         {
           "value": "left",
@@ -81,10 +188,14 @@
     {
       "name": "Announcement Banner",
       "settings": {
-        "heading": "Welcome to Bloom & Branch",
-        "message": "Enjoy 20% OFF on your first order!",
-        "background_color": "#DCEFE2",
-        "alignment": { "display_name": "Center", "value": "center" }
+        "heading": "Special Offers & Exclusive Discounts",
+        "message": "Get 5% Extra Discount on Prepaid Orders | COD Available (T&C Apply)",
+        "background_color": "#000000",
+        "text_color": "#FFFFFF",
+        "alignment": {
+          "display_name": "Center",
+          "value": "center"
+        }
       }
     }
   ]

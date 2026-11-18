@@ -1,18 +1,6 @@
 {
   "layout": "theme",
   "sections": {
-    "announcement-banner": {
-      "type": "announcement-banner",
-      "settings": {
-        "heading": "Welcome to Bloom & Branch",
-        "message": "Enjoy 20% OFF on your first order!",
-        "background_color": "#DCEFE2",
-        "alignment": {
-          "display_name": "Center",
-          "value": "center"
-        }
-      }
-    },
     "hero-banner": {
       "type": "hero-banner",
       "settings": {
@@ -1257,7 +1245,6 @@
     }
   },
   "order": [
-    "announcement-banner",
     "hero-banner",
     "custom-banner",
     "product-collection",

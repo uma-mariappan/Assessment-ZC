@@ -1,28 +1,20 @@
+
 {
   "name": "Header",
   "type": "header",
   "sections": {
-    "header_announcement_bar": {
-      "type": "header-announcement-bar",
+    "announcement-banner": {
+      "type": "announcement-banner",
       "settings": {
-        "padding_top": 8,
-        "padding_bottom": 8,
-        "autoplay_speed": 3
-      },
-      "blocks": {
-        "announcement_1": {
-          "type": "announcement",
-          "settings": {
-            "announcement_text": "Glow up with our new arrivals!",
-            "cta_text": "Shop now.",
-            "cta_url": {
-              "display_name": "All Products",
-              "handle": "collections/all-products"
-            }
-          }
+        "heading": "Special Offers & Exclusive Discounts",
+        "message": "Get 5% Extra Discount on Prepaid Orders | COD Available (T&C Apply)",
+        "background_color": "#000000",
+        "text_color": "#FFFFFF",
+        "alignment": {
+          "display_name": "Center",
+          "value": "center"
         }
-      },
-      "block_order": ["announcement_1"]
+      }
     },
     "header": {
       "type": "header",
@@ -74,5 +66,8 @@
       }
     }
   },
-  "order": ["header_announcement_bar", "header"]
+  "order": [
+    "announcement-banner",
+    "header"
+  ]
 }
