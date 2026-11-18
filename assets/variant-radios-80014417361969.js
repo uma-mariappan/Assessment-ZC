@@ -144,8 +144,7 @@
 
     updateVariantDetails = (currentVariant) => {
       if (this.variantTitle) {
-        this.variantTitle.textContent = currentVariant.title || '';
-        this.variantTitle.classList.toggle('hidden', !currentVariant.title);
+        this.variantTitle.textContent = currentVariant.title || '—';
       }
 
       if (this.variantAvailability) {
@@ -157,8 +156,7 @@
 
       if (this.variantSku) {
         const sku = String(currentVariant.sku || '').trim();
-        this.variantSku.textContent = sku ? `SKU: ${sku}` : '';
-        this.variantSku.classList.toggle('hidden', !sku);
+        this.variantSku.textContent = sku || '—';
       }
     };
 

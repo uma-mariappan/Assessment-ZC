@@ -40,17 +40,38 @@
   {% endfor %}
 
   {% assign selected_variant = product.initial_variant | default: product.variants.first %}
-  <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm" data-variant-details aria-live="polite">
-    <span data-variant-title {% if selected_variant.title == blank %}class="hidden"{% endif %}>
-      {{ selected_variant.title | escape }}
-    </span>
+  <div class="product-variant-details text-sm" data-variant-details aria-live="polite">
+    <strong>Variant:</strong>
+    <span data-variant-title>{{ selected_variant.title | escape }}</span>
+
+    <strong>Availability:</strong>
     <span data-variant-availability class="{% if selected_variant.available %}text-green-700{% else %}text-red-600{% endif %}">
       {% if selected_variant.available %}In stock{% else %}Out of stock{% endif %}
     </span>
-    <span data-variant-sku {% if selected_variant.sku == blank %}class="hidden"{% endif %}>
-      {% if selected_variant.sku != blank %}SKU: {{ selected_variant.sku | escape }}{% endif %}
-    </span>
+
+    <strong>SKU:</strong>
+    <span data-variant-sku>{{ selected_variant.sku | default: '—' | escape }}</span>
   </div>
+
+  <style>
+    .product-variant-details {
+      display: grid;
+      grid-template-columns: 140px minmax(0, 1fr);
+      column-gap: 12px;
+      row-gap: 8px;
+      align-items: baseline;
+    }
+
+    .product-variant-details strong {
+      font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+      .product-variant-details {
+        grid-template-columns: 120px minmax(0, 1fr);
+      }
+    }
+  </style>
 
   <script id="productVariantsJson" type="application/json">{{ product.variants | json }}</script>
   <script id="currencyJson" type="application/json">{{ currency | json }}</script>
