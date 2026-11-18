@@ -2,6 +2,22 @@
   assign featured_image = perProduct.cover_media
   assign product_image = featured_image | image_url
   assign product_url = perProduct.url
+  assign promo_text = ''
+
+  for promo_variant in perProduct.variants
+    for custom_field in promo_variant.custom_fields
+      assign custom_field_label = custom_field.label | downcase | strip
+      if custom_field_label == 'promo text' or custom_field_label == 'cf_promo_text' or custom_field.name == 'cf_promo_text' or custom_field.key == 'cf_promo_text'
+        assign promo_text = custom_field.value | default: custom_field.value_formatted | strip
+        if promo_text != blank
+          break
+        endif
+      endif
+    endfor
+    if promo_text != blank
+      break
+    endif
+  endfor
 %}
 
 {% if product_image == '?' or product_image == '' %}
@@ -14,6 +30,11 @@
       {% if perProduct.on_sale %}
         <div class="absolute top-3 left-3 z-10 btn-primary btn-primary-color text-xs font-medium px-3 py-1.5">
           Sale
+        </div>
+      {% endif %}
+      {% if promo_text != blank %}
+        <div class="pointer-events-none absolute bottom-3 left-3 z-10 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-semibold text-emerald-800 md:text-xs">
+          {{ promo_text | escape }}
         </div>
       {% endif %}
 
