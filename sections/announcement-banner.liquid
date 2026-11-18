@@ -45,6 +45,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 0 0 8px 8px;
+    overflow: hidden;
   }
 
   .announcement-banner__content {
@@ -55,6 +56,23 @@
     justify-content: center;
     gap: 2px;
     min-width: 0;
+    animation: announcement-marquee 20s linear infinite;
+  }
+
+  @keyframes announcement-marquee {
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .announcement-banner__content {
+      animation: none;
+    }
   }
 
   .announcement-banner__content h2 {
